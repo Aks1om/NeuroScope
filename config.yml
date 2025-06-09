@@ -1,0 +1,25 @@
+news_sources:
+  - url: "https://wallpaper.com"
+    tags: ["cars"]
+  - url: "https://quto.ru"
+    tags: ["cars"]
+  - url: "https://kolesa.ru"
+    tags: ["cars"]
+  - url: "https://detailed.com"
+    tags: ["cars"]
+  - url: "https://quto.ru"
+    tags: [ "cars" ]
+  - url: "https://motor.ru"
+    tags: [ "cars" ]
+  - url: "https://autonews.ru"
+    tags: [ "cars" ]
+  - url: "https://quto.ru"
+    tags: [ "cars" ]
+
+
+
+filters:
+  keywords:
+    - "биткоин"
+    - "нейросети"
+    - "рынок акций"
