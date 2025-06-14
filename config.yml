@@ -11,6 +11,7 @@ news_sources:
     tags: [ "cars" ]
   - url: "https://autonews.ru"
     tags: [ "cars" ]
+  - url: "https://news.drom.ru"
 
 
 
