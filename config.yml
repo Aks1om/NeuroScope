@@ -6,14 +6,10 @@ news_sources:
   - url: "https://kolesa.ru"
     tags: ["cars"]
   - url: "https://detailed.com"
-    tags: ["cars"]
-  - url: "https://quto.ru"
     tags: [ "cars" ]
   - url: "https://motor.ru"
     tags: [ "cars" ]
   - url: "https://autonews.ru"
-    tags: [ "cars" ]
-  - url: "https://quto.ru"
     tags: [ "cars" ]
 
 
