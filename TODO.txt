@@ -4,6 +4,12 @@
 https://github.com/discus0434/nook
 https://github.com/nuhmanpk/WebScrapper
 
+https://github.com/bytedance/pasa
+https://github.com/finaldie/auto-news
+
+https://github.com/jmcarpenter2/swifter
+https://github.com/mautrix/telegram
+
 Логика хеш-тегов:
 Технические теги:
     что-то вроде has photo, has poll и т.д
