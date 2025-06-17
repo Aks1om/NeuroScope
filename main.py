@@ -19,7 +19,7 @@ class DummyTelegramBot:
         print(f"\n[TELEGRAM] {article['title']}")
         print(f"URL: {article['url']}")
         print(f"Дата: {article.get('date')}")
-        print(f"Текст: {article.get('text')[:300]}...")  # первые 300 символов
+        print(f"Текст: {article.get('text')}")  # первые 300 символов
         print("Картинки:")
         for img in article.get("images", []):
             print(f" - {img}")

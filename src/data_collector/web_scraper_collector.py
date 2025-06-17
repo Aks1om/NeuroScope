@@ -1,10 +1,12 @@
 from src.data_collector.web_scraper.drom_scraper import DromNewsScraper
+from src.data_collector.web_scraper.wallpaper_scraper import WallpaperTransportScraper
 
 class WebScraperCollector:
     def __init__(self, db):
         self.db = db
         self.scrapers = [
-            DromNewsScraper("https://news.drom.ru/")
+            DromNewsScraper("https://news.drom.ru/"),
+            WallpaperTransportScraper("https://www.wallpaper.com/transportation"),
         ]
 
     def collect(self):
