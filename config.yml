@@ -3,8 +3,8 @@ logging:
   level: INFO                # уровень логирования: DEBUG/INFO/WARNING/ERROR/CRITICAL
   console_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
   telegram_format: '*%(levelname)s* %(message)s'
-  tg_log: true               # включить/отключить отправку логов в Telegram-канал
-  tg_error_log: true         # включить/отключить отправку ошибок программистам
+  tg_log: false               # включить/отключить отправку логов в Telegram-канал
+  tg_error_log: false         # включить/отключить отправку ошибок программистам
 
 
 news_sources:

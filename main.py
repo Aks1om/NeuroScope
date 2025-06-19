@@ -2,82 +2,56 @@
 import sys
 import asyncio
 
-# На Windows ставим SelectorEventLoop, чтобы aiodns не падал
-
 from src.utils.config import load_config
 from src.logger.logger import setup_logger
-'''
+from src.data_manager.duckdb_client import DuckDBClient
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.data_collector.web_scraper_collector import WebScraperCollector
-from src.data_collector.drom_scraper import DromScraperCollector
-from src.data_collector.wallpaper_scraper import WallpaperScraperCollector
-from src.processing.db_filter import DbFilterEngine
-from src.processing.simple_filter import PassThroughFilter
-from src.processing.sentiment import SentimentAnalyzer
-from src.notification.telegram import TelegramNotifier
-from src.services.news_service import NewsService
-from src.scheduler.tasks import run_scheduler
-<<<<<<< HEAD
-from src.data_manager.duckdb_client import DuckDBClient
 
-def main():
-=======
-'''
 
 async def main():
->>>>>>> 5b7634b481cc9b435ce7410f9089bcc074f6af2f
-    # Загрузка конфигурации и логгера
+    # 1) Загрузка конфига и логгера (возвращает и Bot для корректного закрытия)
     cfg = load_config('config.yml')
     logger, bot = setup_logger(cfg, __name__)
-    logger.info("✅ INFO: бот запустился — сообщение в группу и в консоль")
-    logger.error("❌ ERROR: тестовое сообщение проггерам и в консоль")
-    await asyncio.sleep(2)
-    await bot.session.close()
 
-<<<<<<< HEAD
+    # 2) Инициализация БД: raw и processed
+    # Метод create_database() создаёт/открывает обе БД и сам позаботится о схемах :contentReference[oaicite:3]{index=3}
+    db_clients = DuckDBClient.create_database()
+    raw_db_client = db_clients['raw']
+    processed_db_client = db_clients['processed']
+    logger.info(f"✅ БД инициализированы: raw={raw_db_client.db_path}, processed={processed_db_client.db_path}")
 
+    # 3) Репозиторий для сохранения новостей в processed-БД
+    # Передаём путь к processed-DB, репозиторий создаст собственный DuckDBClient внутри себя :contentReference[oaicite:4]{index=4}
+    repo = DuckDBNewsRepository(processed_db_client.db_path)
 
-=======
-    '''
->>>>>>> 5b7634b481cc9b435ce7410f9089bcc074f6af2f
-    # Репозиторий (DuckDB)
-    repo = DuckDBNewsRepository(cfg.raw_db_path or RAW_DB)
-
-    # Коллекторы данных
+    # 4) Коллекторы данных
     collectors = [
-        WebScraperCollector(cfg.sources.web),
-        DromScraperCollector(cfg.sources.drom),
-        WallpaperScraperCollector(cfg.sources.wallpaper),
+        WebScraperCollector,
     ]
 
-    # Выбор механизма фильтрации
-    if getattr(cfg, 'use_db_filter', False):
-        filter_engine = DbFilterEngine(repo.client)
-        logger.info("Используется DB фильтр")
-    else:
-        filter_engine = PassThroughFilter()
-        logger.info("Используется PassThrough фильтр")
+    logger.info("🚀 Запуск цикла сбора данных")
 
-    # Анализатор
-    analyzer = SentimentAnalyzer(cfg.analyzer)
+    # 5) Сбор
+    items = []
+    for collector in collectors:
+        try:
+            collected = collector.collect()
+            logger.debug(f"{collector.__class__.__name__} собрал {len(collected)} элементов")
+            items.extend(collected)
+        except Exception as e:
+            logger.error(f"Ошибка при сборе ({collector.__class__.__name__}): {e}")
 
-    # Нотификатор (Telegram)
-    notifier = TelegramNotifier(token=cfg.telegram.token,
-                                chat_id=cfg.telegram.chat_id)
+    # Здесь можно продолжить фильтрацию, анализ и сохранение...
+    # Например:
+    # filtered = your_filter_engine.filter(items)
+    # analyzed = your_analyzer.analyze(filtered)
+    # repo.insert_news(analyzed)
 
-    # Сервис-оркестратор
-    service = NewsService(
-        repository=repo,
-        collectors=collectors,
-        filter_engine=filter_engine,
-        analyzer=analyzer,
-        notifier=notifier,
-        logger=logger
-    )
+    # 6) Дадим время на отправку логов в Telegram, затем корректно закроем сессию
+    #await asyncio.sleep(2)
+    #await bot.session.close()
 
-    # Запуск по расписанию
-    run_scheduler(service.run, interval=cfg.scheduler.interval)
-    '''
 
 if __name__ == "__main__":
     if sys.platform.startswith("win"):
