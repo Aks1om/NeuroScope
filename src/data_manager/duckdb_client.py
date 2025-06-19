@@ -31,7 +31,8 @@ class DuckDBClient:
                 url TEXT,
                 date TIMESTAMP,
                 content TEXT,
-                media_id UUID
+                media_id UUID,
+                language
             );
         """)
 
