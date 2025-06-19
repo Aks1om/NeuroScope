@@ -3,7 +3,7 @@ import logging
 from src.utils.config import load_config
 from src.utils.paths import RAW_DB
 from src.logger.logger import setup_logger
-from src.data.duckdb_repository import DuckDBNewsRepository
+from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.data_collector.web_scraper_collector import WebScraperCollector
 from src.data_collector.drom_scraper import DromScraperCollector
 from src.data_collector.wallpaper_scraper import WallpaperScraperCollector
