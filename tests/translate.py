@@ -3,6 +3,7 @@ import argostranslate.translate
 
 # Функция для перевода текста
 def translate_text(text, from_code="en", to_code="ru"):
+    argostranslate.package.install_from_path("en_ru.argosmodel")
     # Получаем установленные языки
     installed_languages = argostranslate.translate.get_installed_languages()
     from_lang = next((lang for lang in installed_languages if lang.code == from_code), None)

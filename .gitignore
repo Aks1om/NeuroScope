@@ -1,1 +1,3 @@
 *.pyc
+*.argosmodel
+src/utils/en_ru.argosmodel
