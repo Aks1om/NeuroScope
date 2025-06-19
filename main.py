@@ -13,13 +13,15 @@ from src.processing.sentiment import SentimentAnalyzer
 from src.notification.telegram import TelegramNotifier
 from src.services.news_service import NewsService
 from src.scheduler.tasks import run_scheduler
-
+from src.data_manager.duckdb_client import DuckDBClient
 
 def main():
     # Загрузка конфигурации и логгера
     cfg = load_config('config.yml')
     logger = setup_logger(__name__)
     logger.info("NeuroScope запустился")
+
+
 
     # Репозиторий (DuckDB)
     repo = DuckDBNewsRepository(cfg.raw_db_path or RAW_DB)
