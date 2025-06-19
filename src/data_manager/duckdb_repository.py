@@ -1,5 +1,5 @@
-# src/data_store/duckdb_repository.py
-from .base import NewsRepository
+# src/data_manager/duckdb_repository.py
+from . import NewsRepository
 from .duckdb_client import DuckDBClient
 import uuid
 

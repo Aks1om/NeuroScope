@@ -1,4 +1,4 @@
-# src/data_store/duckdb_client.py
+# src/data_manager/duckdb_client.py
 import duckdb
 from pathlib import Path
 
