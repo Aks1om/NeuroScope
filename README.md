@@ -23,14 +23,14 @@
 
 ```text
 ┌───────────────────┐     ┌───────────────────┐
-│  Data Collectors  │───▶│  Processing Layer │
+│  Data Collector  │───▶│  Processing Layer │
 │  (web_scraper,    │     │  ─ FilterEngine   │
 │   drom_scraper,   │     │  ─ Analyzer       │
 │   wallpaper, …)   │     └───────────────────┘
 └───────────────────┘              │
                                    ▼
 ┌───────────────────┐     ┌───────────────────┐
-│   Data Store      │◀───▶│  NewsService      │
+│   Data Manager    │◀───▶│  NewsService      │
 │  DuckDBClient,    │     │ (оркестратор)     │
 │  Repositories,    │     │                   │
 │  Queries          │     └───────────────────┘

@@ -1,8 +1,12 @@
 # main.py
-import logging
+import sys
+import asyncio
+
+# На Windows ставим SelectorEventLoop, чтобы aiodns не падал
+
 from src.utils.config import load_config
-from src.utils.paths import RAW_DB
 from src.logger.logger import setup_logger
+'''
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.data_collector.web_scraper_collector import WebScraperCollector
 from src.data_collector.drom_scraper import DromScraperCollector
@@ -13,14 +17,18 @@ from src.processing.sentiment import SentimentAnalyzer
 from src.notification.telegram import TelegramNotifier
 from src.services.news_service import NewsService
 from src.scheduler.tasks import run_scheduler
+'''
 
-
-def main():
+async def main():
     # Загрузка конфигурации и логгера
     cfg = load_config('config.yml')
-    logger = setup_logger(__name__)
-    logger.info("NeuroScope запустился")
+    logger, bot = setup_logger(cfg, __name__)
+    logger.info("✅ INFO: бот запустился — сообщение в группу и в консоль")
+    logger.error("❌ ERROR: тестовое сообщение проггерам и в консоль")
+    await asyncio.sleep(2)
+    await bot.session.close()
 
+    '''
     # Репозиторий (DuckDB)
     repo = DuckDBNewsRepository(cfg.raw_db_path or RAW_DB)
 
@@ -58,7 +66,10 @@ def main():
 
     # Запуск по расписанию
     run_scheduler(service.run, interval=cfg.scheduler.interval)
-
+    '''
 
 if __name__ == "__main__":
-    main()
+    if sys.platform.startswith("win"):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+    asyncio.run(main())
