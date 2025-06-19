@@ -41,16 +41,23 @@ def load_config(path: str = 'config.yml') -> SimpleNamespace:
     # Переопределяем секцию telegram данными из окружения
     telegram_cfg = cfg_dict.get('telegram', {})
     telegram_cfg['token'] = os.getenv('TELEGRAM_API_TOKEN', telegram_cfg.get('token'))
-    telegram_cfg['chat_id'] = os.getenv('TELEGRAM_CHAT_ID', telegram_cfg.get('chat_id'))
+    telegram_cfg['chat_id'] = os.getenv('MODERATOR_CHAT_ID', telegram_cfg.get('chat_id'))
     cfg_dict['telegram'] = telegram_cfg
 
-    # Переопределяем список проггеров из переменной окружения PROGGERS_IDS
-    proggers_ids_env = os.getenv('PROGGERS_IDS')
-    if proggers_ids_env:
-        proggers_ids = [cid.strip() for cid in proggers_ids_env.split(',') if cid.strip()]
+    # Переопределяем список проггеров из переменной окружения PROG_IDS
+    prog_ids_env = os.getenv('PROG_IDS')
+    if prog_ids_env:
+        # сразу преобразуем в int
+        prog_ids = [
+            int(cid.strip())
+            for cid in prog_ids_env.split(',')
+            if cid.strip()
+        ]
     else:
-        proggers_ids = cfg_dict.get('proggers', {}).get('ids', [])
-    cfg_dict['proggers'] = {'ids': proggers_ids}
+        # если в YAML уже были, то тоже приводим к int
+        prog_ids = []
+
+    cfg_dict['prog'] = {'ids': prog_ids}
 
     # Рекурсивное преобразование в Namespace
     return _dict_to_namespace(cfg_dict)
