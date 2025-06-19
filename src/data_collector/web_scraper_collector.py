@@ -6,7 +6,7 @@ class WebScraperCollector:
         self.db = db
         self.scrapers = [
             DromNewsScraper("https://news.drom.ru/"),
-            WallpaperTransportScraper("https://www.wallpaper.com/transportation"),
+            #WallpaperTransportScraper("https://www.wallpaper.com/transportation"),
         ]
 
     def collect(self):

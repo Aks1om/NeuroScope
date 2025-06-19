@@ -9,23 +9,17 @@ logging:
 
 news_sources:
   - url: "https://wallpaper.com"
-    tags: ["cars"]
-  - url: "https://quto.ru"
-    tags: ["cars"]
+    topic: ["cars"]
+  - url: "https://news.drom.ru/"
+    topic: ["cars"]
+
   - url: "https://kolesa.ru"
-    tags: ["cars"]
+    topic: ["cars"]
   - url: "https://detailed.com"
-    tags: [ "cars" ]
+    topic: [ "cars" ]
   - url: "https://motor.ru"
-    tags: [ "cars" ]
+    topic: [ "cars" ]
   - url: "https://autonews.ru"
-    tags: [ "cars" ]
+    topic: [ "cars" ]
   - url: "https://news.drom.ru"
 
-
-
-filters:
-  keywords:
-    - "биткоин"
-    - "нейросети"
-    - "рынок акций"
