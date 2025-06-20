@@ -23,7 +23,7 @@ class DuckDBClient:
         self._ensure_tables()
 
     def _ensure_tables(self):
-        # Создаём таблицу news, если её ещё нет
+        # Создаём таблицу
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS news (
                 id UUID PRIMARY KEY,
@@ -31,8 +31,9 @@ class DuckDBClient:
                 url TEXT,
                 date TIMESTAMP,
                 content TEXT,
-                media_id UUID,
-                language
+                media_ids TEXT,
+                topic TEXT,
+                language TEXT
             );
         """)
 

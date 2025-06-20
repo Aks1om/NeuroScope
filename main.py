@@ -15,19 +15,17 @@ async def main():
     logger, bot = setup_logger(cfg, __name__)
 
     # 2) Инициализация БД: raw и processed
-    # Метод create_database() создаёт/открывает обе БД и сам позаботится о схемах :contentReference[oaicite:3]{index=3}
     db_clients = DuckDBClient.create_database()
     raw_db_client = db_clients['raw']
     processed_db_client = db_clients['processed']
     logger.info(f"✅ БД инициализированы: raw={raw_db_client.db_path}, processed={processed_db_client.db_path}")
 
     # 3) Репозиторий для сохранения новостей в processed-БД
-    # Передаём путь к processed-DB, репозиторий создаст собственный DuckDBClient внутри себя :contentReference[oaicite:4]{index=4}
     repo = DuckDBNewsRepository(processed_db_client.db_path)
 
     # 4) Коллекторы данных
     collectors = [
-        WebScraperCollector,
+        WebScraperCollector(raw_db_client),
     ]
 
     logger.info("🚀 Запуск цикла сбора данных")
@@ -42,11 +40,15 @@ async def main():
         except Exception as e:
             logger.error(f"Ошибка при сборе ({collector.__class__.__name__}): {e}")
 
-    # Здесь можно продолжить фильтрацию, анализ и сохранение...
-    # Например:
-    # filtered = your_filter_engine.filter(items)
-    # analyzed = your_analyzer.analyze(filtered)
-    # repo.insert_news(analyzed)
+    # 6) Сохранение собранных новостей
+    if items:
+        try:
+            repo.insert_news(items)
+            logger.info(f"✅ Сохранено новостей: {len(items)}")
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении новостей: {e}")
+    else:
+        logger.info("ℹ️ Нет новых новостей для сохранения")
 
     # 6) Дадим время на отправку логов в Telegram, затем корректно закроем сессию
     #await asyncio.sleep(2)
