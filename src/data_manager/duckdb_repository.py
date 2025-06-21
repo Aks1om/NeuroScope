@@ -1,20 +1,22 @@
 # src/data_manager/duckdb_repository.py
-import uuid
-import os
-import re
-import uuid
-import requests
-from urllib.parse import urlparse
-from src.utils.paths import MEDIA_DIR
-from src.utils.config import load_config
 from .duckdb_client import DuckDBClient
+from src.utils.config import load_config
+from src.utils.paths import MEDIA_DIR
+import uuid, os, re, requests
+from urllib.parse import urlparse
 
 class DuckDBNewsRepository:
     """
     Репозиторий для сохранения и обновления новостей в DuckDB.
     """
-    def __init__(self, db_path):
-        self.client = DuckDBClient(db_path)
+    def __init__(self, db_source):
+        """
+        db_source может быть либо путём (str/Path), либо DuckDBClient.
+        """
+        if isinstance(db_source, DuckDBClient):
+            self.client = db_source
+        else:
+            self.client = DuckDBClient(db_source)
         cfg = load_config('config.yml')
         self.news_sources = getattr(cfg, 'news_sources', [])
 

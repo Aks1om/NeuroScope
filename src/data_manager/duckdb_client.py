@@ -11,6 +11,7 @@ class DuckDBClient:
 
     def __init__(self, db_path: Path | str):
         self.db_path = Path(db_path)
+
         # Убедимся, что папка для БД существует
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
