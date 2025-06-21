@@ -25,8 +25,8 @@ async def main():
     logger.info("БД готовы")
 
     collector_service = CollectorService(
-        collectors=[WebScraperCollector(raw_client)],
-        logger=logger,  # ← прокидываем сюда
+        collectors=[WebScraperCollector()],
+        logger=logger,
     )
     new_count = collector_service.collect_and_save()
 

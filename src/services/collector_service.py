@@ -1,9 +1,9 @@
 # src/services/collector_service.py
 from typing import Iterable
-from src.data_manager.duckdb_client import DuckDBClient
+import logging
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.utils.paths import RAW_DB
-import logging
+
 
 class CollectorService:
     def __init__(
@@ -12,7 +12,7 @@ class CollectorService:
         logger: logging.Logger,
     ):
         self.collectors = collectors
-        self.raw_repo = DuckDBNewsRepository(DuckDBClient(RAW_DB))
+        self.raw_repo = DuckDBNewsRepository(RAW_DB)
         self.logger = logger
 
     def collect_and_save(self) -> int:
