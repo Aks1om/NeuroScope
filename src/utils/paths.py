@@ -15,4 +15,13 @@ PROCESSED_DB = DATA_DIR / 'processed_data.duckdb'
 for db in (RAW_DB, PROCESSED_DB):
     db.touch(exist_ok=True)
 
+# папка для медиа (изображения, видео и пр.)
 MEDIA_DIR = BASE_DIR / 'media'
+MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+
+# папка для хранения моделей нейронных сетей
+MODELS_DIR = BASE_DIR / 'models'
+MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+# пути к модели перевода
+EN_RU_ARGOS = MODELS_DIR / 'en_ru.argosmodel'
