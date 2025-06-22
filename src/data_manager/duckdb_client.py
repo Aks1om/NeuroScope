@@ -5,20 +5,10 @@ from src.utils.paths import RAW_DB, PROCESSED_DB
 
 
 class DuckDBClient:
-    """
-    Обёртка над подключением к DuckDB: управляет соединением и схемой.
-    """
-
     def __init__(self, db_path: Path | str):
         self.db_path = Path(db_path)
-        # Убедимся, что папка для БД существует
+
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-
-        # Если файл есть, но нулевой длины — удаляем, чтобы DuckDB создал новый
-        if self.db_path.exists() and self.db_path.stat().st_size == 0:
-            self.db_path.unlink()
-
-        # Подключаемся (создаст файл, если его нет)
         self.conn = duckdb.connect(str(self.db_path))
         self._ensure_tables()
 
@@ -28,7 +18,7 @@ class DuckDBClient:
             CREATE TABLE IF NOT EXISTS news (
                 id UUID PRIMARY KEY,
                 title TEXT,
-                url TEXT,
+                url TEXT UNIQUE,
                 date TIMESTAMP,
                 content TEXT,
                 media_ids TEXT,
@@ -42,9 +32,10 @@ class DuckDBClient:
         Выполнить запрос; если заданы params — с ними.
         Возвращает DuckDBPyRelation или None.
         """
-        if params:
-            return self.conn.execute(sql, params)
-        return self.conn.execute(sql)
+        # Выполняем и сразу коммитим — теперь запросы будут сохраняться прямо на диск
+        rel = self.conn.execute(sql, params) if params else self.conn.execute(sql)
+        self.conn.commit()
+        return rel
 
     def fetchall(self, relation):
         """Забрать все строки из DuckDBPyRelation."""

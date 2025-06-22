@@ -21,33 +21,6 @@
 
 ## Архитектура
 
-```text
-┌───────────────────┐     ┌───────────────────┐
-│  Data Collector  │───▶│  Processing Layer │
-│  (web_scraper,    │     │  ─ FilterEngine   │
-│   drom_scraper,   │     │  ─ Analyzer       │
-│   wallpaper, …)   │     └───────────────────┘
-└───────────────────┘              │
-                                   ▼
-┌───────────────────┐     ┌───────────────────┐
-│   Data Manager    │◀───▶│  NewsService      │
-│  DuckDBClient,    │     │ (оркестратор)     │
-│  Repositories,    │     │                   │
-│  Queries          │     └───────────────────┘
-└───────────────────┘              │
-                                   ▼
-                         ┌───────────────────┐
-                         │ Scheduler/Runner  │
-                         │ (APScheduler,     │
-                         │  cron, …)         │
-                         └───────────────────┘
-                                   │
-                                   ▼
-                         ┌───────────────────┐
-                         │ Notifier Layer    │
-                         │ (TelegramHandler) │
-                         └───────────────────┘
-```
 
 ### Слои и пакеты
 
