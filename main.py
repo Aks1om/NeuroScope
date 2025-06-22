@@ -16,38 +16,32 @@ async def main():
     # 1) Загрузка конфига и логгера
     cfg = load_config('config.yml')
     logger, bot = setup_logger(cfg, __name__)
-    logger.info("Конфигурация и логгер инициализированы")
+    logger.debug("Конфигурация и логгер инициализированы")
 
-    # 2) Создание клиентов DuckDB (raw и processed)
+    # 2) Клиенты DuckDB и репозитории
     raw_client = DuckDBClient(RAW_DB)
     processed_client = DuckDBClient(PROCESSED_DB)
-    logger.info("DuckDB клиенты для raw и processed готовы")
-
-    # 3) Репозитории новостей
     raw_repo = DuckDBNewsRepository(raw_client)
     processed_repo = DuckDBNewsRepository(processed_client)
-    logger.info("Репозитории raw и processed готовы")
+    logger.debug("Подключены raw и processed базы")
 
-    # 4) Сбор новостей в raw
-    collector_service = CollectorService(
-        raw_client=raw_client,
+    # 3) Сбор в raw
+    collector = CollectorService(
+        raw_repo=raw_repo,
         collectors=[WebScraperCollector()],
         logger=logger,
     )
-    new_raw = collector_service.collect_and_save()
-    logger.info(f"Собрано новых записей в raw: {new_raw}")
+    collector.collect_and_save()
 
-    # 5) Обработка и перевод → сохранение в processed
-    translate_service = TranslateService()
-    processed_service = ProcessedService(
-        raw_client=raw_client,
+    # 4) Обработка и перевод → processed
+    translator = TranslateService()
+    processor = ProcessedService(
+        raw_repo=raw_repo,
         processed_repo=processed_repo,
-        translate_service=translate_service,
+        translate_service=translator,
         logger=logger,
     )
-    new_processed = processed_service.process_and_save()
-    logger.info(f"Сохранено новых записей в processed: {new_processed}")
-
+    processor.process_and_save()
 
     #await asyncio.sleep(2)
     #await bot.session.close()
