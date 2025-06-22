@@ -1,9 +1,12 @@
-# src/data_manager/duckdb_repository.py
+import uuid
+import os
+import re
+import requests
+from urllib.parse import urlparse
+
 from .duckdb_client import DuckDBClient
 from src.utils.config import load_config
 from src.utils.paths import MEDIA_DIR
-import uuid, os, re, requests
-from urllib.parse import urlparse
 
 class DuckDBNewsRepository:
     """
@@ -39,51 +42,59 @@ class DuckDBNewsRepository:
             except Exception:
                 continue
             if target_domain.endswith(src_domain):
-                # список тем собираем в строку
                 topics = src.get('topic') or []
                 return ','.join(topics)
         return None
 
-    def insert_news(self, items: list[dict]) -> None:
+    def insert_news(self, items: list[dict]) -> int:
         """
-        Вставить список новостей в таблицу, игнорируя уже существующие по ключу.
+        Вставить список новостей в таблицу, игнорируя уже существующие по URL
+        и не дублируя медиа.
         """
         MEDIA_DIR.mkdir(parents=True, exist_ok=True)
-        existing_urls = set(r[0] for r in self.client.execute("SELECT url FROM news").fetchall())
 
+        # Собираем уже сохранённые URL, чтобы пропускать дубли
+        existing_urls = {
+            row[0] for row in self.client.execute("SELECT url FROM news").fetchall()
+        }
+
+        inserted = 0
         for item in items:
             url = item.get('url')
             if not url or url in existing_urls:
                 continue
+            # отмечаем, чтобы не обрабатывать повторно в этом запуске
+            existing_urls.add(url)
 
             news_id = item.get('id') or str(uuid.uuid4())
-            url = item.get('url', '')
             title = item.get('title')
             date = item.get('date')
             content = item.get('text', '')
-
             topic = self.get_topic_for_url(url)
             language = self.detect_language(content)
 
-            # Сохраняем медиа
+            # Сохраняем медиа с детерминированными именами, чтобы не дублировать
             saved_ids = []
             for img_url in item.get('images', []):
-                media_id = str(uuid.uuid4())
+                media_uuid = str(uuid.uuid5(uuid.NAMESPACE_URL, img_url))
                 ext = os.path.splitext(urlparse(img_url).path)[1] or ''
-                file_name = f"{media_id}{ext}"
+                file_name = f"{media_uuid}{ext}"
                 file_path = MEDIA_DIR / file_name
                 try:
+                    if file_path.exists():
+                        saved_ids.append(media_uuid)
+                        continue
                     resp = requests.get(img_url, timeout=10)
                     resp.raise_for_status()
                     with open(file_path, 'wb') as f:
                         f.write(resp.content)
-                    saved_ids.append(media_id)
+                    saved_ids.append(media_uuid)
                 except Exception:
                     continue
 
             media_ids_str = ','.join(saved_ids) if saved_ids else None
 
-            # Вставка в БД
+            # Вставка записи с media_ids
             try:
                 self.client.execute(
                     """
@@ -96,5 +107,8 @@ class DuckDBNewsRepository:
                         content, media_ids_str, topic, language
                     ]
                 )
+                inserted += 1
             except Exception:
+                # дубли URL или любая другая ошибка — пропускаем
                 continue
+        return inserted
