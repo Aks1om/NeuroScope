@@ -1,3 +1,5 @@
 *.pyc
 *.argosmodel
 models/en_ru.argosmodel
+/media
+/data
