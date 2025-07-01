@@ -21,5 +21,4 @@ news_sources:
     topic: [ "cars" ]
   - url: "https://autonews.ru"
     topic: [ "cars" ]
-  - url: "https://news.drom.ru"
 

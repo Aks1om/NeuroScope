@@ -1,3 +1,4 @@
+import accelerate
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import os
 
@@ -20,9 +21,9 @@ def generate_telegram_post(news_text, prompt_template):
     input_ids = tokenizer(full_prompt, return_tensors="pt").input_ids.to(model.device)
     output_ids = model.generate(
         input_ids,
-        max_new_tokens=150,  # Длина вывода
-        temperature=1.1,  # Креативность
-        top_p=0.975,  # Разнообразие
+        max_new_tokens=200,  # Длина вывода
+        temperature=1.2,  # Креативность
+        top_p=0.95,  # Разнообразие
         do_sample=True,  # Сэмплирование
         pad_token_id=tokenizer.eos_token_id,
     )
