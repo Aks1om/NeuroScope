@@ -3,6 +3,7 @@ import logging
 from typing import List, Dict, Any
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.services.translate_service import TranslateService
+from dotenv import load_dotenv
 
 class ProcessedService:
     """
@@ -45,6 +46,8 @@ class ProcessedService:
                     out_lang = 'ru'
                 except Exception as e:
                     self.logger.error(f"Перевод {id_} упал: {e}")
+
+            #GPT_processor
 
             to_insert.append({
                 'id': id_,
