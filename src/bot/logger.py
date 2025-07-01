@@ -1,81 +1,84 @@
-# src/logger/logger.py
+# src/bot/logger.py
 import logging
 import sys
 import asyncio
 from aiogram import Bot
-from aiogram.client.default import DefaultBotProperties
-
-
-class SingleLevelFilter(logging.Filter):
-    """
-    Пропускает в хендлер только записи точно указанного уровня.
-    """
-
-    def __init__(self, level: int):
-        super().__init__()
-        self.level = level
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        return record.levelno == self.level
 
 class TelegramLogsHandler(logging.Handler):
-    def __init__(self, bot: Bot, *, user_ids: list[int] | None = None, chat_id: int | None = None, level: int = logging.NOTSET):
+    """
+    Custom logging handler that sends logs to Telegram:
+    - ERROR+ to programmer private chats
+    - INFO to a designated group chat
+    """
+    def __init__(self, bot: Bot, user_ids=None, chat_id=None, level=logging.NOTSET):
         super().__init__(level)
         self.bot = bot
         self.user_ids = user_ids or []
         self.chat_id = chat_id
 
-    def emit(self, record: logging.LogRecord) -> None:
+    def emit(self, record: logging.LogRecord):
         try:
             text = self.format(record)
             loop = asyncio.get_event_loop()
-
-            if self.chat_id is not None:
+            # Errors and above -> private to prog_ids
+            if record.levelno >= logging.ERROR and self.user_ids:
+                for uid in self.user_ids:
+                    loop.create_task(
+                        self.bot.send_message(chat_id=uid, text=f"❗️{record.levelname}: {text}")
+                    )
+            # Info and below -> group chat
+            elif record.levelno >= logging.INFO and self.chat_id:
                 loop.create_task(
                     self.bot.send_message(chat_id=self.chat_id, text=text)
                 )
-
-            for uid in self.user_ids:
-                loop.create_task(
-                    self.bot.send_message(chat_id=uid, text=text)
-                )
-
-        except Exception as e:
-            print(f"[logger] failed to send tg message: {e}", file=sys.stderr)
+        except Exception:
+            self.handleError(record)
 
 
-def setup_logger(cfg, name: str) -> tuple[logging.Logger, Bot]:
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
+    """
+    Configure the application logger:
+    - FileHandler: all logs to .log file
+    - StreamHandler: console output
+    - TelegramLogsHandler: INFO to group, ERROR to progs
+    """
+    # Create logger
+    logger = logging.getLogger("bot")
+    level = logging.DEBUG if cfg.get("debug", False) else logging.INFO
+    logger.setLevel(level)
 
-    fmt = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s | %(message)s")
-    sh = logging.StreamHandler(sys.stdout)
-    sh.setLevel(logging.DEBUG)
-    sh.setFormatter(fmt)
-    logger.addHandler(sh)
+    # Formatter with module name for context
+    fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
-    # инициализируем бота с дефолтным HTML-парсингом
-    bot = Bot(
-        token=cfg.telegram.token,
-        default=DefaultBotProperties(parse_mode='HTML')  # ← здесь ключевое изменение
+    # 1) File handler
+    log_file = cfg.get("log_file", "bot.log")
+    fh = logging.FileHandler(log_file, encoding="utf-8")
+    fh.setFormatter(fmt)
+    fh.setLevel(level)
+    logger.addHandler(fh)
+
+    # 2) Console handler
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(fmt)
+    ch.setLevel(level)
+    logger.addHandler(ch)
+
+    # 3) Telegram INFO -> group
+    info_handler = TelegramLogsHandler(
+        bot=bot,
+        chat_id=cfg["telegram_channels"]["moderators_chat_id"],
+        level=logging.INFO,
     )
+    info_handler.setFormatter(fmt)
+    logger.addHandler(info_handler)
 
-    if cfg.logging.tg_error_log:
-        err_h = TelegramLogsHandler(
-            bot,
-            user_ids=cfg.prog.ids,
-            level=logging.ERROR
-        )
-        err_h.setFormatter(fmt)
-        logger.addHandler(err_h)
+    # 4) Telegram ERROR -> progs
+    error_handler = TelegramLogsHandler(
+        bot=bot,
+        user_ids=cfg["users"]["prog_ids"],
+        level=logging.ERROR,
+    )
+    error_handler.setFormatter(fmt)
+    logger.addHandler(error_handler)
 
-    if cfg.logging.tg_log:
-        info_h = TelegramLogsHandler(
-            bot,
-            chat_id=cfg.telegram.chat_id,
-            level=logging.INFO
-        )
-        info_h.addFilter(SingleLevelFilter(logging.INFO))
-        logger.addHandler(info_h)
-
-    return logger, bot
+    return logger

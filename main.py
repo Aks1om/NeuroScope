@@ -15,62 +15,50 @@ from src.services.processed_service import ProcessedService
 from src.services.polling_service import PollingService
 
 async def main():
-    # 1) Загрузка конфига, логгера и прокси
+    # 1) Load config
     cfg = load_config('config.yml')
     logger, bot = setup_logger(cfg, __name__)
-    logger.debug("Конфигурация и логгер инициализированы")
+    logger.debug("Config and logger initialized")
 
-    # 2) Инициализация клиентов DuckDB и репозиториев
+    # 2) Initialize DB clients
     raw_client = DuckDBClient(RAW_DB)
     processed_client = DuckDBClient(PROCESSED_DB)
     raw_repo = DuckDBNewsRepository(raw_client)
     processed_repo = DuckDBNewsRepository(processed_client)
-    logger.debug("Подключены raw и processed базы")
+    logger.debug("Databases connected")
 
-    # 3) Сбор в raw
-    collector = CollectorService(
-        raw_repo=raw_repo,
-        collectors=[WebScraperCollector()],
-        logger=logger,
-    )
-
-    # 4) Обработка и перевод → processed
+    # 3) Create services
+    collector = CollectorService(raw_repo=raw_repo, collectors=[WebScraperCollector()], logger=logger)
     translator = TranslateService()
-    processor = ProcessedService(
-        raw_repo=raw_repo,
-        processed_repo=processed_repo,
-        translate_service=translator,
-        logger=logger,
-    )
+    processor = ProcessedService(raw_repo=raw_repo, processed_repo=processed_repo, translate_service=translator, logger=logger)
 
-    # 5) Polling Service
+    # 4) Start polling
     polling_service = PollingService(
         collector_service=collector,
         processed_service=processor,
         logger=logger,
-        interval=300,  # каждые 5 минут
+        interval=cfg.get("poll_interval", 300),
     )
 
-    # Graceful shutdown через signal
+    # Graceful shutdown
     loop = asyncio.get_running_loop()
     stop_event = asyncio.Event()
 
     def _signal_handler():
-        logger.info("Получен сигнал на остановку. Завершаем polling_service...")
+        logger.info("Signal received: stopping polling_service...")
         polling_service.stop()
         stop_event.set()
 
-    # На Ctrl+C и SIGTERM вызываем graceful shutdown
     for sig in ('SIGINT', 'SIGTERM'):
         try:
             loop.add_signal_handler(getattr(signal, sig), _signal_handler)
         except NotImplementedError:
             pass
 
-    logger.info("Polling service стартует...")
+    logger.info("Starting polling service...")
     polling_task = asyncio.create_task(polling_service.run())
     await stop_event.wait()
-    await polling_task  # Дождёмся завершения polling
+    await polling_task
 
 if __name__ == "__main__":
     if sys.platform.startswith("win"):

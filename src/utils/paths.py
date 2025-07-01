@@ -4,6 +4,9 @@ from pathlib import Path
 # базовая директория — корень проекта (NeuroScope/)
 BASE_DIR = Path(__file__).resolve().parents[2]
 
+ENV_DIR = BASE_DIR/ '.env'
+CONFIG_DIR = BASE_DIR / 'config.json'
+
 # папка для хранения файлов БД
 DATA_DIR = BASE_DIR / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -21,3 +24,4 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 # пути к модели перевода
 EN_RU_ARGOS = MODELS_DIR / 'en_ru.argosmodel'
+

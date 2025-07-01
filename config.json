@@ -1,6 +1,6 @@
 {
   "telegram_channels": {
-    "moderator_chat_id": -1002857895412,
+    "moderators_chat_id": -1002857895412,
     "topics": {
       "auto": "Test94039084"
     }
@@ -8,9 +8,5 @@
   "users": {
     "prog_ids": [1327341052, 444057295],
     "admin_ids": [11111111]
-  },
-  "logging": {
-    "tg_log": true,
-    "tg_error_log": true
   }
 }
