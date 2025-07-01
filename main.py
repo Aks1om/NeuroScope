@@ -4,7 +4,7 @@ import asyncio
 import signal
 
 from src.utils.config import load_config
-from src.logger.logger import setup_logger
+from src.bot.logger import setup_logger
 from src.utils.paths import RAW_DB, PROCESSED_DB
 from src.data_manager.duckdb_client import DuckDBClient
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
