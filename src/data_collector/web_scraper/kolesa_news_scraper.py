@@ -19,14 +19,10 @@ class KolesaNewsScraper(WebScraperBase):
             url = item.get("href")
             title_tag = item.select_one("span.post-name")
             date_tag = item.select_one("span.post-meta-item.pull-right")
-            lead_tag = item.select_one("span.post-lead")
-            category_tag = item.select_one("span.post-category")
             image_tag = item.select_one("span.post-image")
 
             title = title_tag.get_text(strip=True) if title_tag else None
             date = date_tag.get_text(strip=True) if date_tag else None
-            lead = lead_tag.get_text(strip=True) if lead_tag else ""
-            category = category_tag.get_text(strip=True) if category_tag else ""
 
             # Извлечение URL картинки из стиля background-image
             image = None
@@ -68,10 +64,8 @@ class KolesaNewsScraper(WebScraperBase):
                     "title": title,
                     "url": url,
                     "date": date,
-                    "category": category,
-                    "lead": lead,
-                    "text": full_text,
-                    "images": images
+                    "content": full_text,
+                    "media_ids": images
                 })
             except Exception as e:
                 print(f"[!] Ошибка при получении деталей {url}: {e}")
