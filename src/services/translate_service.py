@@ -2,6 +2,8 @@
 
 import os
 from pathlib import Path
+import re
+from langdetect import detect as langdetect_detect
 import argostranslate.package
 import argostranslate.translate
 
@@ -11,25 +13,19 @@ class TranslateService:
     """
     Сервис для перевода текста с одного языка на другой, используя Argos Translate.
     """
-    def __init__(self,
-                 model_path: Path = None,
-                 from_code: str = 'en',
-                 to_code: str = 'ru'):
-        """
-        :param model_path: Path к .argosmodel файлу
-        :param from_code: код исходного языка
-        :param to_code: код целевого языка
-        """
+
+    def __init__(
+            self,
+            model_path: Path = None,
+            from_code: str = 'en',
+            to_code: str = 'ru'
+    ):
         self.from_code = from_code
         self.to_code = to_code
-        # определяем путь к модели через paths
+
         model_path = Path(model_path or EN_RU_ARGOS)
-        if not model_path.exists():
-            raise FileNotFoundError(f"Модель перевода не найдена: {model_path}")
-        # Устанавливаем модель
         argostranslate.package.install_from_path(str(model_path))
 
-        # Загружаем списки языков
         installed = argostranslate.translate.get_installed_languages()
         self.from_lang = next((lang for lang in installed if lang.code == self.from_code), None)
         self.to_lang = next((lang for lang in installed if lang.code == self.to_code), None)
@@ -47,11 +43,14 @@ class TranslateService:
     from langdetect import detect
     import re
 
-    def detect_language(text: str) -> str:
-        # быстрый хак: если в тексте есть кириллические буквы — 'ru', иначе пытаемся через langdetect
+    def detect_language(self, text: str) -> str:
+        """
+        Определяет язык текста: 'ru' если есть кириллица,
+        иначе пытается через langdetect, или 'unknown'.
+        """
         if re.search(r'[А-Яа-я]', text):
             return 'ru'
         try:
-            return detect(text)
-        except:
+            return langdetect_detect(text)
+        except Exception:
             return 'unknown'

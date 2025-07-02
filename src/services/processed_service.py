@@ -1,5 +1,4 @@
 # src/services/processed_service.py
-
 import logging
 from typing import List, Dict, Any
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
@@ -9,8 +8,10 @@ from src.services.chat_gpt_service import ChatGPTService
 
 class ProcessedService:
     """
-    Читает raw из БД, переводит через TranslateService,
-    обрабатывает через ChatGPTService и сохраняет в processed DB.
+    1) Загружает сырые новости из raw_news,
+    2) переводит англоязычные через TranslateService,
+    3) обрабатывает текст через ChatGPTService,
+    4) сохраняет в processed_news.
     """
 
     def __init__(
@@ -28,50 +29,53 @@ class ProcessedService:
         self.logger = logger
 
     def process_and_save(self) -> int:
-        done_ids = {
-            row[0]
-            for row in self.processed_repo.client.execute("SELECT id FROM news").fetchall()
-        }
-
-        rows = self.raw_repo.client.execute(
-            "SELECT id, title, url, date, content, media_ids, topic, language FROM news"
-        ).fetchall()
+        # 1) Какие ID уже в processed?
+        done_ids = self.processed_repo.fetch_ids()
+        # 2) Все сырые записи
+        rows = self.raw_repo.fetch_all()
 
         to_insert: List[Dict[str, Any]] = []
-        for id_, title, url, date, content, media_ids, topic, lang in rows:
-            if id_ in done_ids:
+        for (
+            news_id, title, url, date,
+            content, media_ids, topic, lang
+        ) in rows:
+            if news_id in done_ids:
                 continue
 
             text = content
             out_lang = lang
+
+            # 3) Переводим только английские новости
             if lang == 'en':
                 try:
                     text = self.translate.translate(content)
                     out_lang = 'ru'
                 except Exception as e:
-                    self.logger.error(f"Translation failed for {id_}: {e}")
+                    self.logger.error(f"Translation failed for {news_id}: {e}")
 
+            # 4) Обработка через ChatGPT
             try:
-                processed = self.chat_gpt.process(text)
+                processed_text = self.chat_gpt.process(text)
             except Exception as e:
-                self.logger.error(f"GPT processing failed for {id_}: {e}")
+                self.logger.error(f"GPT processing failed for {news_id}: {e}")
                 continue
 
             to_insert.append({
-                'id':         id_,
-                'title':      title,
-                'url':        url,
-                'date':       date,
-                'content':    processed,
-                'media_ids':  media_ids,
-                'topic':      topic,
-                'language':   out_lang,
+                'id': news_id,
+                'title': title,
+                'url': url,
+                'date': date,
+                'content': processed_text,
+                'media_ids': media_ids,
+                'language': out_lang,
+                'topic': topic,
             })
 
         if not to_insert:
             self.logger.debug("No new items to process.")
             return 0
 
-        count = self.processed_repo.insert_processed_news(to_insert)
+        # 5) Сохраняем все новые обработанные записи
+        count = self.processed_repo.insert_news(to_insert)
         self.logger.info(f"Inserted {count} processed news items.")
         return count
