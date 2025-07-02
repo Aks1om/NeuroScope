@@ -1,57 +1,44 @@
 # src/data_manager/duckdb_client.py
 import duckdb
 from pathlib import Path
-from src.utils.paths import RAW_DB, PROCESSED_DB
-
+from src.utils.paths import DB
 
 class DuckDBClient:
-    def __init__(self, db_path: Path | str):
+    def __init__(self, db_path: Path | str = DB):
         self.db_path = Path(db_path)
-
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = duckdb.connect(str(self.db_path))
         self._ensure_tables()
 
     def _ensure_tables(self):
-        # Создаём таблицу
+        # 1) Сырая таблица
         self.conn.execute("""
-            CREATE TABLE IF NOT EXISTS news (
-                id UUID PRIMARY KEY,
-                title TEXT,
-                url TEXT UNIQUE,
-                date TIMESTAMP,
-                content TEXT,
-                media_ids TEXT,
-                topic TEXT,
-                language TEXT
-            );
+        CREATE TABLE IF NOT EXISTS raw_news (
+          id         BIGINT PRIMARY KEY,
+          title      VARCHAR,
+          url        VARCHAR,
+          date       TIMESTAMP,
+          content    VARCHAR,
+          media_ids  VARCHAR[],
+          language   VARCHAR,
+          topic      VARCHAR
+        );
         """)
 
-    def execute(self, sql: str, params: list = None):
-        """
-        Выполнить запрос; если заданы params — с ними.
-        Возвращает DuckDBPyRelation или None.
-        """
-        # Выполняем и сразу коммитим — теперь запросы будут сохраняться прямо на диск
-        rel = self.conn.execute(sql, params) if params else self.conn.execute(sql)
-        self.conn.commit()
-        return rel
-
-    def fetchall(self, relation):
-        """Забрать все строки из DuckDBPyRelation."""
-        return relation.fetchall()
+        # 2) Обработанная таблица
+        self.conn.execute("""
+        CREATE TABLE IF NOT EXISTS processed_news (
+          id         BIGINT PRIMARY KEY,
+          title      VARCHAR,
+          url        VARCHAR,
+          date       TIMESTAMP,
+          content    VARCHAR,
+          media_ids  VARCHAR[],
+          language   VARCHAR,
+          topic      VARCHAR
+        );
+        """)
 
     def fetchdf(self, relation):
         """Вернуть результат запроса в виде pandas.DataFrame."""
         return relation.df()
-
-    @classmethod
-    def create_database(cls):
-        """
-        Создаёт/открывает БД 'raw' и 'processed' и возвращает dict:
-        {'raw': DuckDBClient, 'processed': DuckDBClient}.
-        """
-        clients = {}
-        for name, path in {'raw': RAW_DB, 'processed': PROCESSED_DB}.items():
-            clients[name] = cls(path)
-        return clients

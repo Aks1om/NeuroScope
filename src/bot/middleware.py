@@ -3,11 +3,10 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message
 
 class RoleMiddleware(BaseMiddleware):
-    def __init__(self, prog_ids: set, manager_ids: set, moderators_chat_id: int, suggest_group_id: int):
+    def __init__(self, prog_ids: set, admin_ids: set, suggest_group_id: int):
         super().__init__()
         self.prog_ids = prog_ids
-        self.manager_ids = manager_ids
-        self.moderators_chat_id = moderators_chat_id
+        self.admin_ids = admin_ids
         self.suggest_group_id = suggest_group_id
 
     async def __call__(self, handler, event, data):

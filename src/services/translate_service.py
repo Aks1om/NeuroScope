@@ -43,3 +43,15 @@ class TranslateService:
         """
         translation = self.from_lang.get_translation(self.to_lang)
         return translation.translate(text)
+
+    from langdetect import detect
+    import re
+
+    def detect_language(text: str) -> str:
+        # быстрый хак: если в тексте есть кириллические буквы — 'ru', иначе пытаемся через langdetect
+        if re.search(r'[А-Яа-я]', text):
+            return 'ru'
+        try:
+            return detect(text)
+        except:
+            return 'unknown'

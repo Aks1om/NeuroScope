@@ -11,8 +11,7 @@ CONFIG_DIR = BASE_DIR / 'config.json'
 DATA_DIR = BASE_DIR / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-RAW_DB       = DATA_DIR / 'raw_data.duckdb'
-PROCESSED_DB = DATA_DIR / 'processed_data.duckdb'
+DB = DATA_DIR / 'data.duckdb'
 
 # папка для медиа (изображения, видео и пр.)
 MEDIA_DIR = BASE_DIR / 'media'

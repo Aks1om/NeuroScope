@@ -1,6 +1,6 @@
 {
   "telegram_channels": {
-    "moderators_chat_id": -1002857895412,
+    "suggested_chat_id": -1002857895412,
     "topics": {
       "auto": "Test94039084"
     }
@@ -8,5 +8,29 @@
   "users": {
     "prog_ids": [1327341052, 444057295],
     "admin_ids": [11111111]
+  },
+  "source_map": {
+    "auto": [
+      {
+        "class": "DromNewsScraper",
+        "module": "src.data_collector.web_scraper.drom_scraper",
+        "url": "https://news.drom.ru/"
+      },
+      {
+        "class": "AutonewsNewsScraper",
+        "module": "src.data_collector.web_scraper.auto_news_scraper",
+        "url": "https://www.autonews.ru/news/"
+      },
+      {
+        "class": "KolesaNewsScraper",
+        "module": "src.data_collector.web_scraper.kolesa_news_scraper",
+        "url": "https://www.kolesa.ru/news"
+      },
+      {
+        "class": "WallpaperTransportScraper",
+        "module": "src.data_collector.web_scraper.wallpaper_scraper",
+        "url": "https://www.wallpaper.com/transportation"
+      }
+    ]
   }
 }
