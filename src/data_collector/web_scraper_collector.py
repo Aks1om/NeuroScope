@@ -6,10 +6,10 @@ from src.data_collector.web_scraper.wallpaper_scraper import WallpaperTransportS
 class WebScraperCollector:
     def __init__(self):
         self.scrapers = [
-            #DromNewsScraper("https://news.drom.ru/"),
+            DromNewsScraper("https://news.drom.ru/"),
             #WallpaperTransportScraper("https://www.wallpaper.com/transportation"),
             #AutonewsNewsScraper("https://www.autonews.ru/news/"),
-            KolesaNewsScraper("https://www.kolesa.ru/news")
+            #KolesaNewsScraper("https://www.kolesa.ru/news")
         ]
 
     def collect(self):

@@ -1,11 +1,12 @@
+# src/services/polling_service.py
 import asyncio
 import logging
-from typing import Optional, Dict
+from typing import Dict
 
 class PollingService:
     """
     Periodically collects and processes news in an endless async loop.
-    Supports graceful shutdown.
+    Supports graceful shutdown and a first-run mode that skips processing.
     """
     def __init__(
         self,
@@ -13,51 +14,66 @@ class PollingService:
         processed_service,
         logger: logging.Logger,
         interval: int = 300,
+        first_run: bool = True,
     ):
-        """
-        :param collector_service: Service responsible for collecting news
-        :param processed_service: Service responsible for processing news
-        :param logger: Logger instance
-        :param interval: Polling interval in seconds
-        """
-        self.collector_service = collector_service
-        self.processed_service = processed_service
+        self.collector = collector_service
+        self.processor = processed_service
         self.logger = logger
         self.interval = interval
+        self.first_run = first_run
         self._running = False
 
     async def run(self):
-        """
-        Start polling loop. Can be stopped by calling .stop().
-        """
         self._running = True
-        self.logger.info(f"PollingService запущен с интервалом {self.interval} сек.")
+        self.logger.info(f"PollingService started: interval={self.interval}s, first_run={self.first_run}")
         while self._running:
-            await self.poll()
+            stats = await self.poll()
+            self.logger.info(f"Cycle stats: collected={stats['collected']} processed={stats['processed']}")
             await asyncio.sleep(self.interval)
-        self.logger.info("PollingService остановлен.")
+        self.logger.info("PollingService stopped.")
 
     async def poll(self) -> Dict[str, int]:
-        """
-        Perform one poll cycle: collect and process news.
-        Returns stats: {'collected': int, 'processed': int}
-        """
-        stats = {'collected': 0, 'processed': 0}
+        stats = {"collected": 0, "processed": 0}
         try:
-            collected = self.collector_service.collect_and_save()
-            self.logger.info(f"Собрано и сохранено {collected} новостей.")
-            stats['collected'] = collected
+            # 1) collect raw news
+            stats["collected"] = self.collector.collect_and_save()
 
-            processed = self.processed_service.process_and_save()
-            self.logger.info(f"Обработано и сохранено {processed} новостей.")
-            stats['processed'] = processed
+            # 2) on first run, skip processing to avoid bulk GPT calls
+            if self.first_run:
+                self.logger.info("First-run mode: skipping processing step.")
+                self.first_run = False
+                return stats
+
+            # 3) process and save only new items
+            stats["processed"] = self.processor.process_and_save()
+
         except Exception as e:
             self.logger.error(f"PollingService error: {e}")
         return stats
 
     def stop(self):
-        """
-        Request to stop polling loop after current iteration.
-        """
-        self.logger.info("PollingService получен запрос на остановку.")
+        self.logger.info("Stopping PollingService...")
         self._running = False
+
+    def reset(self):
+        """
+        Reset raw and processed databases and clear media cache.
+        """
+        from src.utils.paths import RAW_DB, PROCESSED_DB, MEDIA_DIR
+        # Recreate databases
+        import shutil
+        for path in (RAW_DB, PROCESSED_DB):
+            try:
+                path.unlink()
+                self.logger.info(f"Deleted database file: {path}")
+            except FileNotFoundError:
+                pass
+        # Clear media folder
+        for file in MEDIA_DIR.glob('*'):
+            try:
+                file.unlink()
+            except Exception:
+                self.logger.warning(f"Failed to delete media file {file}")
+        self.logger.info("Databases and media directory have been reset.")
+        # Next cycle is first-run again
+        self.first_run = True

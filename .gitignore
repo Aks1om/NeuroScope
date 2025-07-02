@@ -3,3 +3,4 @@
 models/en_ru.argosmodel
 /media
 /data
+.env
