@@ -1,31 +1,35 @@
 # src/services/duplicate_filter_service.py
+
 from typing import List, Dict, Any
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 
 class DuplicateFilterService:
     """
-    Централизованный сервис фильтрации дубликатов по заголовку и URL.
+    Фильтрация дубликатов по заголовку и URL на основе указанного DuckDBNewsRepository.
     """
-    def __init__(self, raw_repo: DuckDBNewsRepository):
-        self.raw_repo = raw_repo
+
+    def __init__(self, repo: DuckDBNewsRepository):
+        self.repo = repo
 
     def filter(self, items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        # получаем существующие заголовки и URL
-        rows = self.raw_repo.client.execute(
-            "SELECT title, url FROM news"
+        # 1) Считываем все существующие пары (title, url) из нужной таблицы
+        rows = self.repo.conn.execute(
+            f"SELECT title, url FROM {self.repo.table}"
         ).fetchall()
-        existing_titles = {t for t, _ in rows}
-        existing_urls   = {u for _, u in rows}
+        existing = {(t, u) for t, u in rows}
 
-        cleaned = []
-        for item in items:
-            title = item.get('title')
-            url   = item.get('url')
+        cleaned: List[Dict[str, Any]] = []
+        for it in items:
+            title = it.get("title")
+            url   = it.get("url")
             if not title or not url:
+                # игнорируем неполные записи
                 continue
-            if title in existing_titles or url in existing_urls:
+            if (title, url) in existing:
+                # дубликат — пропускаем
                 continue
-            existing_titles.add(title)
-            existing_urls.add(url)
-            cleaned.append(item)
+            # новый — добавляем в оба списка
+            existing.add((title, url))
+            cleaned.append(it)
+
         return cleaned

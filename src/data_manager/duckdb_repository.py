@@ -49,3 +49,49 @@ class DuckDBNewsRepository:
         """Вернуть множество всех id из self.table."""
         rows = self.conn.execute(f"SELECT id FROM {self.table}").fetchall()
         return {r[0] for r in rows}
+
+    def mark_suggested(self, ids: List[int]) -> None:
+        """
+        Пометить в self.table все записи с указанными id как suggested = TRUE.
+        """
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        sql = f"""
+        UPDATE {self.table}
+        SET suggested = TRUE
+        WHERE id IN ({placeholders})
+        """
+        self.conn.execute(sql, ids)
+
+    def mark_all_suggested(self) -> None:
+        """
+        Пометить все записи в таблице как suggested = TRUE.
+        """
+        sql = f"UPDATE {self.table} SET suggested = TRUE"
+        self.conn.execute(sql)
+
+    def fetch_unsuggested(self, limit: int) -> List[Dict[str, Any]]:
+        """
+        Возвращает до `limit` записей из processed_news,
+        у которых suggested = FALSE, с полями:
+        id, title, url, content, media_ids
+        """
+        sql = f"""
+        SELECT id, title, url, content, media_ids
+        FROM {self.table}
+        WHERE suggested = FALSE
+        ORDER BY date ASC
+        LIMIT ?
+        """
+        rows = self.conn.execute(sql, [limit]).fetchall()
+        return [
+            {
+                "id": r[0],
+                "title": r[1],
+                "url": r[2],
+                "content": r[3],
+                "media_ids": r[4] or []
+            }
+            for r in rows
+        ]

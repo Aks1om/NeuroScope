@@ -1,22 +1,20 @@
 # main.py
+import sys
 import asyncio
+
+if sys.platform.startswith("win"):
+    from asyncio import WindowsSelectorEventLoopPolicy
+    asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+
 from aiogram import Bot
 from src.di import dp, bot, polling_service, logger
 
-async def on_startup():
+async def main():
+    print("main entry")
+    logger.info("Тестовый лог — вывод в консоль и файл должен работать")
     logger.info("Запуск polling_service...")
-    # старт цикла сбора новостей в фоне
-    asyncio.create_task(polling_service.run())
-
-async def on_shutdown():
-    logger.info("Остановка polling_service...")
-    polling_service.stop()
-    await bot.session.close()
+    asyncio.create_task(polling_service.run())  # стартуем polling_service
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    # Запуск бота с обработчиками старта и завершения
-    asyncio.run(dp.start_polling(
-        bot,
-        on_startup=on_startup,
-        on_shutdown=on_shutdown
-    ))
+    asyncio.run(main())

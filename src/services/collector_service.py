@@ -1,9 +1,7 @@
 # src/services/collector_service.py
 import logging
 from typing import Iterable, Dict, Any
-from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.services.duplicate_filter_service import DuplicateFilterService
-from src.services.translate_service import TranslateService
 
 class CollectorService:
     """
@@ -11,13 +9,7 @@ class CollectorService:
     Все дубликаты по title/url отбиваются в DuplicateFilterService.
     """
 
-    def __init__(
-        self,
-        raw_repo: DuckDBNewsRepository,
-        collectors: Iterable,
-        translate_service: TranslateService,
-        logger: logging.Logger,
-    ):
+    def __init__(self, raw_repo, collectors, translate_service, logger):
         self.raw_repo = raw_repo
         self.collectors = collectors
         self.translate_service = translate_service

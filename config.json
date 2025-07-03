@@ -1,13 +1,13 @@
 {
   "telegram_channels": {
-    "suggested_chat_id": -1002857895412,
+    "suggested_chat_id": -4885589416,
     "topics": {
-      "auto": "Test94039084"
+      "auto": -1002556034541
     }
   },
   "users": {
     "prog_ids": [1327341052, 444057295],
-    "admin_ids": [11111111]
+    "admin_ids": [1327341052]
   },
   "source_map": {
     "auto": [

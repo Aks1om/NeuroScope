@@ -1,10 +1,7 @@
 # src/services/processed_service.py
 import logging
 from typing import List, Dict, Any
-from src.data_manager.duckdb_repository import DuckDBNewsRepository
-from src.services.translate_service import TranslateService
-from src.services.chat_gpt_service import ChatGPTService
-
+from src.services.duplicate_filter_service import DuplicateFilterService
 
 class ProcessedService:
     """
@@ -14,21 +11,15 @@ class ProcessedService:
     4) сохраняет в processed_news.
     """
 
-    def __init__(
-        self,
-        raw_repo: DuckDBNewsRepository,
-        processed_repo: DuckDBNewsRepository,
-        translate_service: TranslateService,
-        chat_gpt_service: ChatGPTService,
-        logger: logging.Logger,
-    ):
+    def __init__(self, raw_repo, processed_repo, translate_service, chat_gpt_service, logger):
         self.raw_repo = raw_repo
+        self.duplicate_filter = DuplicateFilterService(processed_repo)
         self.processed_repo = processed_repo
         self.translate = translate_service
         self.chat_gpt = chat_gpt_service
         self.logger = logger
 
-    def process_and_save(self) -> int:
+    def process_and_save(self, first_run):
         # 1) Какие ID уже в processed?
         done_ids = self.processed_repo.fetch_ids()
         # 2) Все сырые записи
@@ -54,11 +45,14 @@ class ProcessedService:
                     self.logger.error(f"Translation failed for {news_id}: {e}")
 
             # 4) Обработка через ChatGPT
-            try:
-                processed_text = self.chat_gpt.process(text)
-            except Exception as e:
-                self.logger.error(f"GPT processing failed for {news_id}: {e}")
-                continue
+            if not first_run:
+                try:
+                    processed_text = self.chat_gpt.process(text)
+                except Exception as e:
+                    self.logger.error(f"GPT processing failed for {news_id}: {e}")
+                    continue
+            else:
+                processed_text = text
 
             to_insert.append({
                 'id': news_id,

@@ -68,7 +68,7 @@ def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
     info_handler = TelegramLogsHandler(
         bot=bot,
         prog_ids=[],
-        group_chat_id=cfg["telegram_channels"]["moderators_chat_id"]
+        group_chat_id=cfg["telegram_channels"]["suggested_chat_id"]
     )
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(formatter)

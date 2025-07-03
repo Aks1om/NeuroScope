@@ -1,9 +1,13 @@
 # src/services/polling_service.py
+
 import asyncio
 import logging
 from aiogram import Bot
+from typing import List, Dict, Any
+
 from src.services.collector_service import CollectorService
 from src.services.processed_service import ProcessedService
+from src.services.sending_service import SendingService
 
 class PollingService:
     def __init__(
@@ -11,50 +15,42 @@ class PollingService:
         *,
         collector_service: CollectorService,
         processed_service: ProcessedService,
+        sending_service: SendingService,
         bot: Bot,
         suggest_group_id: int,
         interval: int = 300,
         first_run: bool = True,
+        logger: logging.Logger,  # ← inject your shared logger
     ):
         self.collector = collector_service
         self.processor = processed_service
+        self.sender = sending_service
         self.bot = bot
         self.suggest_group_id = suggest_group_id
         self.interval = interval
         self.first_run = first_run
         self._running = False
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
     async def run(self):
         self._running = True
         while self._running:
             try:
-                # 1) Собираем «сырые» новости
-                new_items = self.collector.collect_and_save()
+                # 1) Собираем и сохраняем raw
+                raw_count = self.collector.collect_and_save()
+                self.logger.debug(f"Raw saved: {raw_count} items")
 
-                # 2) Если не первый запуск — шлём в группу «предложка»
-                if not self.first_run and new_items:
-                    for item in new_items:
-                        text = (
-                            f"🆕 <b>{item['title']}</b>\n"
-                            f"{item['url']}\n\n"
-                            f"ID: <code>{item['id']}</code>\n"
-                            f"Используйте команды в лс для обработки."
-                        )
-                        await self.bot.send_message(
-                            chat_id=self.suggest_group_id,
-                            text=text,
-                        )
-                    self.logger.info(f"Отправили {len(new_items)} новых новостей в предложку.")
+                # 2) Обработка (при первом прогоне без GPT)
+                proc_count = self.processor.process_and_save(self.first_run)
+                self.logger.debug(f"Processed saved: {proc_count} items")
 
-                # 3) Первый запуск — пропускаем обработку через GPT
+                # 3) Отправка в Telegram и пометка
+                sent_count = await self.sender.send(proc_count, self.first_run)
+                self.logger.debug(f"Sent: {sent_count} items")
+
+                # 4) Сбрасываем флаг первого прогона
                 if self.first_run:
                     self.first_run = False
-                    self.logger.info("Первый прогон: пропускаем GPT-обработку.")
-                else:
-                    # 4) Обрабатываем через TranslateService + ChatGPTService
-                    count = self.processor.process_and_save()
-                    self.logger.info(f"Обработано {count} новостей через GPT.")
 
             except Exception as e:
                 self.logger.error(f"Ошибка в PollingService: {e}", exc_info=True)
