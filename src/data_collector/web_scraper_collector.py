@@ -26,21 +26,12 @@ class WebScraperCollector:
             try:
                 raw = scraper.run()
                 for item in raw:
-                    # 1) Normalize keys
-                    if "text" in item and "content" not in item:
-                        item["content"] = item.pop("text")
-                    if "images" in item and "media_ids" not in item:
-                        item["media_ids"] = item.pop("images")
-
-                    # 2) Ensure required keys
                     item.setdefault("title", "")
                     item.setdefault("url", "")
                     item.setdefault("date", "")
-                    item.setdefault("content", "")
-                    mi = item.get("media_ids")
-                    item["media_ids"] = mi if isinstance(mi, list) else []
+                    item.setdefault("text", "")
+                    item.setdefault("media_urls", [])
 
-                    # 3) Attach topic
                     item["topic"] = getattr(scraper, "topic", "general")
                 all_news.extend(raw)
             except Exception as e:

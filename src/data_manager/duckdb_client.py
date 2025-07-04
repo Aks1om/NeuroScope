@@ -12,13 +12,16 @@ class DuckDBClient:
 
     def _ensure_tables(self):
         # 1) Сырая таблица
+        self.conn.execute("DROP TABLE IF EXISTS raw_news;")
+        self.conn.execute("DROP TABLE IF EXISTS processed_news;")
+
         self.conn.execute("""
         CREATE TABLE IF NOT EXISTS raw_news (
-          id         BIGINT PRIMARY KEY,
+          id         UBIGINT PRIMARY KEY,
           title      VARCHAR,
           url        VARCHAR,
           date       TIMESTAMP,
-          content    VARCHAR,
+          text       VARCHAR,
           media_ids  VARCHAR[],
           language   VARCHAR,
           topic      VARCHAR
@@ -28,11 +31,11 @@ class DuckDBClient:
         # 2) Обработанная таблица
         self.conn.execute("""
         CREATE TABLE IF NOT EXISTS processed_news (
-          id         BIGINT PRIMARY KEY,
+          id         UBIGINT PRIMARY KEY,
           title      VARCHAR,
           url        VARCHAR,
           date       TIMESTAMP,
-          content    VARCHAR,
+          text       VARCHAR,
           media_ids  VARCHAR[],
           language   VARCHAR,
           topic      VARCHAR,

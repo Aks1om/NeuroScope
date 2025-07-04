@@ -15,16 +15,6 @@
         "class": "DromNewsScraper",
         "module": "src.data_collector.web_scraper.drom_scraper",
         "url": "https://news.drom.ru/"
-      },
-      {
-        "class": "AutonewsNewsScraper",
-        "module": "src.data_collector.web_scraper.auto_news_scraper",
-        "url": "https://www.autonews.ru/news/"
-      },
-      {
-        "class": "KolesaNewsScraper",
-        "module": "src.data_collector.web_scraper.kolesa_news_scraper",
-        "url": "https://www.kolesa.ru/news"
       }
     ]
   }

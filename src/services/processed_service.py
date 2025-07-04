@@ -71,5 +71,5 @@ class ProcessedService:
 
         # 5) Сохраняем все новые обработанные записи
         count = self.processed_repo.insert_news(to_insert)
-        self.logger.info(f"Inserted {count} processed news items.")
+        self.logger.debug(f"Inserted {count} processed news items.")
         return count

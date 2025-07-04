@@ -26,11 +26,10 @@ class SendingService:
         self.chat_id = suggest_group_id
         self.logger = logger
 
-    async def send(self, count: int, first_run: bool) -> int:
+    async def send(self, count, first_run: bool) -> int:
         # Первый прогон — просто пометить всё, ничего не шлём
         if first_run:
             self.repo.mark_all_suggested()
-            self.logger.info("First run: marked all processed as suggested, skipping sends.")
             return 0
 
         if count <= 0:

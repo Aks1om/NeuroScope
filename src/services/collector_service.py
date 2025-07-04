@@ -3,6 +3,10 @@ import logging
 import hashlib
 from typing import Iterable, Dict, Any
 from src.services.duplicate_filter_service import DuplicateFilterService
+from src.utils.paths import MEDIA_DIR
+import os
+import requests
+from datetime import datetime
 
 class CollectorService:
     """
@@ -21,23 +25,60 @@ class CollectorService:
         h = hashlib.md5(url.encode("utf-8")).hexdigest()[:16]
         return int(h, 16)
 
-    def collect_and_save(self) -> int:
+    def download_image(self, url):
+        media_id = self._generate_id(url)
+        base = os.path.basename(url.split("?")[0])
+        ext = os.path.splitext(base)[1]
+        filename = f"{media_id}{ext}"
+        filepath = MEDIA_DIR / filename
+        if not filepath.exists():
+            try:
+                r = requests.get(url, timeout=10)
+                r.raise_for_status()
+                with open(filepath, "wb") as f:
+                    f.write(r.content)
+            except Exception as e:
+                self.logger.debug(f"Не удалось скачать{url}")
+                return None
+        return filename
+
+    def fix_date(self, date_str):
+        """
+        Переводит строку даты в формат YYYY-MM-DD
+        """
+        if not date_str:
+            return None
+        try:
+            # Если приходит 04.07.2025
+            d = datetime.strptime(date_str, "%d.%m.%Y")
+            return d.strftime("%Y-%m-%d")
+        except Exception:
+            # Если вдруг уже в нормальном формате, оставляем как есть
+            return date_str
+
+    def collect_and_save(self):
         # 1) Запрашиваем уже «причесанные» элементы
         items = self.collector.collect()
-        self.logger.debug(f"WebScraperCollector: собрано {len(items)} новостей")
 
-        # 2) Назначаем id и детектим language
-        for it in items:
-            it["id"] = self._generate_id(it["url"])
-            it["language"] = self.translate_service.detect_language(it["content"])
+        # 2) Назначаем
+        for item in items:
+            media_urls = item.get("media_urls", [])
+            media_ids = []
+            for url in media_urls:
+                file_id = self.download_image(url)
+                if file_id:
+                    media_ids.append(str(file_id))
+
+            item["id"] = self._generate_id(item["url"])
+            item["date"] = self.fix_date(item.get("date", ""))
+            item["media_ids"] = media_ids
+            item["language"] = self.translate_service.detect_language(item["text"])
 
         # 3) Фильтруем дубликаты по полю (title, url)
         unique = self.duplicate_filter.filter(items)
         if not unique:
             self.logger.debug("Новых уникальных новостей нет")
-            return 0
 
         # 4) Сохраняем в raw_news
         count = self.raw_repo.insert_news(unique)
         self.logger.info(f"Сохранили в raw: {count} новостей")
-        return count

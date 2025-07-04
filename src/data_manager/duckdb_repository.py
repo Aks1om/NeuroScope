@@ -6,40 +6,44 @@ import requests
 from urllib.parse import urlparse
 from datetime import datetime
 
-from .duckdb_client import DuckDBClient
 from src.utils.file_utils import load_config
 from src.utils.paths import MEDIA_DIR
 from typing import List, Dict, Any
-from .duckdb_client import DuckDBClient
 
 
 class DuckDBNewsRepository:
-    def __init__(self, client: DuckDBClient, table_name: str):
+    def __init__(self, client, table_name):
         self.conn = client.conn
         self.table = table_name
 
     def insert_news(self, items: List[Dict[str, Any]]) -> int:
-        """
-        Вставить пачку новостей в self.table.
-        Ожидаемый формат items: список словарей с ключами
-        id, title, url, date, content, media_ids, language, topic
-        """
         sql = f"""
-        INSERT INTO {self.table} 
-          (id, title, url, date, content, media_ids, language, topic)
+        INSERT INTO {self.table}
+          (id, title, url, date, text, media_ids, language, topic)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (id) DO NOTHING
         """
-        data = [
-            (
-                item["id"], item["title"], item["url"], item["date"],
-                item["content"], item["media_ids"],
-                item["language"], item["topic"]
-            )
-            for item in items
-        ]
-        cur = self.conn.execute(sql, data)
-        return cur.rowcount
+        data = []
+        for item in items:
+            date = item.get("date")
+            text_value = item.get("text", "")
+            # гарантируем, что media_ids — список строк
+            mids = item.get("media_ids") or []
+            mids_str = [str(mid) for mid in mids]
+
+            data.append((
+                item["id"],
+                item["title"],
+                item["url"],
+                date,
+                text_value,
+                mids_str,
+                item["language"],
+                item["topic"]
+            ))
+        for params in data:
+            self.conn.execute(sql, params)
+        return len(data)
 
     def fetch_all(self) -> List[tuple]:
         """Вернуть все строки из self.table."""
@@ -78,7 +82,7 @@ class DuckDBNewsRepository:
         id, title, url, content, media_ids
         """
         sql = f"""
-        SELECT id, title, url, content, media_ids
+        SELECT id, title, url, text, media_ids
         FROM {self.table}
         WHERE suggested = FALSE
         ORDER BY date ASC
@@ -90,7 +94,7 @@ class DuckDBNewsRepository:
                 "id": r[0],
                 "title": r[1],
                 "url": r[2],
-                "content": r[3],
+                "text": r[3],
                 "media_ids": r[4] or []
             }
             for r in rows

@@ -37,16 +37,13 @@ class PollingService:
         while self._running:
             try:
                 # 1) Собираем и сохраняем raw
-                raw_count = self.collector.collect_and_save()
-                self.logger.debug(f"Raw saved: {raw_count} items")
+                self.collector.collect_and_save()
 
                 # 2) Обработка (при первом прогоне без GPT)
-                proc_count = self.processor.process_and_save(self.first_run)
-                self.logger.debug(f"Processed saved: {proc_count} items")
+                processed_count = self.processor.process_and_save(self.first_run)
 
                 # 3) Отправка в Telegram и пометка
-                sent_count = await self.sender.send(proc_count, self.first_run)
-                self.logger.debug(f"Sent: {sent_count} items")
+                await self.sender.send(processed_count, self.first_run)
 
                 # 4) Сбрасываем флаг первого прогона
                 if self.first_run:

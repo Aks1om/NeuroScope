@@ -33,25 +33,25 @@ class DromNewsScraper(WebScraperBase):
                 detail_soup = BeautifulSoup(detail_html, 'html.parser')
 
                 # Основной текст
-                content_block = detail_soup.select_one("#news_text")
-                content = (
-                    content_block.get_text(strip=True, separator="\n")
-                    if content_block else ""
+                text_block = detail_soup.select_one("#news_text")
+                text = (
+                    text_block.get_text(strip=True, separator="\n")
+                    if text_block else ""
                 )
 
                 # Ссылки на изображения
-                media = []
+                media_urls = []
                 for img_a in detail_soup.select("div.news_img > a"):
                     href = img_a.get("href")
                     if href:
-                        media.append(href)
+                        media_urls.append(href)
 
                 results.append({
                     "title": title,
                     "url": url,
                     "date": date,
-                    "content": content,
-                    "media_ids": media
+                    "text": text,
+                    "media_urls": media_urls
                 })
             except Exception as e:
                 # Лучше логировать через ваш logger, здесь для примера print
