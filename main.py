@@ -10,8 +10,6 @@ from aiogram import Bot
 from src.di import dp, bot, polling_service, logger
 
 async def main():
-    print("main entry")
-    logger.info("Тестовый лог — вывод в консоль и файл должен работать")
     logger.info("Запуск polling_service...")
     asyncio.create_task(polling_service.run())  # стартуем polling_service
     await dp.start_polling(bot)

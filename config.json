@@ -25,11 +25,6 @@
         "class": "KolesaNewsScraper",
         "module": "src.data_collector.web_scraper.kolesa_news_scraper",
         "url": "https://www.kolesa.ru/news"
-      },
-      {
-        "class": "WallpaperTransportScraper",
-        "module": "src.data_collector.web_scraper.wallpaper_scraper",
-        "url": "https://www.wallpaper.com/transportation"
       }
     ]
   }

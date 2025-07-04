@@ -1,5 +1,6 @@
 # src/services/collector_service.py
 import logging
+import hashlib
 from typing import Iterable, Dict, Any
 from src.services.duplicate_filter_service import DuplicateFilterService
 
@@ -9,37 +10,34 @@ class CollectorService:
     Все дубликаты по title/url отбиваются в DuplicateFilterService.
     """
 
-    def __init__(self, raw_repo, collectors, translate_service, logger):
+    def __init__(self, raw_repo, collector, translate_service, logger):
         self.raw_repo = raw_repo
-        self.collectors = collectors
+        self.collector = collector
         self.translate_service = translate_service
         self.logger = logger
         self.duplicate_filter = DuplicateFilterService(raw_repo)
 
+    def _generate_id(self, url: str) -> int:
+        h = hashlib.md5(url.encode("utf-8")).hexdigest()[:16]
+        return int(h, 16)
+
     def collect_and_save(self) -> int:
-        all_items: list[Dict[str, Any]] = []
+        # 1) Запрашиваем уже «причесанные» элементы
+        items = self.collector.collect()
+        self.logger.debug(f"WebScraperCollector: собрано {len(items)} новостей")
 
-        for scraper in self.collectors:
-            try:
-                news = scraper.run()
-                # определяем язык для каждого item
-                for item in news:
-                    content = item.get("content", "")
-                    item["language"] = self.translate_service.detect_language(content)
-                all_items.extend(news)
-                self.logger.debug(f"{scraper.__class__.__name__}: собрано {len(news)}")
-            except Exception as e:
-                self.logger.error(f"Ошибка в {scraper.__class__.__name__}: {e}")
+        # 2) Назначаем id и детектим language
+        for it in items:
+            it["id"] = self._generate_id(it["url"])
+            it["language"] = self.translate_service.detect_language(it["content"])
 
-        if not all_items:
-            self.logger.debug("Нет новых сырых новостей")
-            return 0
-
-        unique = self.duplicate_filter.filter(all_items)
+        # 3) Фильтруем дубликаты по полю (title, url)
+        unique = self.duplicate_filter.filter(items)
         if not unique:
             self.logger.debug("Новых уникальных новостей нет")
             return 0
 
+        # 4) Сохраняем в raw_news
         count = self.raw_repo.insert_news(unique)
-        self.logger.debug(f"Сохранили в raw: {count} новостей")
+        self.logger.info(f"Сохранили в raw: {count} новостей")
         return count

@@ -2,6 +2,7 @@
 
 import importlib
 from typing import List, Dict, Any
+from urllib.parse import urlparse
 
 class WebScraperCollector:
     """
@@ -13,36 +14,35 @@ class WebScraperCollector:
         self.scrapers = []
         for topic, specs in source_map.items():
             for spec in specs:
-                module_name = spec["module"]
-                class_name  = spec["class"]
-                url         = spec["url"]
-
-                try:
-                    module = importlib.import_module(module_name)
-                    scraper_cls = getattr(module, class_name)
-                except (ImportError, AttributeError) as e:
-                    raise ImportError(
-                        f"Невозможно загрузить {class_name} из {module_name}: {e}"
-                    )
-
-                # Инстанцируем скраper и навешиваем тему
-                scraper = scraper_cls(url)
-                setattr(scraper, "topic", topic)
-                self.scrapers.append(scraper)
+                module = importlib.import_module(spec["module"])
+                cls = getattr(module, spec["class"])
+                inst = cls(spec["url"])
+                setattr(inst, "topic", topic)
+                self.scrapers.append(inst)
 
     def collect(self) -> List[Dict[str, Any]]:
-        """
-        Запускает .run() всех скраper-ов, добавляя field 'topic' в каждый item.
-        """
-        all_news = []
+        all_news: List[Dict[str, Any]] = []
         for scraper in self.scrapers:
             try:
-                items = scraper.run()
-                for it in items:
-                    # если в item ещё нет topic, берем тот, что навесили
-                    it.setdefault("topic", getattr(scraper, "topic"))
-                all_news.extend(items)
+                raw = scraper.run()
+                for item in raw:
+                    # 1) Normalize keys
+                    if "text" in item and "content" not in item:
+                        item["content"] = item.pop("text")
+                    if "images" in item and "media_ids" not in item:
+                        item["media_ids"] = item.pop("images")
+
+                    # 2) Ensure required keys
+                    item.setdefault("title", "")
+                    item.setdefault("url", "")
+                    item.setdefault("date", "")
+                    item.setdefault("content", "")
+                    mi = item.get("media_ids")
+                    item["media_ids"] = mi if isinstance(mi, list) else []
+
+                    # 3) Attach topic
+                    item["topic"] = getattr(scraper, "topic", "general")
+                all_news.extend(raw)
             except Exception as e:
-                # логгер здесь не подключён — прокиньте при необходимости
                 print(f"[!] Ошибка в {scraper.__class__.__name__}: {e}")
         return all_news

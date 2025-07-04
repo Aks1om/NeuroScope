@@ -48,16 +48,16 @@ raw_repo       = DuckDBNewsRepository(db_client, table_name="raw_news")
 processed_repo = DuckDBNewsRepository(db_client, table_name="processed_news")
 
 # 5) Сервисы
-web_collector    = WebScraperCollector(config.get("source_map", {}))
-collector_svc    = CollectorService(
+web_collector = WebScraperCollector(config["source_map"])
+translate_svc = TranslateService()
+collector_svc = CollectorService(
     raw_repo=raw_repo,
-    collectors=web_collector.scrapers,
-    translate_service=TranslateService(),
+    collector=web_collector,
+    translate_service=translate_svc,
     logger=logger
 )
 
 # 6) Перевод + GPT
-translate_svc = TranslateService()
 chatgpt_svc   = ChatGPTService(
     api_key=get_env("OPENAI_API_KEY"),
     proxy_url=config.get("gpt_proxy_url")
