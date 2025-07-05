@@ -1,0 +1,1983 @@
+2025-07-05 18:45:56,633 | INFO | bot | Запуск NeuroScope
+2025-07-05 18:46:04,833 | DEBUG | bot | Сохранили в raw: 20 новостей
+2025-07-05 18:46:04,875 | DEBUG | bot | Переделано 20 новостей
+2025-07-05 18:49:36,088 | INFO | bot | Запуск NeuroScope
+2025-07-05 18:49:43,696 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:44,360 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:44,920 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:45,384 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:46,044 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:47,333 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:47,334 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:49,034 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:49,036 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:50,340 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:50,882 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:51,095 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:52,207 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:52,208 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:53,498 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:49:55,132 | DEBUG | bot | Сохранили в raw: 35 новостей
+2025-07-05 18:49:55,204 | DEBUG | bot | Переделано 35 новостей
+2025-07-05 18:54:58,441 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,444 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,447 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,449 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,453 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,457 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,458 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,462 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,464 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,468 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,470 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,471 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,475 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,476 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,480 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 18:54:58,483 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 18:54:58,483 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 18:54:58,485 | DEBUG | bot | No new items to process.
+2025-07-05 19:00:02,420 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,423 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,425 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,427 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,430 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,436 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,437 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,442 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,443 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,448 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,450 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,452 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,457 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,458 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,462 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    r = requests.get(url, timeout=10)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:00:02,466 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 19:00:02,466 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 19:00:02,468 | DEBUG | bot | No new items to process.
+2025-07-05 19:05:06,279 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,282 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,284 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,286 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,289 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,293 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,294 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,298 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,299 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,303 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,305 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,306 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,310 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,311 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,315 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:05:06,319 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 19:05:06,319 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 19:05:06,320 | DEBUG | bot | No new items to process.
+2025-07-05 19:10:10,026 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,028 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,031 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,032 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,035 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,038 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,039 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,044 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,045 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,049 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,052 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,053 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,056 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,058 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,062 | ERROR | bot | Не удалось скачать {{ post.preview_url }}: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 45, in _download_image_sync
+    filename = f"{media_id}{ext}"
+                ^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL '{{ post.preview_url }}': No scheme supplied. Perhaps you meant https://{{ post.preview_url }}?
+2025-07-05 19:10:10,065 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 19:10:10,066 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 19:10:10,067 | DEBUG | bot | No new items to process.
+2025-07-05 19:13:04,372 | INFO | bot | Запуск NeuroScope
+2025-07-05 19:13:05,979 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/obnovlennyi-haval-dargo-pervye-izobrazeniia: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,018 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/italiancy-pokazali-novyi-benzinovyi-fiat-500-so-starym-motorom: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,186 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/novyi-miniven-mercedes-benz-vle-gotovitsia-priiti-na-smenu-eqv: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,213 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/restailingovyi-sedan-kia-k8-dobralsia-do-kazaxstana-s-polnym-privodom: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,240 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/slilsia-s-tmoi-u-vnedoroznika-land-rover-defender-octa-poiavilsia-zatemnennyi-variant: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,273 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/krossover-geely-icon-snova-dorabotan-teper-s-drugim-salonom: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,300 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/krossven-kia-carens-clavis-na-podxode-versiia-s-sovsem-drugoi-nacinkoi: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,374 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/karera-umnogo-krossovera-xpeng-g7-startuet-s-aziotaznogo-sprosa: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,403 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/universal-byd-seal-06-travel-edition-vyxodit-na-rynok-dostupnye-ceny-evropa-na-oceredi: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,439 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/zadnii-privod-po-preznemu-rulit-bmw-m2-cs-ustanovil-novyi-rekord-niurburgringa: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,471 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/dozdalis-dilery-za-odin-den-sobrali-bolee-10-000-predzakazov-na-ram-1500-c-hemi-v8: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:06,605 | ERROR | bot | Error parsing Kolesa article https://www.kolesa.ru/news/lynk-co-10-em-p-gotovitsia-k-startu-prodaz-sedan-predlozat-so-standartnym-polnym-privodom: cannot access local variable 'full' where it is not associated with a value
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\data_collector\web_scraper\kolesa_news_scraper.py", line 70, in _fetch_detail
+    if full.startswith(("http://", "https://")):
+       ^^^^
+UnboundLocalError: cannot access local variable 'full' where it is not associated with a value
+2025-07-05 19:13:13,169 | DEBUG | bot | Сохранили в raw: 23 новостей
+2025-07-05 19:13:13,217 | DEBUG | bot | Переделано 23 новостей
+2025-07-05 19:18:20,841 | INFO | bot | Запуск NeuroScope
+2025-07-05 19:18:28,303 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:29,107 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:29,811 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:30,353 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:31,195 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:32,657 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:32,787 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:34,681 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:34,828 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:36,225 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:36,913 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:37,375 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:38,535 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:38,667 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:39,964 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:18:41,686 | DEBUG | bot | Сохранили в raw: 35 новостей
+2025-07-05 19:18:41,758 | DEBUG | bot | Переделано 35 новостей
+2025-07-05 19:23:45,146 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,277 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,415 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,566 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,719 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,839 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:45,977 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,143 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,296 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,436 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,566 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,703 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,843 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:46,994 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:47,158 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+    r.raise_for_status()
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:23:47,162 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 19:23:47,162 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 19:23:47,163 | DEBUG | bot | No new items to process.
+2025-07-05 19:28:50,471 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:50,606 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:50,743 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:50,873 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,021 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,157 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,304 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,471 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,605 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,740 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:51,878 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:52,003 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:52,161 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:52,282 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:52,428 | ERROR | bot | Не удалось скачать https://www.kolesa.ru/{{ post.preview_url }}: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+Traceback (most recent call last):
+  File "E:\For coding\GitHub\NeuroScope\src\services\collector_service.py", line 51, in _download_image_sync
+  File "E:\For coding\CryptoTradingBot\Lib\site-packages\requests\models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://www.kolesa.ru/%7B%7B%20post.preview_url%20%7D%7D
+2025-07-05 19:28:52,432 | DEBUG | bot | Новых уникальных новостей нет
+2025-07-05 19:28:52,432 | DEBUG | bot | Сохранили в raw: 0 новостей
+2025-07-05 19:28:52,433 | DEBUG | bot | No new items to process.
+2025-07-05 19:29:48,596 | INFO | bot | Запуск NeuroScope
+2025-07-05 19:30:07,232 | DEBUG | bot | Сохранили в raw: 35 новостей
+2025-07-05 19:30:07,303 | DEBUG | bot | Переделано 35 новостей
+2025-07-05 19:32:06,850 | INFO | bot | Запуск NeuroScope
+2025-07-05 19:32:20,430 | DEBUG | bot | Сохранили в raw: 15 новостей
+2025-07-05 19:32:20,462 | DEBUG | bot | Переделано 15 новостей

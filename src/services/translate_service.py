@@ -40,9 +40,6 @@ class TranslateService:
         translation = self.from_lang.get_translation(self.to_lang)
         return translation.translate(text)
 
-    from langdetect import detect
-    import re
-
     def detect_language(self, text: str) -> str:
         """
         Определяет язык текста: 'ru' если есть кириллица,

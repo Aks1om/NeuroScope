@@ -18,6 +18,11 @@
         "class": "DromNewsScraper",
         "module": "src.data_collector.web_scraper.drom_scraper",
         "url": "https://news.drom.ru/"
+      },
+      {
+        "class": "KolesaNewsScraper",
+        "module": "src.data_collector.web_scraper.kolesa_news_scraper",
+        "url": "https://www.kolesa.ru/news"
       }
     ]
   }

@@ -34,6 +34,15 @@ class CollectorService:
         return await asyncio.to_thread(self._download_image_sync, url)
 
     def _download_image_sync(self, url: str) -> str | None:
+        # — если это шаблон вида {{ post.preview_url }}, пропускаем
+        if '{{' in url and '}}' in url:
+            self.logger.debug(f"Пропущен шаблонный URL: {url}")
+            return None
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        if not parsed.scheme or not parsed.netloc:
+            self.logger.debug(f"Пропущен некорректный URL: {url}")
+            return None
         media_id = self._generate_id(url)
         base = os.path.basename(url.split("?")[0])
         ext = os.path.splitext(base)[1]
