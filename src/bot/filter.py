@@ -7,11 +7,11 @@ class ProgFilter(BaseFilter):
     async def __call__(self, message: Message):
         return message.chat.type == "private" and message.from_user.id in self.prog_ids
 
-class ManagerFilter(BaseFilter):
-    def __init__(self, manager_ids):
-        self.manager_ids = set(manager_ids)
+class AdminFilter(BaseFilter):
+    def __init__(self, admin_ids):
+        self.admin_ids = set(admin_ids)
     async def __call__(self, message: Message):
-        return message.from_user.id in self.manager_ids
+        return message.from_user.id in self.admin_ids
 
 class IsFromSuggestGroup(BaseFilter):
     def __init__(self, group_id):

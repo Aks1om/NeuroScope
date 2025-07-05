@@ -1,6 +1,7 @@
 # src/services/collector_service.py
 import logging
 import hashlib
+import asyncio
 from typing import Iterable, Dict, Any
 from src.services.duplicate_filter_service import DuplicateFilterService
 from src.utils.paths import MEDIA_DIR
@@ -25,47 +26,53 @@ class CollectorService:
         h = hashlib.md5(url.encode("utf-8")).hexdigest()[:16]
         return int(h, 16)
 
-    def download_image(self, url):
+    async def download_image(self, url: str) -> str | None:
+        if not url:
+            self.logger.debug("Не удалось скачать: пустой URL")
+            return None
+        # Выносим синхронную часть в отдельный поток
+        return await asyncio.to_thread(self._download_image_sync, url)
+
+    def _download_image_sync(self, url: str) -> str | None:
         media_id = self._generate_id(url)
         base = os.path.basename(url.split("?")[0])
         ext = os.path.splitext(base)[1]
         filename = f"{media_id}{ext}"
         filepath = MEDIA_DIR / filename
+
         if not filepath.exists():
             try:
                 r = requests.get(url, timeout=10)
                 r.raise_for_status()
                 with open(filepath, "wb") as f:
                     f.write(r.content)
+                #self.logger.debug(f"Успешно скачан медиа-файл: {filename}")
             except Exception as e:
-                self.logger.debug(f"Не удалось скачать{url}")
+                # Логируем реальный URL и текст ошибки
+                self.logger.error(f"Не удалось скачать {url}: {e}", exc_info=True)
                 return None
+
         return filename
 
-    def fix_date(self, date_str):
-        """
-        Переводит строку даты в формат YYYY-MM-DD
-        """
+    def fix_date(self, date_str: str) -> str | None:
         if not date_str:
             return None
         try:
-            # Если приходит 04.07.2025
             d = datetime.strptime(date_str, "%d.%m.%Y")
             return d.strftime("%Y-%m-%d")
         except Exception:
-            # Если вдруг уже в нормальном формате, оставляем как есть
             return date_str
 
-    def collect_and_save(self):
+    async def collect_and_save(self):
         # 1) Запрашиваем уже «причесанные» элементы
-        items = self.collector.collect()
+        items = await self.collector.collect()
 
         # 2) Назначаем
         for item in items:
             media_urls = item.get("media_urls", [])
             media_ids = []
             for url in media_urls:
-                file_id = self.download_image(url)
+                file_id = await self.download_image(url)
                 if file_id:
                     media_ids.append(str(file_id))
 
@@ -81,4 +88,4 @@ class CollectorService:
 
         # 4) Сохраняем в raw_news
         count = self.raw_repo.insert_news(unique)
-        self.logger.info(f"Сохранили в raw: {count} новостей")
+        self.logger.debug(f"Сохранили в raw: {count} новостей")

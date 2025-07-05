@@ -11,9 +11,6 @@ from aiogram.types import (
 )
 from aiogram.fsm.storage.memory import MemoryStorage
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "7014592821:AAEqfe-sfKGt8QKnCNGpLrqWCVqDiwQT-9M")
-CHANNEL_ID = '-1002556034541'
-
 db = duckdb.connect("posts.db")
 db.execute("""
 CREATE TABLE IF NOT EXISTS posts (

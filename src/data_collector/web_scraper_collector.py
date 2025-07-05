@@ -1,16 +1,26 @@
 # src/data_collector/web_scraper/web_scraper_collector.py
 
 import importlib
+import asyncio
 from typing import List, Dict, Any
 from urllib.parse import urlparse
 
 class WebScraperCollector:
     """
-    Динамически создаёт список скраper-ов из config['source_map'].
-    У каждого scraper’а выставляет атрибут .topic, и собирает их в .scrapers.
+        Асинхронно запускает все скрейперы, указанные в source_map из конфигурации,
+        и собирает результаты в единый список новостей.
+
+        Каждый элемент source_map имеет ключ topic и список спецификаций:
+          - module: путь к модулю скрейпера
+          - class: имя класса скрейпера
+          - url: URL для скрейпера
+
+        В результате метод collect() вернёт List[Dict] с ключами:
+          title, url, date, text, media_urls, topic
     """
 
-    def __init__(self, source_map: Dict[str, List[Dict[str, Any]]]):
+    def __init__(self, source_map: Dict[str, List[Dict[str, Any]]], logger):
+        self.logger = logger
         self.scrapers = []
         for topic, specs in source_map.items():
             for spec in specs:
@@ -20,20 +30,29 @@ class WebScraperCollector:
                 setattr(inst, "topic", topic)
                 self.scrapers.append(inst)
 
-    def collect(self) -> List[Dict[str, Any]]:
+    async def collect(self) -> List[Dict[str, Any]]:
         all_news: List[Dict[str, Any]] = []
-        for scraper in self.scrapers:
-            try:
-                raw = scraper.run()
-                for item in raw:
-                    item.setdefault("title", "")
-                    item.setdefault("url", "")
-                    item.setdefault("date", "")
-                    item.setdefault("text", "")
-                    item.setdefault("media_urls", [])
-
-                    item["topic"] = getattr(scraper, "topic", "general")
-                all_news.extend(raw)
-            except Exception as e:
-                print(f"[!] Ошибка в {scraper.__class__.__name__}: {e}")
+        tasks = [self._run_scraper(scraper) for scraper in self.scrapers]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for res in results:
+            if isinstance(res, Exception):
+                # Ошибка логируется в _run_scraper
+                continue
+            for item in res:
+                # Гарантируем наличие всех нужных полей
+                item.setdefault("title", "")
+                item.setdefault("url", "")
+                item.setdefault("date", "")
+                item.setdefault("text", "")
+                item.setdefault("media_urls", [])
+                # Тема может быть в item или в атрибуте
+                item["topic"] = getattr(item, "topic", None) or item.get("topic") or "general"
+                all_news.append(item)
         return all_news
+
+    async def _run_scraper(self, scraper) -> List[Dict[str, Any]]:
+        try:
+            return await scraper.run()
+        except Exception as e:
+            self.logger.error(f"Ошибка в {scraper.__class__.__name__}: {e}", exc_info=True)
+            return []

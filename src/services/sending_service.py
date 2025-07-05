@@ -3,8 +3,23 @@
 import logging
 from typing import List, Dict, Any
 from aiogram import Bot
-from aiogram.types import InputMediaPhoto
+from aiogram.types import (
+    InputMediaPhoto, InlineKeyboardMarkup, InlineKeyboardButton, Message
+)
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
+
+def edit_keyboard(post_id: int) -> InlineKeyboardMarkup:
+    """Клавиатура для редактирования поста"""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="✏️ Редактировать",
+                    callback_data=f"editpost_{post_id}"
+                )
+            ]
+        ]
+    )
 
 class SendingService:
     """
@@ -41,13 +56,15 @@ class SendingService:
 
         for it in items:
             caption = (
-                f"🆕 <b>{it['title']}</b>\n\n"
+                f"<b>{it['title']}</b>\n\n"
                 f"{it['content']}\n\n"
                 f"<a href=\"{it['url']}\">Читать полностью</a>\n"
                 f"ID: <code>{it['id']}</code>"
             )
 
             media = it.get("media_ids", [])
+            msg: Message = None
+
             if media:
                 # Формируем media_group с первой подписью
                 group = []
@@ -58,20 +75,39 @@ class SendingService:
                         media_item.parse_mode = "HTML"
                     group.append(media_item)
                 try:
-                    await self.bot.send_media_group(chat_id=self.chat_id, media=group)
+                    msgs = await self.bot.send_media_group(chat_id=self.chat_id, media=group)
+                    # Отправить кнопку редактирования отдельным сообщением-реплаем на первую часть media_group
+                    if msgs:
+                        await self.bot.send_message(
+                            chat_id=self.chat_id,
+                            text=f"Управление постом ID: <code>{it['id']}</code>",
+                            reply_markup=edit_keyboard(it["id"]),
+                            parse_mode="HTML",
+                            reply_to_message_id=msgs[0].message_id
+                        )
                 except Exception as e:
-                    # Если не удалось отправить media_group, падаём обратно на текст
+                    # Если не удалось отправить media_group, падаем обратно на текст
                     self.logger.error(f"Failed to send media_group for {it['id']}: {e}")
-                    await self.bot.send_message(chat_id=self.chat_id, text=caption, parse_mode="HTML")
-            else:
-                await self.bot.send_message(chat_id=self.chat_id, text=caption, parse_mode="HTML")
+                    msg = await self.bot.send_message(
+                        chat_id=self.chat_id,
+                        text=caption,
+                        parse_mode="HTML",
+                        reply_markup=edit_keyboard(it["id"])
+                    )
+                else:
+                    msg = await self.bot.send_message(
+                        chat_id=self.chat_id,
+                        text=caption,
+                        parse_mode="HTML",
+                        reply_markup=edit_keyboard(it["id"])
+                    )
 
-            sent_ids.append(it["id"])
+                sent_ids.append(it["id"])
 
         # 2) Помечаем отправленные
         if sent_ids:
             self.repo.mark_suggested(sent_ids)
-            self.logger.info(f"Sent & marked {len(sent_ids)} items as suggested.")
+            self.logger.debug(f"Отмечено {len(sent_ids)} как отправленные")
 
         return len(sent_ids)
 

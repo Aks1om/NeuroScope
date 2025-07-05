@@ -1,18 +1,35 @@
 # src/data_collector/web_scraper/drom_scraper.py
-
+import logging
+import aiohttp
+import asyncio
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 from . import WebScraperBase
-import requests
 
 class DromNewsScraper(WebScraperBase):
-    def parse(self, html):
+    def __init__(self, url: str):
+        super().__init__(url)
+        self.logger = logging.getLogger("bot")
+
+    async def run(self) -> list[dict]:
+        """
+        Загружает страницу списка новостей и сразу же парсит детали в рамках одной сессии.
+        """
+        async with aiohttp.ClientSession() as session:
+            # 1) Скачиваем HTML списка
+            async with session.get(self.base_url, timeout=10) as resp:
+                resp.raise_for_status()
+                html = await resp.text()
+            # 2) Парсим и загружаем детали, используя ту же сессию
+            return await self.parse(html, session)
+
+    async def parse(self, html: str, session: aiohttp.ClientSession) -> list[dict]:
         soup = BeautifulSoup(html, 'html.parser')
         blocks = soup.select(
             "div.b-wrapper div.b-content div.b-left-side "
             "div.b-media-query.b-random-group div.b-info-block"
         )
-
-        results = []
+        tasks = []
         for block in blocks:
             a_tag = block.find("a", class_="b-info-block__cont")
             title_tag = block.find("div", class_="b-info-block__title")
@@ -23,38 +40,40 @@ class DromNewsScraper(WebScraperBase):
             date = date_tag.get_text(strip=True) if date_tag else None
 
             if url and not url.startswith("http"):
-                url = f"https://news.drom.ru{url}"
-
+                url = urljoin(self.base_url, url)
             if not title or not url:
                 continue
 
-            try:
-                detail_html = requests.get(url, timeout=10).text
-                detail_soup = BeautifulSoup(detail_html, 'html.parser')
+            tasks.append(self._fetch_detail(title, url, date, session))
 
-                # Основной текст
-                text_block = detail_soup.select_one("#news_text")
-                text = (
-                    text_block.get_text(strip=True, separator="\n")
-                    if text_block else ""
-                )
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        items = []
+        for r in results:
+            if isinstance(r, Exception):
+                # Ошибка уже залогирована в _fetch_detail
+                continue
+            if r:
+                items.append(r)
+        return items
 
-                # Ссылки на изображения
-                media_urls = []
-                for img_a in detail_soup.select("div.news_img > a"):
-                    href = img_a.get("href")
-                    if href:
-                        media_urls.append(href)
+    async def _fetch_detail(self, title: str, url: str, date: str, session: aiohttp.ClientSession) -> dict | None:
+        try:
+            async with session.get(url, timeout=10) as resp:
+                resp.raise_for_status()
+                detail_html = await resp.text()
 
-                results.append({
-                    "title": title,
-                    "url": url,
-                    "date": date,
-                    "text": text,
-                    "media_urls": media_urls
-                })
-            except Exception as e:
-                # Лучше логировать через ваш logger, здесь для примера print
-                print(f"[!] Ошибка при детальном парсинге {url}: {e}")
+            detail_soup = BeautifulSoup(detail_html, 'html.parser')
+            text_block = detail_soup.select_one("#news_text")
+            text = text_block.get_text(strip=True, separator="\n") if text_block else ""
+            media_urls = [img.get("href") for img in detail_soup.select("div.news_img > a") if img.get("href")]
 
-        return results
+            return {
+                "title": title,
+                "url": url,
+                "date": date,
+                "text": text,
+                "media_urls": media_urls
+            }
+        except Exception as e:
+            self.logger.error(f"Error parsing Drom article {url}: {e}", exc_info=True)
+            return None

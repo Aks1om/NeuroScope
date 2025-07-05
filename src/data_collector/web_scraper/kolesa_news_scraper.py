@@ -1,73 +1,83 @@
-import requests
+import logging
+import aiohttp
+import asyncio
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 from . import WebScraperBase
 
 class KolesaNewsScraper(WebScraperBase):
     """
-    Скрепер для сайта Kolesa.ru.
-    Извлекает заголовок, URL, дату, краткое описание, полный текст и изображения каждой новости.
+    Асинхронный скрепер для сайта Kolesa.ru.
+    Возвращает для каждой новости словарь с ключами:
+      title, url, date, text, media_urls
     """
-    BASE_URL = "https://www.kolesa.ru/news"
+    BASE_HOST = "https://www.kolesa.ru"
 
-    def parse(self, html):
+    def __init__(self, url: str):
+        super().__init__(url)
+        self.logger = logging.getLogger("bot")
+
+    async def run(self) -> list[dict]:
+        async with aiohttp.ClientSession() as session:
+            # Скачиваем страницу списка
+            async with session.get(self.base_url, timeout=10) as resp:
+                resp.raise_for_status()
+                html = await resp.text()
+            # Парсим и скачиваем детали
+            return await self.parse(html, session)
+
+    async def parse(self, html: str, session: aiohttp.ClientSession) -> list[dict]:
         soup = BeautifulSoup(html, 'html.parser')
-        # Селектор карточек новостей
-        news_items = soup.select("a.post-list-item")
+        tasks = []
+        for link in soup.select('a.post-list-item'):
+            href = link.get('href')
+            if href and not href.startswith('http'):
+                href = urljoin(self.BASE_HOST, href)
 
-        results = []
-        for item in news_items:
-            url = item.get("href")
-            title_tag = item.select_one("span.post-name")
-            date_tag = item.select_one("span.post-meta-item.pull-right")
-            image_tag = item.select_one("span.post-image")
+            title_tag = link.select_one('span.post-name')
+            date_tag  = link.select_one('span.post-meta-item.pull-right')
+            title = title_tag.get_text(strip=True) if title_tag else ''
+            date  = date_tag.get_text(strip=True) if date_tag else ''
 
-            title = title_tag.get_text(strip=True) if title_tag else None
-            date = date_tag.get_text(strip=True) if date_tag else None
-
-            # Извлечение URL картинки из стиля background-image
-            image = None
-            if image_tag and image_tag.has_attr("style"):
-                style = image_tag["style"]
-                # Ожидаем формат: background-image: url(...)
-                try:
-                    image = style.split("url(")[1].split(")")[0].strip('"')
-                except Exception:
-                    image = None
-
-            if not title or not url:
+            if not title or not href:
                 continue
+            tasks.append(self._fetch_detail(title, href, date, session))
 
-            # Если нужно, преобразуйте относительные ссылки
-            if url.startswith("/"):
-                url = "https://www.kolesa.ru" + url
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        # Оставляем только успешные словари
+        return [r for r in results if isinstance(r, dict)]
 
-            try:
-                # Получаем детальную страницу
-                full_html = requests.get(url, timeout=10).text
-                detail_soup = BeautifulSoup(full_html, 'html.parser')
+    async def _fetch_detail(self, title: str, url: str, date: str, session: aiohttp.ClientSession) -> dict:
+        try:
+            async with session.get(url, timeout=10) as resp:
+                resp.raise_for_status()
+                detail_html = await resp.text()
+            detail_soup = BeautifulSoup(detail_html, 'html.parser')
 
-                # Парсим тело новости
-                content_block = detail_soup.select_one("div.post-content")
-                full_text = content_block.get_text(strip=True, separator="\n") if content_block else ""
+            content_block = detail_soup.select_one('div.post-content')
+            text = content_block.get_text(strip=True, separator='\n') if content_block else ''
 
-                # Собираем все изображения внутри галереи
-                images = []
-                for img in detail_soup.select("div.post-gallery img"):  # Фотографии в галерее
-                    img_url = img.get("src")
-                    if img_url:
-                        images.append(img_url)
-                # Добавляем главную картинку, если есть
-                if image:
-                    images.insert(0, image)
+            media_urls = []
+            # Галерея
+            for img in detail_soup.select('div.post-gallery img'):
+                src = img.get('src')
+                if src:
+                    media_urls.append(src)
+            # Главная картинка
+            main_img = detail_soup.select_one('span.post-image')
+            if main_img and main_img.has_attr('style'):
+                style = main_img['style']
+                if 'url(' in style:
+                    img_url = style.split('url(')[1].split(')')[0].strip('"\'')
+                    media_urls.insert(0, img_url)
 
-                results.append({
-                    "title": title,
-                    "url": url,
-                    "date": date,
-                    "content": full_text,
-                    "media_ids": images
-                })
-            except Exception as e:
-                print(f"[!] Ошибка при получении деталей {url}: {e}")
-
-        return results
+            return {
+                'title': title,
+                'url': url,
+                'date': date,
+                'text': text,
+                'media_urls': media_urls
+            }
+        except Exception as e:
+            self.logger.error(f"Error parsing Kolesa article {url}: {e}", exc_info=True)
+            return None

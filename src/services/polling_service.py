@@ -37,7 +37,7 @@ class PollingService:
         while self._running:
             try:
                 # 1) Собираем и сохраняем raw
-                self.collector.collect_and_save()
+                await self.collector.collect_and_save()
 
                 # 2) Обработка (при первом прогоне без GPT)
                 processed_count = self.processor.process_and_save(self.first_run)

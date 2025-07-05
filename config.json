@@ -1,4 +1,7 @@
 {
+  "settings": {
+    "reset": true
+  },
   "telegram_channels": {
     "suggested_chat_id": -4885589416,
     "topics": {

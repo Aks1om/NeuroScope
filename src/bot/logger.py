@@ -47,7 +47,7 @@ def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
     - TelegramLogsHandler: INFO/WARNING to group, ERROR+ to programmers
     """
     logger = logging.getLogger("bot")
-    level = logging.DEBUG if cfg.get("debug", False) else logging.INFO
+    level = logging.DEBUG
     logger.setLevel(level)
 
     formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")

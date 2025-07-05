@@ -6,12 +6,10 @@ if sys.platform.startswith("win"):
     from asyncio import WindowsSelectorEventLoopPolicy
     asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
-from aiogram import Bot
-from src.di import dp, bot, polling_service, logger
+from src.di import dp, bot, polling_service
 
 async def main():
-    logger.info("Запуск polling_service...")
-    asyncio.create_task(polling_service.run())  # стартуем polling_service
+    asyncio.create_task(polling_service.run())
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
 # src/data_collector/web_scraper/web_scraper_base.py
 
+import aiohttp
+import asyncio
 from abc import ABC, abstractmethod
 import requests
 
@@ -32,7 +34,12 @@ class WebScraperBase(ABC):
         """
         ...
 
-    def run(self) -> list[dict]:
-        """Скачивает страницу и запускает парсинг."""
-        html = self.fetch()
-        return self.parse(html)
+    async def run(self) -> list[dict]:
+        """Асинхронно загружает страницу списка и парсит её."""
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.base_url, timeout=10) as resp:
+                resp.raise_for_status()
+                html = await resp.text()
+        # parse может стать асинхронным, если нужен session
+        return await self.parse(html, session)
+
