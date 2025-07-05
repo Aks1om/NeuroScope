@@ -38,8 +38,8 @@ class ChatGPTService:
                 model="gpt-4.1",
                 store=True,
                 messages=[
-                    {"role": "system",  "content": prompt},
-                    {"role": "user",    "content": news_text}
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": news_text}
                 ]
             )
             return completion.choices[0].message.content.strip()

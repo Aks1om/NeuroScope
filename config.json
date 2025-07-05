@@ -3,7 +3,7 @@
     "reset": true
   },
   "telegram_channels": {
-    "suggested_chat_id": -4885589416,
+    "suggested_chat_id": -1002857895412,
     "topics": {
       "auto": -1002556034541
     }
@@ -18,6 +18,11 @@
         "class": "DromNewsScraper",
         "module": "src.data_collector.web_scraper.drom_scraper",
         "url": "https://news.drom.ru/"
+      },
+      {
+        "class": "KolesaNewsScraper",
+        "module": "src.data_collector.web_scraper.kolesa_news_scraper",
+        "url": "https://www.kolesa.ru/news"
       }
     ]
   }

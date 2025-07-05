@@ -89,9 +89,9 @@ processor_svc = ProcessedService(
 
 # 7) Отправка в Telegram и пометка suggested
 sending_svc = SendingService(
-    processed_repo=processed_repo,
     bot=bot,
-    suggest_group_id=suggested_chat_id,
+    chat_id=suggested_chat_id,
+    processed_repo=processed_repo,
     logger=logger
 )
 
@@ -103,7 +103,7 @@ polling_service = PollingService(
     bot=bot,
     suggest_group_id=suggested_chat_id,
     interval=config.get("poll_interval", 300),
-    first_run=config.get("first_run", True),
+    first_run=config.get("first_run", False),
     logger=logger
 )
 

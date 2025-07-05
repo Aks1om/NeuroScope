@@ -1,114 +1,114 @@
 # src/services/sending_service.py
-
+import asyncio
 import logging
-from typing import List, Dict, Any
 from aiogram import Bot
-from aiogram.types import (
-    InputMediaPhoto, InlineKeyboardMarkup, InlineKeyboardButton, Message
-)
-from src.data_manager.duckdb_repository import DuckDBNewsRepository
-
-def edit_keyboard(post_id: int) -> InlineKeyboardMarkup:
-    """Клавиатура для редактирования поста"""
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="✏️ Редактировать",
-                    callback_data=f"editpost_{post_id}"
-                )
-            ]
-        ]
-    )
+from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
+from aiogram.types import InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
+from src.utils.paths import MEDIA_DIR
 
 class SendingService:
-    """
-    send(count, first_run):
-      - Если first_run: помечает все существующие processed_news как suggested и возвращает 0
-      - Иначе: вытаскивает из processed_news до count записей с suggested=FALSE,
-               отправляет их в Telegram, помечает как suggested и возвращает число отправленных.
-    """
-
     def __init__(
         self,
-        processed_repo: DuckDBNewsRepository,
         bot: Bot,
-        suggest_group_id: int,
+        chat_id: int,
+        processed_repo,
         logger: logging.Logger,
     ):
-        self.repo = processed_repo
         self.bot = bot
-        self.chat_id = suggest_group_id
+        self.chat_id = chat_id
+        self.processed_repo = processed_repo
         self.logger = logger
 
-    async def send(self, count, first_run: bool) -> int:
-        # Первый прогон — просто пометить всё, ничего не шлём
-        if first_run:
-            self.repo.mark_all_suggested()
-            return 0
-
-        if count <= 0:
-            return 0
-
-        # 1) Берём данные
-        items = self.repo.fetch_unsuggested(count)
-        sent_ids: List[int] = []
+    async def send(self, limit: int, first_run: bool):
+        """
+        Отправляет неотправленные новости в Telegram.
+        Ограничивает количество отправляемых элементов параметром limit.
+        Флаг first_run не влияет на отправку.
+        """
+        items = self.processed_repo.fetch_unsuggested(limit=limit)
+        if not items:
+            self.logger.debug("Нет новостей для отправки.")
+            return
 
         for it in items:
-            caption = (
-                f"<b>{it['title']}</b>\n\n"
-                f"{it['content']}\n\n"
-                f"<a href=\"{it['url']}\">Читать полностью</a>\n"
-                f"ID: <code>{it['id']}</code>"
-            )
+            title = it.get('title', '')
+            text = it.get('text') or it.get('content', '')
+            url = it.get('url', '')
+            media_ids = it.get("media_ids", [])
 
-            media = it.get("media_ids", [])
-            msg: Message = None
+            msg_text = f"<b>{title}</b>\n{text}\n<a href='{url}'>Читать далее</a>"
 
-            if media:
-                # Формируем media_group с первой подписью
-                group = []
-                for idx, url in enumerate(media):
-                    media_item = InputMediaPhoto(media=url)
-                    if idx == 0:
-                        media_item.caption = caption
-                        media_item.parse_mode = "HTML"
-                    group.append(media_item)
+            try:
+                text_msg = await self.bot.send_message(
+                    chat_id=self.chat_id,
+                    text=msg_text,
+                    parse_mode='HTML',
+                    disable_web_page_preview=True
+                )
+            except TelegramRetryAfter as e:
+                self.logger.warning(f"Flood control: retry after {e.retry_after}s")
+                await asyncio.sleep(e.retry_after)
+                text_msg = await self.bot.send_message(
+                    chat_id=self.chat_id,
+                    text=msg_text,
+                    parse_mode='HTML',
+                    disable_web_page_preview=True
+                )
+            first_msg_id = text_msg.message_id
+
+            # Если есть медиа, отправляем альбом без caption
+            if media_ids:
+                if len(media_ids) > 10:
+                    self.logger.warning(
+                        f"Media count {len(media_ids)} > 10 for {it['id']}, sending only first 10"
+                    )
+                album_ids = media_ids[:10]
+                album = []  # type: list[InputMediaPhoto]
+                for media_id in album_ids:
+                    path = MEDIA_DIR / media_id
+                    album.append(InputMediaPhoto(media=FSInputFile(str(path))))
+
                 try:
-                    msgs = await self.bot.send_media_group(chat_id=self.chat_id, media=group)
-                    # Отправить кнопку редактирования отдельным сообщением-реплаем на первую часть media_group
-                    if msgs:
-                        await self.bot.send_message(
-                            chat_id=self.chat_id,
-                            text=f"Управление постом ID: <code>{it['id']}</code>",
-                            reply_markup=edit_keyboard(it["id"]),
-                            parse_mode="HTML",
-                            reply_to_message_id=msgs[0].message_id
-                        )
-                except Exception as e:
-                    # Если не удалось отправить media_group, падаем обратно на текст
-                    self.logger.error(f"Failed to send media_group for {it['id']}: {e}")
-                    msg = await self.bot.send_message(
+                    await self.bot.send_media_group(
                         chat_id=self.chat_id,
-                        text=caption,
-                        parse_mode="HTML",
-                        reply_markup=edit_keyboard(it["id"])
+                        media=album
                     )
-                else:
-                    msg = await self.bot.send_message(
+                except TelegramRetryAfter as e:
+                    self.logger.warning(f"Flood control: retry after {e.retry_after}s")
+                    await asyncio.sleep(e.retry_after)
+                    await self.bot.send_media_group(
                         chat_id=self.chat_id,
-                        text=caption,
-                        parse_mode="HTML",
-                        reply_markup=edit_keyboard(it["id"])
+                        media=album
                     )
+                except TelegramBadRequest as e:
+                    self.logger.error(f"Failed media_group for {it['id']}: {e}")
 
-                sent_ids.append(it["id"])
+            # Отправка клавиатуры к текстовому сообщению
+            try:
+                await self.bot.send_message(
+                    chat_id=self.chat_id,
+                    text=f"Управление постом ID: <code>{it['id']}</code>",
+                    reply_markup=self._edit_keyboard(it['id']),
+                    parse_mode='HTML',
+                    reply_to_message_id=first_msg_id
+                )
+            except Exception as e:
+                self.logger.error(f"Failed to send control keyboard for {it['id']}: {e}")
 
-        # 2) Помечаем отправленные
-        if sent_ids:
-            self.repo.mark_suggested(sent_ids)
-            self.logger.debug(f"Отмечено {len(sent_ids)} как отправленные")
+            # Помечаем как отправленное
+            self.processed_repo.mark_suggested([it['id']])
 
-        return len(sent_ids)
+            # Пауза между отправками
+            await asyncio.sleep(1)
 
-
+    def _edit_keyboard(self, post_id: int) -> InlineKeyboardMarkup:
+        """
+        Создаёт InlineKeyboardMarkup с кнопками редактирования и удаления.
+        """
+        btn_edit = InlineKeyboardButton(
+            text='Редактировать', callback_data=f'edit:{post_id}'
+        )
+        btn_delete = InlineKeyboardButton(
+            text='Удалить', callback_data=f'delete:{post_id}'
+        )
+        return InlineKeyboardMarkup(inline_keyboard=[[btn_edit, btn_delete]])

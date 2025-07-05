@@ -28,18 +28,17 @@ class ProcessedService:
         to_insert: List[Dict[str, Any]] = []
         for (
             news_id, title, url, date,
-            content, media_ids, topic, lang
+            text, media_ids, topic, lang
         ) in rows:
             if news_id in done_ids:
                 continue
 
-            text = content
             out_lang = lang
 
             # 3) Переводим только английские новости
             if lang == 'en':
                 try:
-                    text = self.translate.translate(content)
+                    text = self.translate.translate(text)
                     out_lang = 'ru'
                 except Exception as e:
                     self.logger.error(f"Translation failed for {news_id}: {e}")
@@ -59,11 +58,12 @@ class ProcessedService:
                 'title': title,
                 'url': url,
                 'date': date,
-                'content': processed_text,
+                'text': processed_text,
                 'media_ids': media_ids,
                 'language': out_lang,
                 'topic': topic,
             })
+            self.logger.debug(to_insert)
 
         if not to_insert:
             self.logger.debug("No new items to process.")

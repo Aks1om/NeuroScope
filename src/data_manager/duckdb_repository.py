@@ -79,7 +79,7 @@ class DuckDBNewsRepository:
         """
         Возвращает до `limit` записей из processed_news,
         у которых suggested = FALSE, с полями:
-        id, title, url, content, media_ids
+        id, title, url, text, media_ids
         """
         sql = f"""
         SELECT id, title, url, text, media_ids
@@ -99,3 +99,25 @@ class DuckDBNewsRepository:
             }
             for r in rows
         ]
+
+    def fetch_by_id(self, id: int) -> dict | None:
+        sql = f"SELECT id, title, url, text, media_ids FROM {self.table} WHERE id=?"
+        row = self.conn.execute(sql, [id]).fetchone()
+        if not row:
+            return None
+        return {
+            "id": row[0],
+            "title": row[1],
+            "url": row[2],
+            "text": row[3],
+            "media_ids": row[4] or []
+        }
+
+    def update_text(self, id: int, new_text: str) -> None:
+        sql = f"UPDATE {self.table} SET text=? WHERE id=?"
+        self.conn.execute(sql, [new_text, id])
+
+    def update_media(self, id: int, media_ids: list[str]) -> None:
+        # Сохраняем как массив строк
+        sql = f"UPDATE {self.table} SET media_ids=? WHERE id=?"
+        self.conn.execute(sql, [media_ids, id])

@@ -19,8 +19,8 @@ class PollingService:
         bot: Bot,
         suggest_group_id: int,
         interval: int = 300,
-        first_run: bool = True,
-        logger: logging.Logger,  # ← inject your shared logger
+        first_run: bool = False,
+        logger: logging.Logger,
     ):
         self.collector = collector_service
         self.processor = processed_service
