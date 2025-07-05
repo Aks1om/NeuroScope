@@ -58,18 +58,38 @@ class KolesaNewsScraper(WebScraperBase):
             text = content_block.get_text(strip=True, separator='\n') if content_block else ''
 
             media_urls = []
-            # Галерея
+            # — Галерея изображений
             for img in detail_soup.select('div.post-gallery img'):
                 src = img.get('src')
-                if src:
+                # пропускаем пустые и шаблонные ссылки {{ … }}
+                if not src or ('{{' in src and '}}' in src):
+                    continue
+                # если уже абсолютный
+                if src.startswith(("http://", "https://")):
                     media_urls.append(src)
-            # Главная картинка
+                else:
+                    # собираем абсолютный из относительного
+                    full_url = urljoin(self.BASE_HOST, src)
+                    if full_url.startswith(("http://", "https://")):
+                        media_urls.append(full_url)
+
+            # — Главная картинка в стиле background-image
             main_img = detail_soup.select_one('span.post-image')
             if main_img and main_img.has_attr('style'):
                 style = main_img['style']
                 if 'url(' in style:
                     img_url = style.split('url(')[1].split(')')[0].strip('"\'')
-                    media_urls.insert(0, img_url)
+                    # пропускаем шаблоны
+                    if '{{' in img_url and '}}' in img_url:
+                        img_url = None
+                    # иначе собираем и фильтруем так же, как выше
+                    if img_url:
+                        if img_url.startswith(("http://", "https://")):
+                            media_urls.insert(0, img_url)
+                        else:
+                            full_url = urljoin(self.BASE_HOST, img_url)
+                            if full_url.startswith(("http://", "https://")):
+                                media_urls.insert(0, full_url)
 
             return {
                 'title': title,
