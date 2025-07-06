@@ -1,7 +1,7 @@
 {
   "settings": {
     "reset": true,
-    "poll_interval": 300,
+    "poll_interval": 1800,
     "first_run": true
   },
   "telegram_channels": {
