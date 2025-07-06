@@ -53,7 +53,7 @@ class ProcessedService:
             else:
                 processed_text = text
 
-            to_insert.append({
+            news_item = {
                 'id': news_id,
                 'title': title,
                 'url': url,
@@ -62,8 +62,9 @@ class ProcessedService:
                 'media_ids': media_ids,
                 'language': out_lang,
                 'topic': topic,
-            })
-            self.logger.debug(to_insert)
+            }
+            to_insert.append(news_item)
+            self.logger.debug("Prepared for insert: %s", news_item)
 
         if not to_insert:
             self.logger.debug("No new items to process.")

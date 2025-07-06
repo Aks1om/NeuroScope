@@ -28,11 +28,11 @@ class SendingService:
         # При первом запуске не шлём ничего, просто помечаем все новости
         if first_run:
             try:
-                # Используем метод для пометки всех новостей сразу
+                # Если репозиторий умеет сразу помечать всё
                 if hasattr(self.processed_repo, 'mark_all_suggested'):
                     self.processed_repo.mark_all_suggested()
                 else:
-                    # fallback: помечаем первые limit новостей как suggested
+                    # Иначе помечаем первые `limit` новостей как отправленные
                     ids = [item['id'] for item in self.processed_repo.fetch_unsuggested(limit)]
                     self.processed_repo.mark_suggested(ids)
                 self.logger.debug("Первый прогон: все новости помечены как отправленные")
