@@ -5,12 +5,10 @@ import importlib
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-
-from src.utils.file_utils import load_env, load_config, get_env
+from src.utils.file_utils import *
 from src.bot.logger import setup_logger
 from src.bot.middleware import LoggingMiddleware, RoleMiddleware, CommandRestrictionMiddleware
 from src.bot.handlers.general import router as general_router
-
 from src.data_manager.duckdb_client import DuckDBClient
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.utils.paths import *
@@ -26,10 +24,17 @@ from src.services.polling_service import PollingService
 
 # 1) Загрузка конфига и окружения
 load_env()
-config = load_config()
+raw_cfg = load_config()
+cfg = dict_to_namespace(raw_cfg)
+reset           = cfg.settings.reset
+poll_interval   = cfg.settings.poll_interval
+first_run       = cfg.settings.first_run
+suggested_chat_id  = cfg.telegram_channels.suggested_chat_id
+prog_ids        = set(cfg.users.prog_ids)
+admin_ids       = set(cfg.users.admin_ids)
 
 # 1.5) Если в настройках reset=true, очищаем media и удаляем БД
-if config.get("settings", {}).get("reset", True):
+if reset:
     # Удаляем папку media целиком
     if os.path.isdir(MEDIA_DIR):
         shutil.rmtree(MEDIA_DIR)
@@ -42,18 +47,14 @@ if config.get("settings", {}).get("reset", True):
 
 # 2) Бот и логгер
 bot = Bot(token=get_env("TELEGRAM_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-logger = setup_logger(config, bot)
+logger = setup_logger(cfg, bot)
 
 # 3) Dispatcher + middleware
 dp = Dispatcher()
-prog_ids    = set(config["users"]["prog_ids"])
-admin_ids   = set(config["users"]["admin_ids"])
-suggested_chat_id  = int(config["telegram_channels"]["suggested_chat_id"])
 
 async def on_startup(dispatcher: Dispatcher, bot: Bot):
     logger.info("Запуск NeuroScope")
 dp.startup.register(on_startup)
-
 dp.update.middleware(LoggingMiddleware(logger))
 dp.update.middleware(RoleMiddleware(prog_ids, admin_ids, suggested_chat_id))
 dp.update.middleware(CommandRestrictionMiddleware(prog_ids, suggested_chat_id))
@@ -65,7 +66,7 @@ raw_repo       = DuckDBNewsRepository(db_client, table_name="raw_news")
 processed_repo = DuckDBNewsRepository(db_client, table_name="processed_news")
 
 # 5) Сервисы
-web_collector = WebScraperCollector(config["source_map"], logger)
+web_collector = WebScraperCollector(cfg.source_map, logger)
 translate_svc = TranslateService()
 collector_svc = CollectorService(
     raw_repo=raw_repo,
@@ -102,10 +103,10 @@ polling_service = PollingService(
     sending_service=sending_svc,
     bot=bot,
     suggest_group_id=suggested_chat_id,
-    interval=config.get("poll_interval", 300),
-    first_run=config.get("first_run", False),
+    interval=poll_interval,
+    first_run=first_run,
     logger=logger
 )
 
 
-__all__ = ["bot", "dp", "logger", "config", "polling_service"]
+__all__ = ["bot", "dp", "logger", "cfg", "polling_service"]

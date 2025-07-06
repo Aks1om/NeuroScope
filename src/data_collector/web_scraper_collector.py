@@ -2,6 +2,7 @@
 
 import importlib
 import asyncio
+from types import SimpleNamespace
 from typing import List, Dict, Any
 from urllib.parse import urlparse
 
@@ -19,14 +20,38 @@ class WebScraperCollector:
           title, url, date, text, media_urls, topic
     """
 
-    def __init__(self, source_map: Dict[str, List[Dict[str, Any]]], logger):
+    def __init__(
+        self,
+        source_map: Dict[str, List[Dict[str, Any]]] | SimpleNamespace,
+        logger,
+    ):
         self.logger = logger
+        # Если передан Namespace, конвертируем в dict
+        if isinstance(source_map, SimpleNamespace):
+            self.source_map = vars(source_map)
+        else:
+            self.source_map = source_map
+
         self.scrapers = []
-        for topic, specs in source_map.items():
+        for topic, specs in self.source_map.items():
             for spec in specs:
-                module = importlib.import_module(spec["module"])
-                cls = getattr(module, spec["class"])
-                inst = cls(spec["url"])
+                # Спецификация может быть dict или Namespace
+                if isinstance(spec, dict):
+                    module_name = spec.get("module")
+                    class_name = spec.get("class")
+                    url = spec.get("url")
+                else:
+                    module_name = getattr(spec, "module", None)
+                    class_name = getattr(spec, "class", None)
+                    url = getattr(spec, "url", None)
+
+                if not module_name or not class_name or not url:
+                    self.logger.error(f"Неверная спецификация для топика {topic}: {spec}")
+                    continue
+
+                module = importlib.import_module(module_name)
+                cls = getattr(module, class_name)
+                inst = cls(url)
                 setattr(inst, "topic", topic)
                 self.scrapers.append(inst)
 
@@ -36,7 +61,7 @@ class WebScraperCollector:
         results = await asyncio.gather(*tasks, return_exceptions=True)
         for res in results:
             if isinstance(res, Exception):
-                # Ошибка логируется в _run_scraper
+                # Ошибка уже залогирована в _run_scraper
                 continue
             for item in res:
                 # Гарантируем наличие всех нужных полей
@@ -45,7 +70,7 @@ class WebScraperCollector:
                 item.setdefault("date", "")
                 item.setdefault("text", "")
                 item.setdefault("media_urls", [])
-                # Тема может быть в item или в атрибуте
+                # Тема может быть атрибутом или полем
                 item["topic"] = getattr(item, "topic", None) or item.get("topic") or "general"
                 all_news.append(item)
         return all_news

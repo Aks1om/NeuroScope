@@ -9,14 +9,11 @@ import os
 import requests
 from datetime import datetime
 
-limit_first = True
-
 class CollectorService:
     """
     Собирает новости у collectors и сохраняет их в raw-базу.
     Все дубликаты по title/url отбиваются в DuplicateFilterService.
     """
-
 
     def __init__(self, raw_repo, collector, translate_service, logger):
         self.raw_repo = raw_repo
@@ -78,10 +75,6 @@ class CollectorService:
     async def collect_and_save(self):
         # 1) Запрашиваем уже «причесанные» элементы
         items = await self.collector.collect()
-
-        if limit_first and items:
-            items = [items[0]]
-            self.logger.debug("Тестовый режим: выбрана первая новость для обработки")
 
         # 2) Назначаем
         for item in items:

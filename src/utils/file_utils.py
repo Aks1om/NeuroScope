@@ -2,6 +2,7 @@ from src.utils.paths import*
 import os
 import json
 from dotenv import load_dotenv
+from types import SimpleNamespace
 from src.utils.paths import BASE_DIR
 
 def load_env():
@@ -20,3 +21,11 @@ def get_env(key):
         raise RuntimeError(f"ENV: обязательная переменная {key} не найдена!")
     return value
 
+def dict_to_namespace(d: dict) -> SimpleNamespace:
+    ns = SimpleNamespace()
+    for key, val in d.items():
+        if isinstance(val, dict):
+            setattr(ns, key, dict_to_namespace(val))
+        else:
+            setattr(ns, key, val)
+    return ns

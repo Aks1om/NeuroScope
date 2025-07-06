@@ -39,7 +39,7 @@ class TelegramLogsHandler(logging.Handler):
             self.handleError(record)
 
 
-def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
+def setup_logger(cfg, bot) -> logging.Logger:
     """
     Configure application logger:
     - FileHandler: all logs to a file
@@ -53,7 +53,8 @@ def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
     formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
     # File handler
-    file_handler = logging.FileHandler(cfg.get("log_file", "bot.log"), encoding="utf-8")
+    log_file = getattr(cfg, 'log_file', 'bot.log')
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setLevel(level)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
@@ -65,19 +66,25 @@ def setup_logger(cfg: dict, bot: Bot) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # Telegram handler: INFO/WARNING to group
+    group_chat_id = None
+    if hasattr(cfg, 'telegram_channels'):
+        group_chat_id = getattr(cfg.telegram_channels, 'suggested_chat_id', None)
     info_handler = TelegramLogsHandler(
         bot=bot,
         prog_ids=[],
-        group_chat_id=cfg["telegram_channels"]["suggested_chat_id"]
+        group_chat_id=group_chat_id
     )
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(formatter)
     logger.addHandler(info_handler)
 
     # Telegram handler: ERROR+ to programmers
+    prog_ids = []
+    if hasattr(cfg, 'users'):
+        prog_ids = getattr(cfg.users, 'prog_ids', [])
     error_handler = TelegramLogsHandler(
         bot=bot,
-        prog_ids=cfg["users"]["prog_ids"],
+        prog_ids=prog_ids,
         group_chat_id=None
     )
     error_handler.setLevel(logging.ERROR)

@@ -1,26 +1,18 @@
 # src/services/polling_service.py
-
 import asyncio
-import logging
-from aiogram import Bot
-from typing import List, Dict, Any
-
-from src.services.collector_service import CollectorService
-from src.services.processed_service import ProcessedService
-from src.services.sending_service import SendingService
 
 class PollingService:
     def __init__(
         self,
         *,
-        collector_service: CollectorService,
-        processed_service: ProcessedService,
-        sending_service: SendingService,
-        bot: Bot,
-        suggest_group_id: int,
-        interval: int = 300,
-        first_run: bool = False,
-        logger: logging.Logger,
+        collector_service,
+        processed_service,
+        sending_service,
+        bot,
+        suggest_group_id,
+        interval,
+        first_run,
+        logger
     ):
         self.collector = collector_service
         self.processor = processed_service
