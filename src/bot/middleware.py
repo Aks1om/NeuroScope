@@ -40,7 +40,7 @@ class LoggingMiddleware(BaseMiddleware):
 
     async def __call__(self, handler, event, data):
         # Log every incoming update
-        self.logger.debug(f"Received update: {event!r}")
+        # self.logger.debug(f"Received update: {event!r}")
         return await handler(event, data)
 
 class CommandRestrictionMiddleware(BaseMiddleware):

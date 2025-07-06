@@ -23,8 +23,23 @@ class SendingService:
         """
         Отправляет неотправленные новости в Telegram.
         Ограничивает количество отправляемых элементов параметром limit.
-        Флаг first_run не влияет на отправку.
+        При первом прогоне помечает все новости как отправленные и ничего не отправляет.
         """
+        # При первом запуске не шлём ничего, просто помечаем все новости
+        if first_run:
+            try:
+                # Используем метод для пометки всех новостей сразу
+                if hasattr(self.processed_repo, 'mark_all_suggested'):
+                    self.processed_repo.mark_all_suggested()
+                else:
+                    # fallback: помечаем первые limit новостей как suggested
+                    ids = [item['id'] for item in self.processed_repo.fetch_unsuggested(limit)]
+                    self.processed_repo.mark_suggested(ids)
+                self.logger.debug("Первый прогон: все новости помечены как отправленные")
+            except Exception as e:
+                self.logger.error(f"Ошибка при пометке всех новостей: {e}")
+            return
+
         items = self.processed_repo.fetch_unsuggested(limit=limit)
         if not items:
             self.logger.debug("Нет новостей для отправки.")
@@ -34,10 +49,11 @@ class SendingService:
             title = it.get('title', '')
             text = it.get('text') or it.get('content', '')
             url = it.get('url', '')
-            media_ids = it.get("media_ids", [])
+            media_ids = it.get('media_ids', [])
 
             msg_text = f"<b>{title}</b>\n{text}\n<a href='{url}'>Читать далее</a>"
 
+            # Отправка текстового сообщения
             try:
                 text_msg = await self.bot.send_message(
                     chat_id=self.chat_id,
@@ -56,7 +72,7 @@ class SendingService:
                 )
             first_msg_id = text_msg.message_id
 
-            # Если есть медиа, отправляем альбом без caption
+            # Если есть медиа, отправляем альбом (до 10 фото)
             if media_ids:
                 if len(media_ids) > 10:
                     self.logger.warning(
@@ -83,7 +99,7 @@ class SendingService:
                 except TelegramBadRequest as e:
                     self.logger.error(f"Failed media_group for {it['id']}: {e}")
 
-            # Отправка клавиатуры к текстовому сообщению
+            # Отправка клавиатуры под текстовым сообщением
             try:
                 await self.bot.send_message(
                     chat_id=self.chat_id,
