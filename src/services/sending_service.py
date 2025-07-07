@@ -18,6 +18,23 @@ class SendingService:
         self.chat_id = chat_id
         self.processed_repo = processed_repo
         self.logger = logger
+        # Время последней отправки медиа-группы
+        self._last_media_group_time = 0.0
+
+    async def _send_media_group_throttled(self, media: list[InputMediaPhoto]):
+        """Отправляет медиа-группу, соблюдая ограничение в 1 секунду между вызовами."""
+        loop = asyncio.get_event_loop()
+        now = loop.time()
+        elapsed = now - self._last_media_group_time
+        if elapsed < 1.0:
+            await asyncio.sleep(1.0 - elapsed)
+        result = await self.bot.send_media_group(
+            chat_id=self.chat_id,
+            media=media
+        )
+        # Обновляем время последней отправки
+        self._last_media_group_time = loop.time()
+        return result
 
     async def send(self, limit: int, first_run: bool):
         """
@@ -28,11 +45,9 @@ class SendingService:
         # При первом запуске не шлём ничего, просто помечаем все новости
         if first_run:
             try:
-                # Если репозиторий умеет сразу помечать всё
                 if hasattr(self.processed_repo, 'mark_all_suggested'):
                     self.processed_repo.mark_all_suggested()
                 else:
-                    # Иначе помечаем первые `limit` новостей как отправленные
                     ids = [item['id'] for item in self.processed_repo.fetch_unsuggested(limit)]
                     self.processed_repo.mark_suggested(ids)
                 self.logger.debug("Первый прогон: все новости помечены как отправленные")
@@ -85,17 +100,11 @@ class SendingService:
                     album.append(InputMediaPhoto(media=FSInputFile(str(path))))
 
                 try:
-                    await self.bot.send_media_group(
-                        chat_id=self.chat_id,
-                        media=album
-                    )
+                    await self._send_media_group_throttled(album)
                 except TelegramRetryAfter as e:
                     self.logger.warning(f"Flood control: retry after {e.retry_after}s")
                     await asyncio.sleep(e.retry_after)
-                    await self.bot.send_media_group(
-                        chat_id=self.chat_id,
-                        media=album
-                    )
+                    await self._send_media_group_throttled(album)
                 except TelegramBadRequest as e:
                     self.logger.error(f"Failed media_group for {it['id']}: {e}")
 
@@ -114,8 +123,8 @@ class SendingService:
             # Помечаем как отправленное
             self.processed_repo.mark_suggested([it['id']])
 
-            # Пауза между отправками
-            await asyncio.sleep(1)
+            # Пауза между отправками элементов (чтобы не перегружать Telegram)
+            await asyncio.sleep(1.0)
 
     def _edit_keyboard(self, post_id: int) -> InlineKeyboardMarkup:
         """
