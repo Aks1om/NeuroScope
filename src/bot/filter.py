@@ -1,20 +1,25 @@
 from aiogram.filters import BaseFilter
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 class ProgFilter(BaseFilter):
-    def __init__(self, prog_ids):
-        self.prog_ids = set(prog_ids)
-    async def __call__(self, message: Message):
-        return message.chat.type == "private" and message.from_user.id in self.prog_ids
+    def __init__(self, prog_ids: set[int]):
+        self.prog_ids = prog_ids
+
+    async def __call__(self, event: Message | CallbackQuery, data=None) -> bool:
+        return event.from_user.id in self.prog_ids
 
 class AdminFilter(BaseFilter):
-    def __init__(self, admin_ids):
-        self.admin_ids = set(admin_ids)
-    async def __call__(self, message: Message):
-        return message.from_user.id in self.admin_ids
+    """Фильтр, пропускающий апдейты от администраторов."""
+    def __init__(self, admin_ids: set[int]):
+        # Сохраняем множество админских id
+        self.admin_ids = admin_ids
 
-class IsFromSuggestGroup(BaseFilter):
-    def __init__(self, group_id):
-        self.group_id = group_id
-    async def __call__(self, message: Message):
-        return message.chat.id == self.group_id
+    async def __call__(self, event: Message | CallbackQuery, data=None) -> bool:
+        return event.from_user.id in self.admin_ids
+
+class ProgOrAdminFilter(BaseFilter):
+    def __init__(self, prog_ids: set[int], admin_ids: set[int]):
+        self.allowed_ids = set(prog_ids) | set(admin_ids)
+
+    async def __call__(self, event: Message | CallbackQuery, data=None) -> bool:
+        return event.from_user.id in self.allowed_ids

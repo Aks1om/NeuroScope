@@ -15,11 +15,17 @@ class CollectorService:
     Все дубликаты по title/url отбиваются в DuplicateFilterService.
     """
 
-    def __init__(self, raw_repo, collector, translate_service, logger):
+    def __init__(self,
+                 raw_repo,
+                 collector,
+                 translate_service,
+                 logger,
+                 raw_limit):
         self.raw_repo = raw_repo
         self.collector = collector
         self.translate_service = translate_service
         self.logger = logger
+        self.raw_limit = raw_limit
         self.duplicate_filter = DuplicateFilterService(raw_repo)
 
     def _generate_id(self, url: str) -> int:
@@ -75,6 +81,13 @@ class CollectorService:
     async def collect_and_save(self):
         # 1) Запрашиваем уже «причесанные» элементы
         items = await self.collector.collect()
+        if self.raw_limit is not None:
+            raw_index = 0
+            try:
+                chosen = items[raw_index]
+                items = [chosen]
+            except IndexError:
+                self.logger.error(f"raw_index={raw_index} вне диапазона (0..{len(items) - 1})")
 
         # 2) Назначаем
         for item in items:

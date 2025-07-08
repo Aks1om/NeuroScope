@@ -5,6 +5,7 @@ import re
 import requests
 from urllib.parse import urlparse
 from datetime import datetime
+from types import SimpleNamespace
 
 from src.utils.file_utils import load_config
 from src.utils.paths import MEDIA_DIR
@@ -100,18 +101,19 @@ class DuckDBNewsRepository:
             for r in rows
         ]
 
-    def fetch_by_id(self, id: int) -> dict | None:
-        sql = f"SELECT id, title, url, text, media_ids FROM {self.table} WHERE id=?"
+    def fetch_by_id(self, id: int) -> SimpleNamespace | None:
+        sql = f"SELECT id, title, url, text, media_ids, topic FROM {self.table} WHERE id=?"
         row = self.conn.execute(sql, [id]).fetchone()
         if not row:
             return None
-        return {
-            "id": row[0],
-            "title": row[1],
-            "url": row[2],
-            "text": row[3],
-            "media_ids": row[4] or []
-        }
+        return SimpleNamespace(
+            id=row[0],
+            title=row[1],
+            url=row[2],
+            text=row[3],
+            media_ids=row[4] or [],
+            topic=row[5]
+        )
 
     def update_text(self, id: int, new_text: str) -> None:
         sql = f"UPDATE {self.table} SET text=? WHERE id=?"
@@ -121,3 +123,25 @@ class DuckDBNewsRepository:
         # Сохраняем как массив строк
         sql = f"UPDATE {self.table} SET media_ids=? WHERE id=?"
         self.conn.execute(sql, [media_ids, id])
+
+    def mark_confirmed(self, ids: List[int]) -> None:
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        sql = f"""
+        UPDATE {self.table}
+        SET confirmed = TRUE
+        WHERE id IN ({placeholders})
+        """
+        self.conn.execute(sql, ids)
+
+    def mark_rejected(self, ids: List[int]) -> None:
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        sql = f"""
+        UPDATE {self.table}
+        SET suggested = TRUE  -- уже предлагали, но не подтвердили
+        WHERE id IN ({placeholders})
+        """
+        self.conn.execute(sql, ids)

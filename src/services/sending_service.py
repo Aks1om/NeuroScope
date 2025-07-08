@@ -62,11 +62,14 @@ class SendingService:
 
         for it in items:
             title = it.get('title', '')
-            text = it.get('text') or it.get('content', '')
+            raw_text  = it.get('text') or it.get('content', '')
             url = it.get('url', '')
             media_ids = it.get('media_ids', [])
 
-            msg_text = f"<b>{title}</b>\n{text}\n<a href='{url}'>Читать далее</a>"
+            # Санитизация «не-HTML-тегов» вида <…>, чтобы Telegram HTML-парсер не ругался
+            safe_text = raw_text.replace('<…>', '...')
+
+            msg_text = f"<b>{title}</b>\n{safe_text}\n<a href='{url}'>Источник</a>"
 
             # Отправка текстового сообщения
             try:
@@ -127,13 +130,7 @@ class SendingService:
             await asyncio.sleep(1.0)
 
     def _edit_keyboard(self, post_id: int) -> InlineKeyboardMarkup:
-        """
-        Создаёт InlineKeyboardMarkup с кнопками редактирования и удаления.
-        """
-        btn_edit = InlineKeyboardButton(
-            text='Редактировать', callback_data=f'edit:{post_id}'
-        )
-        btn_delete = InlineKeyboardButton(
-            text='Удалить', callback_data=f'delete:{post_id}'
-        )
-        return InlineKeyboardMarkup(inline_keyboard=[[btn_edit, btn_delete]])
+        btn_edit = InlineKeyboardButton(text='Редактировать', callback_data=f'edit:{post_id}')
+        btn_delete = InlineKeyboardButton(text='Удалить', callback_data=f'delete:{post_id}')
+        btn_confirm = InlineKeyboardButton(text='Подтвердить', callback_data=f'confirm:{post_id}')
+        return InlineKeyboardMarkup(inline_keyboard=[[btn_edit, btn_delete, btn_confirm]])

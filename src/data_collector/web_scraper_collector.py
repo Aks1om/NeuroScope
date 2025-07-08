@@ -77,7 +77,10 @@ class WebScraperCollector:
 
     async def _run_scraper(self, scraper) -> List[Dict[str, Any]]:
         try:
-            return await scraper.run()
+            items = await scraper.run()
+            for it in items:
+                it["topic"] = getattr(scraper, "topic", None)
+            return items
         except Exception as e:
             self.logger.error(f"Ошибка в {scraper.__class__.__name__}: {e}", exc_info=True)
             return []

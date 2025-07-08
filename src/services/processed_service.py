@@ -1,5 +1,4 @@
 # src/services/processed_service.py
-import logging
 from typing import List, Dict, Any
 from src.services.duplicate_filter_service import DuplicateFilterService
 
@@ -11,13 +10,22 @@ class ProcessedService:
     4) сохраняет в processed_news.
     """
 
-    def __init__(self, raw_repo, processed_repo, translate_service, chat_gpt_service, logger):
+    def __init__(
+        self,
+        raw_repo,
+        processed_repo,
+        translate_service,
+        chat_gpt_service,
+        logger,
+        use_chatgpt
+    ):
         self.raw_repo = raw_repo
         self.duplicate_filter = DuplicateFilterService(processed_repo)
         self.processed_repo = processed_repo
         self.translate = translate_service
         self.chat_gpt = chat_gpt_service
         self.logger = logger
+        self.use_chatgpt = use_chatgpt
 
     def process_and_save(self, first_run):
         # 1) Какие ID уже в processed?
@@ -28,7 +36,7 @@ class ProcessedService:
         to_insert: List[Dict[str, Any]] = []
         for (
             news_id, title, url, date,
-            text, media_ids, topic, lang
+            text, media_ids, lang, topic
         ) in rows:
             if news_id in done_ids:
                 continue
@@ -44,14 +52,14 @@ class ProcessedService:
                     self.logger.error(f"Translation failed for {news_id}: {e}")
 
             # 4) Обработка через ChatGPT
-            if not first_run:
+            if first_run or not self.use_chatgpt:
+                processed_text = text
+            else:
                 try:
                     processed_text = self.chat_gpt.process(text)
                 except Exception as e:
                     self.logger.error(f"GPT processing failed for {news_id}: {e}")
                     continue
-            else:
-                processed_text = text
 
             news_item = {
                 'id': news_id,

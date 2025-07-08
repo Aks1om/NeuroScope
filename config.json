@@ -2,17 +2,19 @@
   "settings": {
     "reset": true,
     "poll_interval": 1800,
-    "first_run": true
+    "first_run": false,
+    "use_chatgpt": false,
+    "raw_limit": 1
   },
   "telegram_channels": {
-    "suggested_chat_id": -1002857895412,
+    "suggested_chat_id": -4885589416,
     "topics": {
-      "auto": -1002556034541
+      "auto": "@Autogfpojoerg"
     }
   },
   "users": {
     "prog_ids": [1327341052, 444057295],
-    "admin_ids": [1327341052]
+    "admin_ids": []
   },
   "source_map": {
     "auto": [
