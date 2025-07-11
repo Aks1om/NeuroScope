@@ -1,80 +1,47 @@
 # src/services/collector_service.py
 import logging
 import hashlib
-import asyncio
-from typing import Iterable, Dict, Any
-from src.services.duplicate_filter_service import DuplicateFilterService
-from src.utils.paths import MEDIA_DIR
-import os
-import requests
 from datetime import datetime
+from typing import Dict, Any, Iterable
+
+from src.services.duplicate_filter_service import DuplicateFilterService
+
 
 class CollectorService:
     """
     Собирает новости у collectors и сохраняет их в raw-базу.
-    Все дубликаты по title/url отбиваются в DuplicateFilterService.
+    Скачивание медиа вынесено в MediaService.
     """
 
     def __init__(
-            self,
-            raw_repo,
-            collector,
-            translate_service,
-            logger,
-            *,
-            test_one_raw: bool = False,  # ← логика выбора одной записи
-            item_index: int = 0,
+        self,
+        raw_repo,
+        collector,
+        translate_service,
+        media_service,
+        duplicate_filter,
+        logger: logging.Logger,
+        *,
+        test_one_raw: bool = False,
+        item_index: int = 0,
     ):
         self.raw_repo = raw_repo
         self.collector = collector
         self.translate_service = translate_service
+        self.media_service = media_service
+        self.duplicate_filter = duplicate_filter
         self.logger = logger
         self.test_one_raw = test_one_raw
         self.item_index = item_index
         self.duplicate_filter = DuplicateFilterService(raw_repo)
 
-    def _generate_id(self, url: str) -> int:
-        h = hashlib.md5(url.encode("utf-8")).hexdigest()[:16]
-        return int(h, 16)
+    # ───────────────────────────────────────── helpers ── #
+    @staticmethod
+    def _generate_id(url: str) -> int:
+        return int(hashlib.md5(url.encode()).hexdigest()[:16], 16)
 
-    async def download_image(self, url: str) -> str | None:
-        if not url:
-            self.logger.debug("Не удалось скачать: пустой URL")
-            return None
-        # Выносим синхронную часть в отдельный поток
-        return await asyncio.to_thread(self._download_image_sync, url)
-
-    def _download_image_sync(self, url: str) -> str | None:
-        # — если это шаблон вида {{ post.preview_url }}, пропускаем
-        if '{{' in url and '}}' in url:
-            self.logger.debug(f"Пропущен шаблонный URL: {url}")
-            return None
-        from urllib.parse import urlparse
-        parsed = urlparse(url)
-        if not parsed.scheme or not parsed.netloc:
-            self.logger.debug(f"Пропущен некорректный URL: {url}")
-            return None
-        media_id = self._generate_id(url)
-        base = os.path.basename(url.split("?")[0])
-        ext = os.path.splitext(base)[1]
-        filename = f"{media_id}{ext}"
-        filepath = MEDIA_DIR / filename
-
-        if not filepath.exists():
-            try:
-                r = requests.get(url, timeout=10)
-                r.raise_for_status()
-                with open(filepath, "wb") as f:
-                    f.write(r.content)
-                #self.logger.debug(f"Успешно скачан медиа-файл: {filename}")
-            except Exception as e:
-                # Логируем реальный URL и текст ошибки
-                self.logger.error(f"Не удалось скачать {url}: {e}", exc_info=True)
-                return None
-
-        return filename
-
-    def fix_date(self, date_str: str) -> str | None:
+    @staticmethod
+    def _fix_date(date_str: str) -> str | None:
         if not date_str:
             return None
         try:
@@ -83,35 +50,38 @@ class CollectorService:
         except Exception:
             return date_str
 
+    # ───────────────────────────────────────── main ──── #
     async def collect_and_save(self):
         # 1) Собираем
-        items = await self.collector.collect()
+        items: list[Dict[str, Any]] = await self.collector.collect()
 
-        # 1.1) Если нужен ровно один элемент
+        # 1.1) Тестовый режим: берём один элемент
         if self.test_one_raw and items:
             idx = max(0, min(self.item_index, len(items) - 1))
             items = [items[idx]]
             self.logger.info("Тестовый режим: взята запись #%d", idx)
 
-        # 2) Назначаем
+        # 2) Обрабатываем каждую новость
         for item in items:
-            media_urls = item.get("media_urls", [])
-            media_ids = []
+            # 2.1) Скачиваем медиа
+            media_urls: Iterable[str] = item.get("media_urls", [])
+            media_ids: list[str] = []
             for url in media_urls:
-                file_id = await self.download_image(url)
+                file_id = await self.media_service.download(url)
                 if file_id:
-                    media_ids.append(str(file_id))
+                    media_ids.append(file_id)
 
+            # 2.2) Дополнительные поля под базу
             item["id"] = self._generate_id(item["url"])
-            item["date"] = self.fix_date(item.get("date", ""))
+            item["date"] = self._fix_date(item.get("date", ""))
             item["media_ids"] = media_ids
             item["language"] = self.translate_service.detect_language(item["text"])
 
-        # 3) Фильтруем дубликаты по полю (title, url)
+        # 3) Фильтруем дубликаты
         unique = self.duplicate_filter.filter(items)
         if not unique:
             self.logger.debug("Новых уникальных новостей нет")
 
-        # 4) Сохраняем в raw_news
+        # 4) Сохраняем
         count = self.raw_repo.insert_news(unique)
-        self.logger.debug(f"Сохранили в raw: {count} новостей")
+        self.logger.debug("Сохранили в raw: %d новостей", count)

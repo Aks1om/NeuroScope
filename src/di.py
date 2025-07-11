@@ -17,11 +17,14 @@ from src.utils.paths import *
 
 
 from src.data_collector.web_scraper_collector import WebScraperCollector
+from src.services.duplicate_filter_service import DuplicateFilterService
 from src.services.collector_service import CollectorService
+from src.services.media_service import MediaService
 from src.services.translate_service import TranslateService
 from src.services.chat_gpt_service import ChatGPTService
 from src.services.processed_service import ProcessedService
 from src.services.sending_service import SendingService
+from src.services.news_post_service import NewsPostService
 from src.services.polling_service import PollingService
 
 # 1) Загрузка конфига и окружения
@@ -67,19 +70,23 @@ raw_repo       = DuckDBNewsRepository(db_client, table_name="raw_news")
 processed_repo = DuckDBNewsRepository(db_client, table_name="processed_news")
 
 prog_admin_filter = ProgOrAdminFilter(prog_ids, admin_ids)
-dp.include_router(get_post_admin_router(processed_repo, prog_admin_filter, cfg))
 
 # 5) Сервисы
-web_collector = WebScraperCollector(
-    cfg.source_map,
-    logger=logger
-)
+news_post_service = NewsPostService(processed_repo, logger)
+dp.include_router(get_post_admin_router(news_post_service, prog_admin_filter, cfg))
 
+web_collector = WebScraperCollector(cfg.source_map,logger=logger)
+duplicate_filter_raw  = DuplicateFilterService(raw_repo)
+duplicate_filter_proc = DuplicateFilterService(processed_repo)
+
+media_svc = MediaService(logger)
 translate_svc = TranslateService()
 collector_svc = CollectorService(
     raw_repo=raw_repo,
     collector=web_collector,
     translate_service=translate_svc,
+    media_service=media_svc,
+    duplicate_filter=duplicate_filter_raw,
     logger=logger,
     test_one_raw=cfg.settings.test_one_raw,
     item_index=0
@@ -96,8 +103,9 @@ processor_svc = ProcessedService(
     processed_repo=processed_repo,
     translate_service=translate_svc,
     chat_gpt_service=chatgpt_svc,
+    duplicate_filter=duplicate_filter_proc,
     logger=logger,
-    use_chatgpt=use_chatgpt
+    use_chatgpt=use_chatgpt,
 )
 
 sending_svc = SendingService(
