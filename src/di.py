@@ -33,7 +33,6 @@ reset           = cfg.settings.reset
 poll_interval   = cfg.settings.poll_interval
 first_run       = cfg.settings.first_run
 use_chatgpt     = cfg.settings.use_chatgpt
-raw_limit       = cfg.settings.raw_limit
 suggested_chat_id  = cfg.telegram_channels.suggested_chat_id
 prog_ids        = set(cfg.users.prog_ids)
 admin_ids       = set(cfg.users.admin_ids)
@@ -71,14 +70,19 @@ prog_admin_filter = ProgOrAdminFilter(prog_ids, admin_ids)
 dp.include_router(get_post_admin_router(processed_repo, prog_admin_filter, cfg))
 
 # 5) Сервисы
-web_collector = WebScraperCollector(cfg.source_map, logger)
+web_collector = WebScraperCollector(
+    cfg.source_map,
+    logger=logger
+)
+
 translate_svc = TranslateService()
 collector_svc = CollectorService(
     raw_repo=raw_repo,
     collector=web_collector,
     translate_service=translate_svc,
     logger=logger,
-    raw_limit=raw_limit
+    test_one_raw=cfg.settings.test_one_raw,
+    item_index=0
 )
 
 # 6) Перевод + GPT

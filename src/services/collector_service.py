@@ -15,17 +15,22 @@ class CollectorService:
     Все дубликаты по title/url отбиваются в DuplicateFilterService.
     """
 
-    def __init__(self,
-                 raw_repo,
-                 collector,
-                 translate_service,
-                 logger,
-                 raw_limit):
+    def __init__(
+            self,
+            raw_repo,
+            collector,
+            translate_service,
+            logger,
+            *,
+            test_one_raw: bool = False,  # ← логика выбора одной записи
+            item_index: int = 0,
+    ):
         self.raw_repo = raw_repo
         self.collector = collector
         self.translate_service = translate_service
         self.logger = logger
-        self.raw_limit = raw_limit
+        self.test_one_raw = test_one_raw
+        self.item_index = item_index
         self.duplicate_filter = DuplicateFilterService(raw_repo)
 
     def _generate_id(self, url: str) -> int:
@@ -79,15 +84,14 @@ class CollectorService:
             return date_str
 
     async def collect_and_save(self):
-        # 1) Запрашиваем уже «причесанные» элементы
+        # 1) Собираем
         items = await self.collector.collect()
-        if self.raw_limit is not None:
-            raw_index = 0
-            try:
-                chosen = items[raw_index]
-                items = [chosen]
-            except IndexError:
-                self.logger.error(f"raw_index={raw_index} вне диапазона (0..{len(items) - 1})")
+
+        # 1.1) Если нужен ровно один элемент
+        if self.test_one_raw and items:
+            idx = max(0, min(self.item_index, len(items) - 1))
+            items = [items[idx]]
+            self.logger.info("Тестовый режим: взята запись #%d", idx)
 
         # 2) Назначаем
         for item in items:

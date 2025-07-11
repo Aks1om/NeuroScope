@@ -22,10 +22,17 @@ def get_env(key):
     return value
 
 def dict_to_namespace(d: dict) -> SimpleNamespace:
+    """
+    Рекурсивно превращает словарь в SimpleNamespace,
+    **кроме** ключа 'source_map' – он остаётся dict,
+    чтобы WebScraperCollector работал без костылей.
+    """
     ns = SimpleNamespace()
-    for key, val in d.items():
-        if isinstance(val, dict):
-            setattr(ns, key, dict_to_namespace(val))
+    for k, v in d.items():
+        if k == "source_map":
+            setattr(ns, k, v)                   # ← оставляем dict
+        elif isinstance(v, dict):
+            setattr(ns, k, dict_to_namespace(v))
         else:
-            setattr(ns, key, val)
+            setattr(ns, k, v)
     return ns

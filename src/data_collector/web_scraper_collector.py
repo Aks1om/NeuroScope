@@ -1,86 +1,71 @@
-# src/data_collector/web_scraper/web_scraper_collector.py
+from __future__ import annotations
 
-import importlib
 import asyncio
-from types import SimpleNamespace
-from typing import List, Dict, Any
-from urllib.parse import urlparse
+import logging
+from typing import Any, Dict, List, Sequence
+
+from .web_scrapers import SCRAPER_REGISTRY
+
+logger = logging.getLogger(__name__)
+
 
 class WebScraperCollector:
-    """
-        Асинхронно запускает все скрейперы, указанные в source_map из конфигурации,
-        и собирает результаты в единый список новостей.
-
-        Каждый элемент source_map имеет ключ topic и список спецификаций:
-          - module: путь к модулю скрейпера
-          - class: имя класса скрейпера
-          - url: URL для скрейпера
-
-        В результате метод collect() вернёт List[Dict] с ключами:
-          title, url, date, text, media_urls, topic
-    """
+    """Запускает все скра-перы и возвращает объединённый список новостей."""
 
     def __init__(
         self,
-        source_map: Dict[str, List[Dict[str, Any]]] | SimpleNamespace,
-        logger,
-    ):
-        self.logger = logger
-        # Если передан Namespace, конвертируем в dict
-        if isinstance(source_map, SimpleNamespace):
-            self.source_map = vars(source_map)
-        else:
-            self.source_map = source_map
+        source_map: Dict[str, Sequence[Dict[str, str]]],
+        logger: logging.Logger | None = None,
+    ) -> None:
+        if not isinstance(source_map, dict):
+            raise TypeError(
+                "source_map must be dict[str, list[dict]] "
+                f"(got {type(source_map).__name__})"
+            )
 
-        self.scrapers = []
-        for topic, specs in self.source_map.items():
+        self.logger = logger or logging.getLogger(__name__)
+        self.scrapers: list[Any] = []
+
+        for topic, specs in source_map.items():
             for spec in specs:
-                # Спецификация может быть dict или Namespace
-                if isinstance(spec, dict):
-                    module_name = spec.get("module")
-                    class_name = spec.get("class")
-                    url = spec.get("url")
-                else:
-                    module_name = getattr(spec, "module", None)
-                    class_name = getattr(spec, "class", None)
-                    url = getattr(spec, "url", None)
+                if not isinstance(spec, dict):
+                    raise TypeError(
+                        f"each spec inside source_map[{topic!r}] "
+                        f"must be dict (got {type(spec).__name__})"
+                    )
 
-                if not module_name or not class_name or not url:
-                    self.logger.error(f"Неверная спецификация для топика {topic}: {spec}")
+                cls_name, url = spec.get("class"), spec.get("url")
+                if not cls_name or not url:
+                    self.logger.error("Bad spec for %s: %s", topic, spec)
                     continue
 
-                module = importlib.import_module(module_name)
-                cls = getattr(module, class_name)
-                inst = cls(url)
-                setattr(inst, "topic", topic)
+                cls = SCRAPER_REGISTRY.get(cls_name)
+                if cls is None:
+                    self.logger.error("Scraper %s not in registry", cls_name)
+                    continue
+
+                inst = cls(url)                # type: ignore[call-arg]
+                inst.topic = topic
                 self.scrapers.append(inst)
 
-    async def collect(self) -> List[Dict[str, Any]]:
-        all_news: List[Dict[str, Any]] = []
-        tasks = [self._run_scraper(scraper) for scraper in self.scrapers]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        for res in results:
-            if isinstance(res, Exception):
-                # Ошибка уже залогирована в _run_scraper
-                continue
-            for item in res:
-                # Гарантируем наличие всех нужных полей
-                item.setdefault("title", "")
-                item.setdefault("url", "")
-                item.setdefault("date", "")
-                item.setdefault("text", "")
-                item.setdefault("media_urls", [])
-                # Тема может быть атрибутом или полем
-                item["topic"] = getattr(item, "topic", None) or item.get("topic") or "general"
-                all_news.append(item)
-        return all_news
-
-    async def _run_scraper(self, scraper) -> List[Dict[str, Any]]:
+    # --------------------------- helpers --------------------------- #
+    async def _safe_run(self, scraper):
         try:
-            items = await scraper.run()
-            for it in items:
-                it["topic"] = getattr(scraper, "topic", None)
-            return items
-        except Exception as e:
-            self.logger.error(f"Ошибка в {scraper.__class__.__name__}: {e}", exc_info=True)
+            return await scraper.run()
+        except Exception as exc:               # pylint: disable=broad-except
+            self.logger.exception("%s failed: %s", scraper.__class__.__name__, exc)
             return []
+
+    # ---------------------------- API ------------------------------ #
+    async def collect(self) -> List[Dict[str, Any]]:
+        if not self.scrapers:
+            return []
+
+        results = await asyncio.gather(*(self._safe_run(s) for s in self.scrapers))
+
+        merged: list[dict] = []
+        for scraper, items in zip(self.scrapers, results, strict=True):
+            for item in items:
+                item.setdefault("topic", scraper.topic)
+                merged.append(item)
+        return merged
