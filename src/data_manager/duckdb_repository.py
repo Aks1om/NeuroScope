@@ -2,6 +2,7 @@
 import uuid
 import os
 import re
+import json
 import requests
 from urllib.parse import urlparse
 from datetime import datetime
@@ -102,27 +103,36 @@ class DuckDBNewsRepository:
         ]
 
     def fetch_by_id(self, id: int) -> SimpleNamespace | None:
-        sql = f"SELECT id, title, url, text, media_ids, topic FROM {self.table} WHERE id=?"
-        row = self.conn.execute(sql, [id]).fetchone()
+        row = self.conn.execute(
+            f"SELECT id, title, url, text, media_ids, topic FROM {self.table} WHERE id=?",
+            [id]
+        ).fetchone()
         if not row:
             return None
+        media_list = json.loads(row[4]) if row[4] else []
         return SimpleNamespace(
             id=row[0],
             title=row[1],
             url=row[2],
             text=row[3],
-            media_ids=row[4] or [],
+            media_ids=media_list,
             topic=row[5]
         )
+
+    def update_title(self, id: int, new_title: str):
+        self.conn.execute(f"UPDATE {self.table} SET title=? WHERE id=?", [new_title, id])
 
     def update_text(self, id: int, new_text: str) -> None:
         sql = f"UPDATE {self.table} SET text=? WHERE id=?"
         self.conn.execute(sql, [new_text, id])
 
     def update_media(self, id: int, media_ids: list[str]) -> None:
-        # Сохраняем как массив строк
+        """
+        Сохраняем список как JSON-строку, чтобы DuckDB видел ОДНО значение,
+        а не вектор параметров.
+        """
         sql = f"UPDATE {self.table} SET media_ids=? WHERE id=?"
-        self.conn.execute(sql, [media_ids, id])
+        self.conn.execute(sql, [json.dumps(media_ids), id])
 
     def mark_confirmed(self, ids: List[int]) -> None:
         if not ids:

@@ -10,7 +10,7 @@ from src.bot.logger import setup_logger
 from src.bot.filter import ProgOrAdminFilter
 from src.bot.middleware import LoggingMiddleware, RoleMiddleware, CommandRestrictionMiddleware
 from src.bot.handlers.general import router as general_router
-from src.bot.handlers.post import get_post_admin_router
+from src.bot.handlers.post import build_post_admin_router
 from src.data_manager.duckdb_client import DuckDBClient
 from src.data_manager.duckdb_repository import DuckDBNewsRepository
 from src.utils.paths import *
@@ -24,7 +24,6 @@ from src.services.translate_service import TranslateService
 from src.services.chat_gpt_service import ChatGPTService
 from src.services.processed_service import ProcessedService
 from src.services.sending_service import SendingService
-from src.services.news_post_service import NewsPostService
 from src.services.polling_service import PollingService
 
 # 1) Загрузка конфига и окружения
@@ -72,8 +71,7 @@ processed_repo = DuckDBNewsRepository(db_client, table_name="processed_news")
 prog_admin_filter = ProgOrAdminFilter(prog_ids, admin_ids)
 
 # 5) Сервисы
-news_post_service = NewsPostService(processed_repo, logger)
-dp.include_router(get_post_admin_router(news_post_service, prog_admin_filter, cfg))
+dp.include_router(build_post_admin_router(processed_repo, prog_admin_filter, cfg))
 
 web_collector = WebScraperCollector(cfg.source_map,logger=logger)
 duplicate_filter_raw  = DuplicateFilterService(raw_repo)
