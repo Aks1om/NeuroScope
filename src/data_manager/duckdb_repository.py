@@ -30,13 +30,18 @@ class DuckDBRepository(Generic[T]):
             vals = list(m.dict().values())
             vals[2] = str(vals[2])  # url -> str
             vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            if "album_mids" in cols:
+                vals[cols.index("album_mids")] = json.dumps(vals[cols.index("album_mids")])
             self.conn.execute(sql, vals)
         return len(items)
 
     # ─── helpers ─── #
     def _row_to_model(self, row: Sequence, cols: Sequence[str]) -> T:
         data = {
-            k: (json.loads(v) if k == "media_ids" else v)
+            k: (
+                json.loads(v)
+                if k in ("media_ids", "album_mids") else v
+            )
             for k, v in zip(cols, row)
         }
         return self.Model(**data)
@@ -66,6 +71,8 @@ class DuckDBRepository(Generic[T]):
     def update_fields(self, id_: int, **fields):
         if "media_ids" in fields:
             fields["media_ids"] = json.dumps(fields["media_ids"])
+        if "album_mids" in fields:
+            fields["album_mids"] = json.dumps(fields["album_mids"])
         sets = ", ".join(f"{k}=?" for k in fields)
         self.conn.execute(
             f"UPDATE {self.table} SET {sets} WHERE id=?",

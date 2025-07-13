@@ -5,29 +5,32 @@ from src.utils.paths import DB
 
 DDL_RAW = """
 CREATE TABLE IF NOT EXISTS raw_news (
-  id        UBIGINT PRIMARY KEY,
-  title     TEXT,
-  url       TEXT,
-  date      TIMESTAMP,
-  text      TEXT,
-  media_ids TEXT,
-  language  TEXT,
-  topic     TEXT
+    id        UBIGINT PRIMARY KEY,
+    title     TEXT,
+    url       TEXT,
+    date      TIMESTAMP,
+    text      TEXT,
+    media_ids TEXT,
+    language  TEXT,
+    topic     TEXT
 );
 """
 
 DDL_PROCESSED = """
 CREATE TABLE IF NOT EXISTS processed_news (
-  id        UBIGINT PRIMARY KEY,
-  title     TEXT,
-  url       TEXT,
-  date      TIMESTAMP,
-  text      TEXT,
-  media_ids TEXT,
-  language  TEXT,
-  topic     TEXT,
-  suggested BOOLEAN DEFAULT FALSE,
-  confirmed BOOLEAN DEFAULT FALSE
+    id        UBIGINT PRIMARY KEY,
+    title     TEXT,
+    url       TEXT,
+    date      TIMESTAMP,
+    text      TEXT,
+    media_ids TEXT,
+    language  TEXT,
+    topic     TEXT,
+    suggested BOOLEAN DEFAULT FALSE,
+    confirmed BOOLEAN DEFAULT FALSE,
+    main_mid  UBIGINT,
+    meta_mid  UBIGINT,
+    album_mids TEXT
 );
 """
 

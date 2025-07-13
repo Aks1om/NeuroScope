@@ -71,68 +71,88 @@ class SendingService:
                 reply_markup=kb,
             )
 
+    # ───────── helpers ───────── #
     @staticmethod
     def _edit_kb(post_id: int) -> InlineKeyboardMarkup:
+        """Клавиатура: в callback-data только ID поста."""
         return InlineKeyboardMarkup(
-            inline_keyboard=[[                       # 👇 добавили text=
+            inline_keyboard=[[
                 InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit:{post_id}"),
-                InlineKeyboardButton(text="🗑 Удалить",        callback_data=f"delete:{post_id}"),
-                InlineKeyboardButton(text="✅ Подтвердить",    callback_data=f"confirm:{post_id}"),
+                InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete:{post_id}"),
+                InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"confirm:{post_id}"),
             ]]
         )
 
     # ────────── core ────────── #
     async def send(self, limit: int, first_run: bool):
-        """Отправляет новости в предложку: альбом ≤10 медиа + meta-пост."""
+        """
+        Отправляет новости в «предложку».
+
+        • Если у новости < 10 медиа — шлём альбом, иначе один текстовый пост.
+        • Сохраняем ВСЕ message_id альбома, чтобы потом удалить без «хвостов».
+        • На самом первом запуске (first_run=True) только проставляем флаг
+          suggested — ничего не отправляем, чтобы не завалить чат.
+        """
         items: List[ProcessedNewsItem] = self.repo.fetch_unsuggested(limit)
 
-        # На самом первом прогоне просто отмечаем, ничего не отправляем.
+        # ── первый прогон: просто отметили и вышли ─────────────────────────
         if first_run:
             self.repo.set_flag("suggested", [it.id for it in items])
             self.log.debug("First run: %d записей помечены suggested", len(items))
             return
 
+        # ── обычный режим ──────────────────────────────────────────────────
         for news in items:
             caption = build_caption(news)
+            album_ids: list[int] = []  # все id альбома или [main_mid] для текста
+            main_mid: int | None = None
 
             # ---------- альбом ----------
-            sent_main = False
             if news.media_ids:
-                mids = news.media_ids[: self.MAX_MEDIA]
-                album: List[InputMediaPhoto] = []
-
-                for i, mid in enumerate(mids):
+                album: list[InputMediaPhoto] = []
+                for i, mid in enumerate(news.media_ids[: self.MAX_MEDIA]):
                     path = Path(MEDIA_DIR) / mid
-                    if path.exists():
+                    if path.exists():  # файл на диске
                         media_src = FSInputFile(path)
                     elif len(mid) >= self.FILE_ID_MIN and "." not in mid:
                         media_src = mid  # Telegram file_id
                     else:
-                        self.log.warning(
-                            "Skip media «%s»: файла нет и это не file_id", mid
-                        )
+                        self.log.warning("Skip media «%s»: файла нет", mid)
                         continue
 
-                    if i == 0:
-                        album.append(
-                            InputMediaPhoto(media=media_src,
-                                            caption=caption,
-                                            parse_mode="HTML")
-                        )
-                    else:
-                        album.append(InputMediaPhoto(media=media_src))
+                    kwargs = {"caption": caption, "parse_mode": "HTML"} if i == 0 else {}
+                    album.append(InputMediaPhoto(media=media_src, **kwargs))
 
                 if album:
-                    await self._safe_send_album(album)
-                    sent_main = True
+                    msgs = await self._safe_send_album(album)
+                    album_ids = [m.message_id for m in msgs]
+                    if album_ids:
+                        main_mid = album_ids[0]
 
-            # ---------- текстовый пост, если альбома нет ----------
-            if not sent_main:
-                await self._safe_send_text(caption)
+            # ---------- одиночный текст ----------
+            if main_mid is None:  # альбом не отправлен
+                msg = await self._safe_send_text(caption)
+                main_mid = msg.message_id
+                album_ids = [main_mid]
 
             # ---------- meta ----------
-            await self._safe_send_text(build_meta(news), kb=self._edit_kb(news.id))
+            meta_msg = await self.bot.send_message(
+                self.chat,
+                f"Источник: <a href='{news.url}'>ссылка</a>\nID: <code>{news.id}</code>",
+                parse_mode="HTML",
+                disable_web_page_preview=False,  # хотим превью
+                reply_markup=self._edit_kb(news.id),
+            )
+            meta_mid = meta_msg.message_id
 
-            # ---------- mark ----------
-            self.repo.set_flag("suggested", [news.id])
-            await asyncio.sleep(1.0)  # пауза между новостями
+            # ---------- запись в БД ----------
+            self.repo.update_fields(
+                news.id,
+                main_mid=main_mid,
+                meta_mid=meta_mid,
+                album_mids=album_ids,  # сохраняем полный список id
+                suggested=True,
+            )
+
+            await asyncio.sleep(1.0)  # пауза, чтобы не ловить flood-контроль
+
