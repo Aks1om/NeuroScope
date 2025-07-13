@@ -1,85 +1,97 @@
 # src/services/processed_service.py
-from typing import List, Dict, Any
+from __future__ import annotations
+
+import logging
+from typing import List
+
+from src.data_manager.NewsItem import RawNewsItem, ProcessedNewsItem
 from src.services.duplicate_filter_service import DuplicateFilterService
+from src.utils.file_utils import _parse_date
+
 
 class ProcessedService:
     """
-    1) Загружает сырые новости из raw_news,
-    2) переводит англоязычные через TranslateService,
-    3) обрабатывает текст через ChatGPTService,
-    4) сохраняет в processed_news.
+    1. Берёт всё из raw_repo.
+    2. Переводит EN→RU (TranslateService).
+    3. При необходимости обрабатывает GPT.
+    4. Сохраняет уникальные записи в processed_repo.
     """
 
     def __init__(
         self,
+        *,
         raw_repo,
         processed_repo,
         translate_service,
         chat_gpt_service,
-        duplicate_filter,
-        logger,
-        use_chatgpt
+        duplicate_filter: DuplicateFilterService[ProcessedNewsItem],
+        logger: logging.Logger,
+        use_chatgpt: bool,
     ):
         self.raw_repo = raw_repo
-        self.duplicate_filter = DuplicateFilterService(processed_repo)
-        self.processed_repo = processed_repo
+        self.proc_repo = processed_repo
         self.translate = translate_service
         self.chat_gpt = chat_gpt_service
-        self.duplicate_filter = duplicate_filter
+        self.dup_filter = duplicate_filter
         self.logger = logger
         self.use_chatgpt = use_chatgpt
 
-    # ------------------------------------------------------------------ #
-    def process_and_save(self, first_run: bool) -> int:
-        done_ids = self.processed_repo.fetch_ids()
-        rows = self.raw_repo.fetch_all()
+    # ───────────────────────── helpers ───────────────────────── #
+    def _already_done_ids(self) -> set[int]:
+        rows = self.proc_repo.conn.execute(f"SELECT id FROM {self.proc_repo.table}")
+        return {r[0] for r in rows.fetchall()}
 
-        batch: List[Dict[str, Any]] = []
-        for news_id, title, url, date, text, media_ids, lang, topic in rows:
-            if news_id in done_ids:
+    # ───────────────────────── core ──────────────────────────── #
+    def process_and_save(self, first_run: bool) -> int:
+        done_ids = self._already_done_ids()
+        raw_items: List[RawNewsItem] = self.raw_repo.fetch_all()
+
+        batch: List[ProcessedNewsItem] = []
+
+        for item in raw_items:
+            if item.id in done_ids:
                 continue
 
-            out_lang = lang
+            text = item.text
+            lang = item.language
+
+            # 1) Перевод, если нужно
             if lang == "en":
                 try:
                     text = self.translate.translate(text)
-                    out_lang = "ru"
+                    lang = "ru"
                 except Exception as e:
-                    self.logger.error("Translation failed for %s: %s", news_id, e)
+                    self.logger.error("Translation failed for %s: %s", item.id, e)
 
-            if first_run or not self.use_chatgpt:
-                processed_text = text
-            else:
+            # 2) GPT-обработка
+            if not first_run and self.use_chatgpt:
                 try:
-                    processed_text = self.chat_gpt.process(text)
+                    text = self.chat_gpt.process(text)
                 except Exception as e:
-                    self.logger.error("GPT failed for %s: %s", news_id, e)
-                    continue
+                    self.logger.error("GPT failed for %s: %s", item.id, e)
+                    continue  # пропускаем, если GPT упал
 
-            batch.append(
-                {
-                    "id": news_id,
-                    "title": title,
-                    "url": url,
-                    "date": date,
-                    "text": processed_text,
-                    "media_ids": media_ids,
-                    "language": out_lang,
-                    "topic": topic,
-                }
+            processed = ProcessedNewsItem(
+                id=item.id,
+                title=item.title,
+                url=item.url,
+                date=_parse_date(item.date),
+                text=text,
+                media_ids=item.media_ids,
+                language=lang,
+                topic=item.topic,
             )
+            batch.append(processed)
 
         if not batch:
-            self.logger.debug("No new items to process.")
+            self.logger.debug("Нет новых элементов для обработки.")
             return 0
 
-        # --- фильтрация дубликатов по title/url ---
-        unique = self.duplicate_filter.filter(batch)
-
+        unique = self.dup_filter.filter(batch)
         if not unique:
-            self.logger.debug("Все элементы — дубликаты.")
+            self.logger.debug("Все элементы оказались дубликатами.")
             return 0
 
-        count = self.processed_repo.insert_news(unique)
-        self.logger.debug("Сохранили в processed: %d", count)
-        return count
+        saved = self.proc_repo.insert_news(unique)
+        self.logger.debug("Сохранили в processed: %d", saved)
+        return saved

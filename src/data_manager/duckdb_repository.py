@@ -1,157 +1,81 @@
-# src/data_manager/duckdb_repository.py
-import uuid
-import os
-import re
+# src/data_manager/duckdb_repository
+from __future__ import annotations
 import json
-import requests
-from urllib.parse import urlparse
-from datetime import datetime
-from types import SimpleNamespace
+from typing import List, TypeVar, Generic, Sequence
 
-from src.utils.file_utils import load_config
-from src.utils.paths import MEDIA_DIR
-from typing import List, Dict, Any
+from pydantic import BaseModel
+
+T = TypeVar("T", bound=BaseModel)
 
 
-class DuckDBNewsRepository:
-    def __init__(self, client, table_name):
-        self.conn = client.conn
-        self.table = table_name
+class DuckDBRepository(Generic[T]):
+    """Универсальный репозиторий для Raw/Processed моделей."""
 
-    def insert_news(self, items: List[Dict[str, Any]]) -> int:
-        sql = f"""
-        INSERT INTO {self.table}
-          (id, title, url, date, text, media_ids, language, topic)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (id) DO NOTHING
-        """
-        data = []
-        for item in items:
-            date = item.get("date")
-            text_value = item.get("text", "")
-            # гарантируем, что media_ids — список строк
-            mids = item.get("media_ids") or []
-            mids_str = [str(mid) for mid in mids]
+    def __init__(self, conn, table: str, model: type[T]):
+        self.conn = conn
+        self.table = table
+        self.Model = model
 
-            data.append((
-                item["id"],
-                item["title"],
-                item["url"],
-                date,
-                text_value,
-                mids_str,
-                item["language"],
-                item["topic"]
-            ))
-        for params in data:
-            self.conn.execute(sql, params)
-        return len(data)
+    # ─── insert ─── #
+    def insert_news(self, items: List[T]) -> int:
+        if not items:
+            return 0
+        cols = list(items[0].dict().keys())  # порядок полей
+        sql = (
+            f"INSERT INTO {self.table} ({', '.join(cols)}) "
+            f"VALUES ({', '.join('?' for _ in cols)}) "
+            f"ON CONFLICT (id) DO NOTHING"
+        )
+        for m in items:
+            vals = list(m.dict().values())
+            vals[2] = str(vals[2])  # url -> str
+            vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            self.conn.execute(sql, vals)
+        return len(items)
 
-    def fetch_all(self) -> List[tuple]:
-        """Вернуть все строки из self.table."""
-        return self.conn.execute(f"SELECT * FROM {self.table}").fetchall()
+    # ─── helpers ─── #
+    def _row_to_model(self, row: Sequence, cols: Sequence[str]) -> T:
+        data = {
+            k: (json.loads(v) if k == "media_ids" else v)
+            for k, v in zip(cols, row)
+        }
+        return self.Model(**data)
 
-    def fetch_ids(self) -> set[int]:
-        """Вернуть множество всех id из self.table."""
-        rows = self.conn.execute(f"SELECT id FROM {self.table}").fetchall()
-        return {r[0] for r in rows}
+    # ─── select all ─── #
+    def fetch_all(self) -> List[T]:
+        rel = self.conn.execute(f"SELECT * FROM {self.table}")
+        cols = [c[0] for c in rel.description]
+        return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-    def mark_suggested(self, ids: List[int]) -> None:
-        """
-        Пометить в self.table все записи с указанными id как suggested = TRUE.
-        """
-        if not ids:
-            return
-        placeholders = ",".join("?" for _ in ids)
-        sql = f"""
-        UPDATE {self.table}
-        SET suggested = TRUE
-        WHERE id IN ({placeholders})
-        """
-        self.conn.execute(sql, ids)
 
-    def mark_all_suggested(self) -> None:
-        """
-        Пометить все записи в таблице как suggested = TRUE.
-        """
-        sql = f"UPDATE {self.table} SET suggested = TRUE"
-        self.conn.execute(sql)
+    # ─── select ─── #
+    def fetch_unsuggested(self, limit: int) -> List[T]:
+        rel = self.conn.execute(
+            f"SELECT * FROM {self.table} WHERE suggested = FALSE LIMIT ?",
+            [limit],
+        )
+        cols = [c[0] for c in rel.description]
+        return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-    def fetch_unsuggested(self, limit: int) -> List[Dict[str, Any]]:
-        """
-        Возвращает до `limit` записей из processed_news,
-        у которых suggested = FALSE, с полями:
-        id, title, url, text, media_ids
-        """
-        sql = f"""
-        SELECT id, title, url, text, media_ids
-        FROM {self.table}
-        WHERE suggested = FALSE
-        ORDER BY date ASC
-        LIMIT ?
-        """
-        rows = self.conn.execute(sql, [limit]).fetchall()
-        return [
-            {
-                "id": r[0],
-                "title": r[1],
-                "url": r[2],
-                "text": r[3],
-                "media_ids": r[4] or []
-            }
-            for r in rows
-        ]
+    def fetch_by_id(self, id_: int) -> T | None:
+        rel = self.conn.execute(f"SELECT * FROM {self.table} WHERE id=?", [id_])
+        row = rel.fetchone()
+        return None if row is None else self._row_to_model(row, [c[0] for c in rel.description])
 
-    def fetch_by_id(self, id: int) -> SimpleNamespace | None:
-        row = self.conn.execute(
-            f"SELECT id, title, url, text, media_ids, topic FROM {self.table} WHERE id=?",
-            [id]
-        ).fetchone()
-        if not row:
-            return None
-        media_list = json.loads(row[4]) if row[4] else []
-        return SimpleNamespace(
-            id=row[0],
-            title=row[1],
-            url=row[2],
-            text=row[3],
-            media_ids=media_list,
-            topic=row[5]
+    # ─── update partial ─── #
+    def update_fields(self, id_: int, **fields):
+        if "media_ids" in fields:
+            fields["media_ids"] = json.dumps(fields["media_ids"])
+        sets = ", ".join(f"{k}=?" for k in fields)
+        self.conn.execute(
+            f"UPDATE {self.table} SET {sets} WHERE id=?",
+            list(fields.values()) + [id_],
         )
 
-    def update_title(self, id: int, new_title: str):
-        self.conn.execute(f"UPDATE {self.table} SET title=? WHERE id=?", [new_title, id])
-
-    def update_text(self, id: int, new_text: str) -> None:
-        sql = f"UPDATE {self.table} SET text=? WHERE id=?"
-        self.conn.execute(sql, [new_text, id])
-
-    def update_media(self, id: int, media_ids: list[str]) -> None:
-        """
-        Сохраняем список как JSON-строку, чтобы DuckDB видел ОДНО значение,
-        а не вектор параметров.
-        """
-        sql = f"UPDATE {self.table} SET media_ids=? WHERE id=?"
-        self.conn.execute(sql, [json.dumps(media_ids), id])
-
-    def mark_confirmed(self, ids: List[int]) -> None:
-        if not ids:
-            return
-        placeholders = ",".join("?" for _ in ids)
-        sql = f"""
-        UPDATE {self.table}
-        SET confirmed = TRUE
-        WHERE id IN ({placeholders})
-        """
-        self.conn.execute(sql, ids)
-
-    def mark_rejected(self, ids: List[int]) -> None:
-        if not ids:
-            return
-        placeholders = ",".join("?" for _ in ids)
-        sql = f"""
-        UPDATE {self.table}
-        SET suggested = TRUE  -- уже предлагали, но не подтвердили
-        WHERE id IN ({placeholders})
-        """
-        self.conn.execute(sql, ids)
+    # ─── flags ─── #
+    def set_flag(self, flag: str, ids: List[int]):
+        if ids:
+            ph = ",".join("?" for _ in ids)
+            self.conn.execute(
+                f"UPDATE {self.table} SET {flag}=TRUE WHERE id IN ({ph})", ids
+            )

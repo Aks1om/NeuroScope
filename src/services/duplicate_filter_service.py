@@ -1,35 +1,35 @@
 # src/services/duplicate_filter_service.py
+from __future__ import annotations
 
-from typing import List, Dict, Any
-from src.data_manager.duckdb_repository import DuckDBNewsRepository
+from typing import List, TypeVar, Generic, Set, Tuple
 
-class DuplicateFilterService:
+from pydantic import BaseModel
+from src.data_manager.duckdb_repository import DuckDBRepository
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class DuplicateFilterService(Generic[T]):
     """
-    Фильтрация дубликатов по заголовку и URL на основе указанного DuckDBNewsRepository.
+    Фильтрация дубликатов по (title, url) на уровне выбранного репозитория.
+    Принимает и возвращает список Pydantic-моделей.
     """
 
-    def __init__(self, repo: DuckDBNewsRepository):
+    def __init__(self, repo: DuckDBRepository):
         self.repo = repo
 
-    def filter(self, items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        # 1) Считываем все существующие пары (title, url) из нужной таблицы
+    def filter(self, items: List[T]) -> List[T]:
+        # загружаем существующие пары title+url
         rows = self.repo.conn.execute(
             f"SELECT title, url FROM {self.repo.table}"
         ).fetchall()
-        existing = {(t, u) for t, u in rows}
+        existing: Set[Tuple[str, str]] = {(t, u) for t, u in rows}
 
-        cleaned: List[Dict[str, Any]] = []
+        unique: List[T] = []
         for it in items:
-            title = it.get("title")
-            url   = it.get("url")
-            if not title or not url:
-                # игнорируем неполные записи
+            pair = (it.title, str(it.url))
+            if pair in existing:
                 continue
-            if (title, url) in existing:
-                # дубликат — пропускаем
-                continue
-            # новый — добавляем в оба списка
-            existing.add((title, url))
-            cleaned.append(it)
-
-        return cleaned
+            existing.add(pair)
+            unique.append(it)
+        return unique

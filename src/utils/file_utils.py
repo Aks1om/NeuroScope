@@ -1,38 +1,45 @@
-from src.utils.paths import*
-import os
+# src/utils/file_utils.py
+from __future__ import annotations
+
 import json
+import os
+from pathlib import Path
+from typing import Any
+from datetime import datetime
 from dotenv import load_dotenv
-from types import SimpleNamespace
-from src.utils.paths import BASE_DIR
 
-def load_env():
-    env_path = ENV_DIR
-    load_dotenv(dotenv_path=env_path)
+from src.utils.paths import ENV_DIR, CONFIG_DIR
+from src.utils.app_config import AppConfig   # ← pydantic-модель
 
-def load_config():
-    config_path = CONFIG_DIR
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = json.load(f)
-    return config
 
-def get_env(key):
+# ─────────────────── env ─────────────────── #
+def load_env() -> None:
+    """Загружает .env в переменные окружения (если файл есть)."""
+    load_dotenv(dotenv_path=ENV_DIR)
+
+
+def get_env(key: str) -> str:
     value = os.environ.get(key)
     if value is None:
         raise RuntimeError(f"ENV: обязательная переменная {key} не найдена!")
     return value
 
-def dict_to_namespace(d: dict) -> SimpleNamespace:
-    """
-    Рекурсивно превращает словарь в SimpleNamespace,
-    **кроме** ключа 'source_map' – он остаётся dict,
-    чтобы WebScraperCollector работал без костылей.
-    """
-    ns = SimpleNamespace()
-    for k, v in d.items():
-        if k == "source_map":
-            setattr(ns, k, v)                   # ← оставляем dict
-        elif isinstance(v, dict):
-            setattr(ns, k, dict_to_namespace(v))
-        else:
-            setattr(ns, k, v)
-    return ns
+
+# ─────────────────── config ───────────────── #
+def load_app_config(path: Path | str = CONFIG_DIR) -> AppConfig:
+    """Читает config.json и валидирует через Pydantic‐модель AppConfig."""
+    with open(path, encoding="utf-8") as f:
+        data: dict[str, Any] = json.load(f)
+    return AppConfig.parse_obj(data)
+
+def _parse_date(v):
+    if v in (None, "", 0):
+        return None
+    if isinstance(v, datetime):
+        return v
+    for fmt in ("%Y-%m-%d", "%d.%m.%Y"):
+        try:
+            return datetime.strptime(v, fmt)
+        except ValueError:
+            continue
+    raise ValueError(f"Неподдерживаемый формат даты: {v!r}")

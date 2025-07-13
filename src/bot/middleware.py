@@ -1,71 +1,77 @@
 # src/bot/middleware.py
+from __future__ import annotations
+import logging
+
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import Message, TelegramObject
+
 
 class RoleMiddleware(BaseMiddleware):
-    def __init__(self, prog_ids: set, admin_ids: set, suggest_group_id: int):
+    """
+    • В личке команды могут слать только `prog_ids`.
+    • В группах — только в suggest-chat.
+    """
+    def __init__(self, prog_ids: set[int], admin_ids: set[int], suggest_group_id: int):
         super().__init__()
         self.prog_ids = prog_ids
         self.admin_ids = admin_ids
         self.suggest_group_id = suggest_group_id
 
-    async def __call__(self, handler, event, data):
-        # Process only text messages with commands
-        if isinstance(event, Message) and event.text and event.text.startswith('/'):
+    async def __call__(self, handler, event: TelegramObject, data):
+        if isinstance(event, Message) and event.text and event.text.startswith("/"):
             uid = event.from_user.id
             cid = event.chat.id
 
-            # Private commands: only programmers allowed; ignore others silently
             if event.chat.type == "private":
                 if uid not in self.prog_ids:
-                    return  # silently ignore unauthorized private commands
-
-            # Group commands: only in suggest group
-            else:
+                    return  # молча игнорируем чужие приват-команды
+            else:  # group/supergroup
                 if cid != self.suggest_group_id:
-                    await data['bot'].send_message(
-                        chat_id=cid,
-                        text="🚫 Команды доступны только в группе предложка."
+                    await data["bot"].send_message(
+                        cid,
+                        "🚫 Команды доступны только в группе-предложке.",
                     )
                     return
-
-        # Continue processing for authorized commands or non-command messages
         return await handler(event, data)
 
 
 class LoggingMiddleware(BaseMiddleware):
-    def __init__(self, logger):
+    """Записывает каждое обновление на DEBUG-уровне."""
+    def __init__(self, logger: logging.Logger):
         super().__init__()
         self.logger = logger
 
-    async def __call__(self, handler, event, data):
-        # Log every incoming update
-        # self.logger.debug(f"Received update: {event!r}")
+    async def __call__(self, handler, event: TelegramObject, data):
+        self.logger.debug("Update: %s", event)
         return await handler(event, data)
+
 
 class CommandRestrictionMiddleware(BaseMiddleware):
     """
-    Restrict commands:
-    - Only prog_ids can send commands in private chat
-    - All other commands must be in the suggestion group
+    • PRIV: команды могут слать только prog_ids
+    • GROUP: команды принимаются только в suggest-chat
     """
-    def __init__(self, prog_ids: set, suggest_group_id: int):
+    def __init__(self, prog_ids: set[int], suggest_group_id: int):
         super().__init__()
         self.prog_ids = prog_ids
         self.suggest_group_id = suggest_group_id
 
-    async def __call__(self, handler, event, data):
-        if isinstance(event, Message) and event.text and event.text.startswith('/'):
+    async def __call__(self, handler, event: TelegramObject, data):
+        if isinstance(event, Message) and event.text and event.text.startswith("/"):
             uid = event.from_user.id
             cid = event.chat.id
-            # Private commands -> only progs
-            if event.chat.type == "private":
-                if uid not in self.prog_ids:
-                    await data['bot'].send_message(cid, "🚫 Только программисты могут использовать команды в личных сообщениях.")
-                    return
-            # Group commands -> only in suggest group
-            else:
-                if cid != self.suggest_group_id:
-                    await data['bot'].send_message(cid, "🚫 Команды доступны только в группе предложка.")
-                    return
+
+            if event.chat.type == "private" and uid not in self.prog_ids:
+                await data["bot"].send_message(
+                    cid,
+                    "🚫 Только разработчики могут использовать команды в личке.",
+                )
+                return
+
+            if event.chat.type != "private" and cid != self.suggest_group_id:
+                await data["bot"].send_message(
+                    cid,
+                    "🚫 Команды доступны только в группе-предложке.",
+                )
+                return
         return await handler(event, data)

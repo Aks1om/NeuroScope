@@ -1,42 +1,28 @@
-from dataclasses import dataclass
-from html import escape
-from typing import List, Optional
+from __future__ import annotations
+from datetime import datetime
+from typing import Protocol, runtime_checkable
+
+# ────────── универсальный интерфейс ────────── #
+@runtime_checkable
+class NewsProto(Protocol):
+    id:        int
+    title:     str
+    url:       str | None
+    date:      datetime | None
+    text:      str
+    media_ids: list[str]
+    language:  str
+    topic:     str
 
 
-# ──────────────────────────── модель ──────────────────────────── #
-
-@dataclass(slots=True)
-class NewsItem:
-    id: int
-    title: str
-    url: str
-    text: str
-    # ↓ обязательные закончились — дальше всё опционально
-    media_ids: Optional[List[str]] = None
-    date: Optional[str] = None
-    language: Optional[str] = None
-    topic: Optional[str] = None
-    summary: Optional[str] = None
-    tags: Optional[List[str]] = None
-    image_url: Optional[str] = None
+# ────────── функции форматирования ────────── #
+def build_caption(news: NewsProto) -> str:
+    date_str = news.date.strftime("%d.%m.%Y") if news.date else ""
+    return f"<b>{news.title}</b>\n\n{news.text}\n\n<i>{date_str}</i>"
 
 
-# ──────────────────────────── utils ──────────────────────────── #
-
-def _e(s: str | None) -> str:
-    """HTML-escape без ковычек, None → ''. """
-    return escape(s or "", quote=False)
-
-
-def build_caption(news: NewsItem) -> str:
-    parts = [f"<b>{_e(news.title)}</b>"]
-    if news.text:
-        parts.append(_e(news.text))
-    return "\n\n".join(parts)
-
-
-def build_meta(news: NewsItem) -> str:
+def build_meta(news: NewsProto) -> str:
     return (
-        f"<b>Источник:</b> <a href='{news.url}'>ссылка</a>\n"
-        f"<b>ID:</b> {news.id}"
+        f"Источник: <a href=\"{news.url}\">ссылка</a>\n"
+        f"ID: <code>{news.id}</code>"
     )

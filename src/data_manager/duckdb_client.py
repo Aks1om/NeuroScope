@@ -1,49 +1,49 @@
-# src/data_manager/duckdb_client.py
-import duckdb
+# src/data_manager/duckdb_client
 from pathlib import Path
+import duckdb
 from src.utils.paths import DB
 
+DDL_RAW = """
+CREATE TABLE IF NOT EXISTS raw_news (
+  id        UBIGINT PRIMARY KEY,
+  title     TEXT,
+  url       TEXT,
+  date      TIMESTAMP,
+  text      TEXT,
+  media_ids TEXT,
+  language  TEXT,
+  topic     TEXT
+);
+"""
+
+DDL_PROCESSED = """
+CREATE TABLE IF NOT EXISTS processed_news (
+  id        UBIGINT PRIMARY KEY,
+  title     TEXT,
+  url       TEXT,
+  date      TIMESTAMP,
+  text      TEXT,
+  media_ids TEXT,
+  language  TEXT,
+  topic     TEXT,
+  suggested BOOLEAN DEFAULT FALSE,
+  confirmed BOOLEAN DEFAULT FALSE
+);
+"""
+
+
 class DuckDBClient:
-    def __init__(self, db_path: Path | str = DB):
-        self.db_path = Path(db_path)
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self.conn = duckdb.connect(str(self.db_path))
-        self._ensure_tables()
+    """Singleton-подключение к DuckDB + создание схемы."""
 
-    def _ensure_tables(self):
-        # 1) Сырая таблица
-        self.conn.execute("DROP TABLE IF EXISTS raw_news;")
-        self.conn.execute("DROP TABLE IF EXISTS processed_news;")
+    def __init__(self, db_path: str | Path = DB, *, reset: bool = False):
+        self.path = Path(db_path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        if reset and self.path.exists():
+            self.path.unlink()
+        self.conn = duckdb.connect(self.path)
+        self._ensure_schema()
 
-        self.conn.execute("""
-        CREATE TABLE IF NOT EXISTS raw_news (
-          id         UBIGINT PRIMARY KEY,
-          title      VARCHAR,
-          url        VARCHAR,
-          date       TIMESTAMP,
-          text       VARCHAR,
-          media_ids  VARCHAR[],
-          language   VARCHAR,
-          topic      VARCHAR
-        );
-        """)
+    def _ensure_schema(self):
+        self.conn.execute(DDL_RAW)
+        self.conn.execute(DDL_PROCESSED)
 
-        # 2) Обработанная таблица
-        self.conn.execute("""
-        CREATE TABLE IF NOT EXISTS processed_news (
-          id         UBIGINT PRIMARY KEY,
-          title      VARCHAR,
-          url        VARCHAR,
-          date       TIMESTAMP,
-          text       VARCHAR,
-          media_ids  VARCHAR[],
-          language   VARCHAR,
-          topic      VARCHAR,
-          suggested  BOOLEAN DEFAULT FALSE,
-          confirmed  BOOLEAN DEFAULT FALSE
-        );
-        """)
-
-    def fetchdf(self, relation):
-        """Вернуть результат запроса в виде pandas.DataFrame."""
-        return relation.df()
