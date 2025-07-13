@@ -1,29 +1,29 @@
 {
   "settings": {
     "reset": true,
-    "poll_interval": 1800,
-    "first_run": true
+    "poll_interval": 900,
+    "first_run": false,
+    "use_chatgpt": false,
+    "test_one_raw": true
   },
   "telegram_channels": {
-    "suggested_chat_id": -1002857895412,
+    "suggested_chat_id": -4885589416,
     "topics": {
-      "auto": -1002556034541
+      "auto": "@Autogfpojoerg"
     }
   },
   "users": {
     "prog_ids": [1327341052, 444057295],
-    "admin_ids": [1327341052]
+    "admin_ids": [1279805536]
   },
   "source_map": {
     "auto": [
       {
         "class": "DromNewsScraper",
-        "module": "src.data_collector.web_scraper.drom_scraper",
         "url": "https://news.drom.ru/"
       },
       {
         "class": "KolesaNewsScraper",
-        "module": "src.data_collector.web_scraper.kolesa_news_scraper",
         "url": "https://www.kolesa.ru/news"
       }
     ]

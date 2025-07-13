@@ -39,7 +39,8 @@ class DuckDBClient:
           media_ids  VARCHAR[],
           language   VARCHAR,
           topic      VARCHAR,
-          suggested  BOOLEAN DEFAULT FALSE
+          suggested  BOOLEAN DEFAULT FALSE,
+          confirmed  BOOLEAN DEFAULT FALSE
         );
         """)
 

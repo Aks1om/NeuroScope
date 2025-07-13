@@ -1,118 +1,194 @@
+# src/bot/handlers/post.py
+from __future__ import annotations
+from pathlib import Path
+from types import SimpleNamespace
+
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from src.bot.filter import ProgFilter, AdminFilter
+from aiogram.types import (
+    CallbackQuery,
+    FSInputFile,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InputMediaPhoto,
+    Message,
+)
 
-# FSM
-class EditPostState(StatesGroup):
-    choosing_field = State()
-    editing_text = State()
-    editing_media = State()
-    editing_url = State()
+from src.utils.paths import MEDIA_DIR
 
-def get_post_admin_router(processed_repo):
-    router = Router()
 
-    # =========== КНОПКА "Редактировать" ===========
-    @router.callback_query(F.data.startswith("editpost_"), ProgFilter, AdminFilter)
-    async def editpost_callback(callback: CallbackQuery, state: FSMContext):
-        post_id = int(callback.data.split("_")[1])
-        await edit_post_start(callback.message, state, post_id=post_id)
-        await callback.answer()
+# ────────────────────────── FSM ────────────────────────── #
+class EditState(StatesGroup):
+    text = State()
+    media = State()
+    title = State()
 
-    # =========== /edit <id> ===========
-    @router.message(Command("edit"), ProgFilter, AdminFilter)
-    async def edit_post_start(message: Message, state: FSMContext, post_id=None):
+
+# ─────────────── helpers ─────────────── #
+def _target_chat(cfg: SimpleNamespace) -> int:
+    t = cfg.telegram_channels
+    topics = t.topics if hasattr(t, "topics") else {}
+    return getattr(topics, "auto", None) or t.suggested_chat_id
+
+
+def _main_kb(pid: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[
+            InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit:{pid}"),
+            InlineKeyboardButton(text="🗑 Удалить",       callback_data=f"delete:{pid}"),
+            InlineKeyboardButton(text="✅ Подтвердить",   callback_data=f"confirm:{pid}"),
+        ]]
+    )
+
+
+def _edit_kb(pid: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[
+            InlineKeyboardButton(text="Текст",     callback_data=f"ef:text:{pid}"),
+            InlineKeyboardButton(text="Медиа",     callback_data=f"ef:media:{pid}"),
+            InlineKeyboardButton(text="Заголовок", callback_data=f"ef:title:{pid}"),
+        ]]
+    )
+
+
+def _media_kb(pid: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[
+            InlineKeyboardButton(text="➕ Добавить", callback_data=f"m:add:{pid}"),
+            InlineKeyboardButton(text="➖ Убрать",   callback_data=f"m:del:{pid}"),
+        ]]
+    )
+
+
+async def _send_suggestion(bot, chat_id: int, post, kb):
+    """Отправить пост-предложку с учётом медиа ≤10 шт."""
+    caption = f"<b>{post.title}</b>\n{post.text}"
+    if post.media_ids:
+        album = [
+            InputMediaPhoto(
+                media=FSInputFile(Path(MEDIA_DIR) / mid),
+                **({"caption": caption, "parse_mode": "HTML"} if i == 0 else {})
+            )
+            for i, mid in enumerate(post.media_ids[:10])
+        ]
+        await bot.send_media_group(chat_id, album)
+        await bot.send_message(chat_id, "▼", reply_markup=kb)
+    else:
+        await bot.send_message(chat_id, caption, parse_mode="HTML", reply_markup=kb)
+
+
+# ──────────────── factory ──────────────── #
+def build_post_admin_router(repo, prog_admin_filter, cfg) -> Router:
+    r = Router()
+    chat_id = _target_chat(cfg)
+
+    # ────────── delete ────────── #
+    @r.callback_query(F.data.startswith("delete:"), prog_admin_filter)
+    async def delete_cb(cb: CallbackQuery):
+        pid = int(cb.data.split(":")[1])
+        repo.mark_rejected([pid])
         try:
-            if post_id is None:
-                post_id = int(message.text.split(maxsplit=1)[1])
-        except (IndexError, ValueError):
-            await message.reply("Укажи ID поста: /edit 123")
-            return
+            await cb.message.bot.delete_message(cb.message.chat.id, cb.message.reply_to_message.message_id)
+            await cb.message.delete()
+        except Exception:
+            pass
+        await cb.answer("Удалено.")
 
-        post = processed_repo.fetch_by_id(post_id)
+    # ────────── confirm ───────── #
+    @r.callback_query(F.data.startswith("confirm:"), prog_admin_filter)
+    async def confirm_cb(cb: CallbackQuery):
+        pid = int(cb.data.split(":")[1])
+        post = repo.fetch_by_id(pid)
         if not post:
-            await message.reply("Пост с таким ID не найден.")
-            return
+            return await cb.answer("Не найдено", show_alert=True)
+        await _send_suggestion(cb.bot, chat_id, post, None)
+        repo.mark_confirmed([pid])
+        await cb.answer("Отправлено!")
 
-        text = post.get('text') or post.get('content') or ''
-        await message.reply(
-            f"Редактируем пост {post_id}.\n\n"
-            f"<b>Текущий текст:</b>\n{text}\n\n"
-            "Что менять?\n"
-            "1. text — текст\n"
-            "2. media — медиа\n"
-            "3. url — ссылка\n\n"
-            "<i>Напиши: text / media / url</i>",
-            parse_mode="HTML"
-        )
-        await state.update_data(post_id=post_id)
-        await state.set_state(EditPostState.choosing_field)
+    # ────────── edit menu ─────── #
+    @r.callback_query(F.data.startswith("edit:"), prog_admin_filter)
+    async def edit_menu(cb: CallbackQuery):
+        pid = int(cb.data.split(":")[1])
+        await cb.message.answer(f"Редактирование {pid}", reply_markup=_edit_kb(pid))
+        await cb.answer()
 
-    # =========== Шаг выбора поля ===========
-    @router.message(EditPostState.choosing_field, ProgFilter, AdminFilter)
-    async def choose_field(message: Message, state: FSMContext):
-        choice = message.text.strip().lower()
-        if choice == "text":
-            await message.reply("Пришли новый текст поста.")
-            await state.set_state(EditPostState.editing_text)
-        elif choice == "media":
-            await message.reply("Пришли новое фото/видео или альбом (несколько медиа).")
-            await state.set_state(EditPostState.editing_media)
-        elif choice == "url":
-            await message.reply("Пришли новый URL поста.")
-            await state.set_state(EditPostState.editing_url)
+    # ───── pick field (ef:...) ─── #
+    @r.callback_query(F.data.startswith("ef:"), prog_admin_filter)
+    async def pick_field(cb: CallbackQuery, state: FSMContext):
+        _, field, pid = cb.data.split(":")
+        pid = int(pid)
+        await state.update_data(pid=pid)
+        if field == "text":
+            await state.set_state(EditState.text)
+            await cb.message.answer("Новый текст:")
+        elif field == "title":
+            await state.set_state(EditState.title)
+            await cb.message.answer("Новый заголовок:")
         else:
-            await message.reply("Варианты: text / media / url.")
+            await cb.message.answer("Медиа: выбери действие", reply_markup=_media_kb(pid))
+        await cb.answer()
 
-    # =========== Сохранение нового текста ===========
-    @router.message(EditPostState.editing_text, ProgFilter, AdminFilter)
-    async def edit_text(message: Message, state: FSMContext):
-        data = await state.get_data()
-        post_id = data["post_id"]
-        processed_repo.update_text(post_id, message.text)
-        await message.reply("Текст поста обновлён!")
+    # ───── media action (m:add / m:del) ──── #
+    @r.callback_query(F.data.startswith("m:"), prog_admin_filter)
+    async def media_mode(cb: CallbackQuery, state: FSMContext):
+        _, mode, pid = cb.data.split(":")
+        await state.update_data(action=mode, pid=int(pid))
+        await state.set_state(EditState.media)
+        await cb.message.answer("Пришли файлы (add) или номера «1,3…» (del).")
+        await cb.answer()
+
+    # ───── edit text ───── #
+    @r.message(EditState.text, prog_admin_filter)
+    async def edit_text(msg: Message, state: FSMContext):
+        pid = (await state.get_data())["pid"]
+        repo.update_text(pid, msg.text)
+        post = repo.fetch_by_id(pid)
+        await _send_suggestion(msg.bot, msg.chat.id, post, _main_kb(pid))
         await state.clear()
 
-    # =========== Сохранение нового URL ===========
-    @router.message(EditPostState.editing_url, ProgFilter, AdminFilter)
-    async def edit_url(message: Message, state: FSMContext):
-        data = await state.get_data()
-        post_id = data["post_id"]
-        processed_repo.update_url(post_id, message.text)
-        await message.reply("URL поста обновлён!")
+    # ───── edit title ───── #
+    @r.message(EditState.title, prog_admin_filter)
+    async def edit_title(msg: Message, state: FSMContext):
+        pid = (await state.get_data())["pid"]
+        repo.update_title(pid, msg.text)
+        post = repo.fetch_by_id(pid)
+        await _send_suggestion(msg.bot, msg.chat.id, post, _main_kb(pid))
         await state.clear()
 
-    # =========== Сохранение новых медиа ===========
-    @router.message(EditPostState.editing_media, ProgFilter, AdminFilter)
-    async def edit_media(message: Message, state: FSMContext):
+    # ───── edit media ───── #
+    @r.message(EditState.media, prog_admin_filter)
+    async def edit_media(msg: Message, state: FSMContext):
         data = await state.get_data()
-        post_id = data["post_id"]
-        media_ids = []
-        if message.photo:
-            media_ids = [message.photo[-1].file_id]
-        elif message.video:
-            media_ids = [message.video.file_id]
-        elif message.media_group_id and hasattr(message, 'media_group'):
-            media_ids = [m.photo[-1].file_id if m.photo else m.video.file_id for m in message.media_group]
-        else:
-            await message.reply("Пришли фото, видео или альбом.")
-            return
+        pid, action = data["pid"], data["action"]
+        post = repo.fetch_by_id(pid)
+        if not post:
+            return await msg.reply("Не найдено.")
+        mids = post.media_ids.copy()
 
-        processed_repo.update_media(post_id, media_ids)
-        await message.reply("Медиа поста обновлены!")
+        if action == "add":
+            new_mids = []
+            if msg.photo:
+                new_mids.append(msg.photo[-1].file_id)
+            elif msg.video:
+                new_mids.append(msg.video.file_id)
+            elif getattr(msg, "media_group", None):
+                for m in msg.media_group:
+                    new_mids.append(m.photo[-1].file_id if m.photo else m.video.file_id)
+            if not new_mids:
+                return await msg.reply("Не увидел медиа.")
+            mids.extend(new_mids)
+        else:  # del
+            try:
+                idxs = [int(i) - 1 for i in msg.text.split(",")]
+            except Exception:
+                return await msg.reply("Укажи номера через запятую.")
+            mids = [m for i, m in enumerate(mids) if i not in idxs]
+
+        repo.update_media(pid, mids)
+        post = repo.fetch_by_id(pid)
+        await _send_suggestion(msg.bot, msg.chat.id, post, _main_kb(pid))
         await state.clear()
 
-    # =========== /edit_help ===========
-    @router.message(Command("edit_help"), ProgFilter, AdminFilter)
-    async def edit_help(message: Message):
-        await message.reply(
-            "/edit <id> — начать редактирование поста\n"
-            "Доступные поля: text, media, url\n"
-            "Редактирование только для программистов и админов.",
-            parse_mode="HTML"
-        )
-
-    return router
+    return r

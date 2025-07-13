@@ -1,12 +1,25 @@
 # src/services/sending_service.py
 import asyncio
 import logging
+from pathlib import Path
+from typing import List
+
 from aiogram import Bot
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
-from aiogram.types import InputMediaPhoto, FSInputFile, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    InputMediaPhoto,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    FSInputFile,
+)
+
 from src.utils.paths import MEDIA_DIR
+from src.utils.formatters import NewsItem, build_caption, build_meta
+
 
 class SendingService:
+    MAX_PHOTOS = 10
+
     def __init__(
         self,
         bot: Bot,
@@ -16,124 +29,94 @@ class SendingService:
     ):
         self.bot = bot
         self.chat_id = chat_id
-        self.processed_repo = processed_repo
+        self.repo = processed_repo
         self.logger = logger
-        # Время последней отправки медиа-группы
-        self._last_media_group_time = 0.0
 
-    async def _send_media_group_throttled(self, media: list[InputMediaPhoto]):
-        """Отправляет медиа-группу, соблюдая ограничение в 1 секунду между вызовами."""
-        loop = asyncio.get_event_loop()
-        now = loop.time()
-        elapsed = now - self._last_media_group_time
-        if elapsed < 1.0:
-            await asyncio.sleep(1.0 - elapsed)
-        result = await self.bot.send_media_group(
-            chat_id=self.chat_id,
-            media=media
-        )
-        # Обновляем время последней отправки
-        self._last_media_group_time = loop.time()
-        return result
+    # ────────────────────────────── helpers ───────────────────────────── #
+
+    async def _send_media_group(self, media: List[InputMediaPhoto]):
+        try:
+            return await self.bot.send_media_group(self.chat_id, media)
+        except TelegramRetryAfter as e:
+            self.logger.warning("Flood control (album): %s s", e.retry_after)
+            await asyncio.sleep(e.retry_after)
+            return await self.bot.send_media_group(self.chat_id, media)
+
+    async def _send_text(self, text: str, kb: InlineKeyboardMarkup | None = None):
+        try:
+            return await self.bot.send_message(
+                self.chat_id,
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=kb,
+            )
+        except TelegramRetryAfter as e:
+            self.logger.warning("Flood control: %s s", e.retry_after)
+            await asyncio.sleep(e.retry_after)
+            return await self.bot.send_message(
+                self.chat_id,
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=kb,
+            )
+
+    @ staticmethod
+    def _edit_keyboard(post_id: int) -> InlineKeyboardMarkup:
+        """Инлайн-клавиатура для модерации поста (aiogram v3)."""
+        kb = [
+            [
+                InlineKeyboardButton(text = "✏️ Редактировать", callback_data = f"edit:{post_id}"),
+                InlineKeyboardButton(text = "🗑 Удалить", callback_data = f"delete:{post_id}"),
+                InlineKeyboardButton(text = "✅ Подтвердить", callback_data = f"confirm:{post_id}"),
+            ]
+        ]
+        return InlineKeyboardMarkup(inline_keyboard=kb)
+
+    # ─────────────────────────────── core ─────────────────────────────── #
 
     async def send(self, limit: int, first_run: bool):
         """
-        Отправляет неотправленные новости в Telegram.
-        Ограничивает количество отправляемых элементов параметром limit.
-        При первом прогоне помечает все новости как отправленные и ничего не отправляет.
+        Шлёт новости в канал/предложку.
+        Итог: два сообщения на новость:
+          1) пост (заголовок + текст + ≤10 фото)
+          2) meta-пост «Источник / ID» + inline-кнопки
         """
-        # При первом запуске не шлём ничего, просто помечаем все новости
+        items = self.repo.fetch_unsuggested(limit)
         if first_run:
-            try:
-                if hasattr(self.processed_repo, 'mark_all_suggested'):
-                    self.processed_repo.mark_all_suggested()
-                else:
-                    ids = [item['id'] for item in self.processed_repo.fetch_unsuggested(limit)]
-                    self.processed_repo.mark_suggested(ids)
-                self.logger.debug("Первый прогон: все новости помечены как отправленные")
-            except Exception as e:
-                self.logger.error(f"Ошибка при пометке всех новостей: {e}")
+            self.repo.mark_suggested([it["id"] for it in items])
+            self.logger.debug("First run → just mark %d posts sent", len(items))
             return
 
-        items = self.processed_repo.fetch_unsuggested(limit=limit)
-        if not items:
-            self.logger.debug("Нет новостей для отправки.")
-            return
+        for raw in items:
+            news = NewsItem(**raw)
 
-        for it in items:
-            title = it.get('title', '')
-            text = it.get('text') or it.get('content', '')
-            url = it.get('url', '')
-            media_ids = it.get('media_ids', [])
+            # ---------- 1) главный пост ----------
+            caption = build_caption(news)
 
-            msg_text = f"<b>{title}</b>\n{text}\n<a href='{url}'>Читать далее</a>"
+            if news.media_ids:                        # есть фото → альбом
+                mids = news.media_ids[: self.MAX_PHOTOS]
+                if len(news.media_ids) > self.MAX_PHOTOS:
+                    self.logger.warning("Photos > %d, берём первые.", self.MAX_PHOTOS)
 
-            # Отправка текстового сообщения
-            try:
-                text_msg = await self.bot.send_message(
-                    chat_id=self.chat_id,
-                    text=msg_text,
-                    parse_mode='HTML',
-                    disable_web_page_preview=True
-                )
-            except TelegramRetryAfter as e:
-                self.logger.warning(f"Flood control: retry after {e.retry_after}s")
-                await asyncio.sleep(e.retry_after)
-                text_msg = await self.bot.send_message(
-                    chat_id=self.chat_id,
-                    text=msg_text,
-                    parse_mode='HTML',
-                    disable_web_page_preview=True
-                )
-            first_msg_id = text_msg.message_id
+                album: List[InputMediaPhoto] = []
+                for i, mid in enumerate(mids):
+                    file = FSInputFile(Path(MEDIA_DIR) / mid)
+                    if i == 0:
+                        album.append(InputMediaPhoto(media=file, caption=caption, parse_mode="HTML"))
+                    else:
+                        album.append(InputMediaPhoto(media=file))
+                await self._send_media_group(album)
 
-            # Если есть медиа, отправляем альбом (до 10 фото)
-            if media_ids:
-                if len(media_ids) > 10:
-                    self.logger.warning(
-                        f"Media count {len(media_ids)} > 10 for {it['id']}, sending only first 10"
-                    )
-                album_ids = media_ids[:10]
-                album = []  # type: list[InputMediaPhoto]
-                for media_id in album_ids:
-                    path = MEDIA_DIR / media_id
-                    album.append(InputMediaPhoto(media=FSInputFile(str(path))))
+            else:                                     # без фото → просто текст
+                await self._send_text(caption)
 
-                try:
-                    await self._send_media_group_throttled(album)
-                except TelegramRetryAfter as e:
-                    self.logger.warning(f"Flood control: retry after {e.retry_after}s")
-                    await asyncio.sleep(e.retry_after)
-                    await self._send_media_group_throttled(album)
-                except TelegramBadRequest as e:
-                    self.logger.error(f"Failed media_group for {it['id']}: {e}")
+            # ---------- 2) meta-пост ----------
+            meta_text = build_meta(news)
+            kb = self._edit_keyboard(news.id)
+            await self._send_text(meta_text, kb)
 
-            # Отправка клавиатуры под текстовым сообщением
-            try:
-                await self.bot.send_message(
-                    chat_id=self.chat_id,
-                    text=f"Управление постом ID: <code>{it['id']}</code>",
-                    reply_markup=self._edit_keyboard(it['id']),
-                    parse_mode='HTML',
-                    reply_to_message_id=first_msg_id
-                )
-            except Exception as e:
-                self.logger.error(f"Failed to send control keyboard for {it['id']}: {e}")
-
-            # Помечаем как отправленное
-            self.processed_repo.mark_suggested([it['id']])
-
-            # Пауза между отправками элементов (чтобы не перегружать Telegram)
-            await asyncio.sleep(1.0)
-
-    def _edit_keyboard(self, post_id: int) -> InlineKeyboardMarkup:
-        """
-        Создаёт InlineKeyboardMarkup с кнопками редактирования и удаления.
-        """
-        btn_edit = InlineKeyboardButton(
-            text='Редактировать', callback_data=f'edit:{post_id}'
-        )
-        btn_delete = InlineKeyboardButton(
-            text='Удалить', callback_data=f'delete:{post_id}'
-        )
-        return InlineKeyboardMarkup(inline_keyboard=[[btn_edit, btn_delete]])
+            # ---------- отметка "отправлено" ----------
+            self.repo.mark_suggested([news.id])
+            await asyncio.sleep(1.0)                  # чуть притормозим

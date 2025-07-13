@@ -1,29 +1,42 @@
-# src/utils/formatters.py
-from src.utils.news import NewsItem
+from dataclasses import dataclass
+from html import escape
+from typing import List, Optional
 
-def format_news_for_telegram(news_item: NewsItem) -> dict:
-    message_parts = []
 
-    # Заголовок (обязательно)
-    message_parts.append(f"*{news_item.title.strip()}*")
+# ──────────────────────────── модель ──────────────────────────── #
 
-    # Текст новости (если есть summary)
-    if news_item.summary:
-        message_parts.append(f"\n_{news_item.summary.strip()}_")
+@dataclass(slots=True)
+class NewsItem:
+    id: int
+    title: str
+    url: str
+    text: str
+    # ↓ обязательные закончились — дальше всё опционально
+    media_ids: Optional[List[str]] = None
+    date: Optional[str] = None
+    language: Optional[str] = None
+    topic: Optional[str] = None
+    summary: Optional[str] = None
+    tags: Optional[List[str]] = None
+    image_url: Optional[str] = None
 
-    # Ссылка на источник (если есть)
-    if news_item.url:
-        message_parts.append(f"\n[Подробнее тут]({news_item.url.strip()})")
 
-    # Теги (если есть)
-    if news_item.tags:
-        tags_str = ', '.join([f"#{tag.strip().replace(' ', '_')}" for tag in news_item.tags])
-        message_parts.append(f"\n{tags_str}")
+# ──────────────────────────── utils ──────────────────────────── #
 
-    full_message = "\n".join(message_parts)
+def _e(s: str | None) -> str:
+    """HTML-escape без ковычек, None → ''. """
+    return escape(s or "", quote=False)
 
-    return {
-        "text": full_message,
-        "parse_mode": "Markdown",
-        "image_url": news_item.image_url
-    }
+
+def build_caption(news: NewsItem) -> str:
+    parts = [f"<b>{_e(news.title)}</b>"]
+    if news.text:
+        parts.append(_e(news.text))
+    return "\n\n".join(parts)
+
+
+def build_meta(news: NewsItem) -> str:
+    return (
+        f"<b>Источник:</b> <a href='{news.url}'>ссылка</a>\n"
+        f"<b>ID:</b> {news.id}"
+    )
