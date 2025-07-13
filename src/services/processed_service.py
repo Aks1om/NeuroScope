@@ -46,6 +46,7 @@ class ProcessedService:
         done_ids = self._already_done_ids()
         raw_items: List[RawNewsItem] = self.raw_repo.fetch_all()
 
+        recent_texts = self.dup_filter.get_recent_texts(raw_items, done_ids)
         batch: List[ProcessedNewsItem] = []
 
         for item in raw_items:
@@ -53,15 +54,11 @@ class ProcessedService:
                 continue
 
             text = item.text
-            lang = item.language
 
-            # 1) Перевод, если нужно
-            if lang == "en":
-                try:
-                    text = self.translate.translate(text)
-                    lang = "ru"
-                except Exception as e:
-                    self.logger.error("Translation failed for %s: %s", item.id, e)
+            # 1) проверка на похожие новости (за последние dub_hours_threshold)
+            if self.dup_filter.is_similar_recent(text, recent_texts):
+                self.logger.debug("Similar news found, skip id=%s", item.id)
+                continue
 
             # 2) GPT-обработка
             if not first_run and self.use_chatgpt:
@@ -78,7 +75,7 @@ class ProcessedService:
                 date=_parse_date(item.date),
                 text=text,
                 media_ids=item.media_ids,
-                language=lang,
+                language=item.language,
                 topic=item.topic,
             )
             batch.append(processed)

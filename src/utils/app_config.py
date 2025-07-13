@@ -22,12 +22,13 @@ class UsersBlock(BaseModel):
 
 
 class SettingsBlock(BaseModel):
-    reset:         bool = False
-    poll_interval: int  = 900
+    reset:         bool = True
     first_run:     bool = True
-    use_chatgpt:   bool = False
+    use_chatgpt:   bool = True
     test_one_raw:  bool = False
-
+    poll_interval: int = 900
+    dub_threshold: int = 0.90
+    dub_hours_threshold: int = 6
 
 class AppConfig(BaseModel):
     telegram_channels: TelegramChannels

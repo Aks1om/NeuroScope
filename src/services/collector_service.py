@@ -60,15 +60,21 @@ class CollectorService:
                 if fid:
                     media_ids.append(fid)
 
+            raw_text = r.get("text", "")
+            lang = self.translate.detect_language(raw_text)
+            if lang == "en":
+                raw_text = self.translate.translate(raw_text)
+                lang = "ru"
+
             # ─── модель ─── #
             item = RawNewsItem(
                 id=self._make_id(r["url"]),
                 title=r["title"],
                 url=HttpUrl(r["url"]),
                 date=_parse_date(r.get("date")),
-                text=r.get("text", ""),
+                text=raw_text,
                 media_ids=media_ids,
-                language=self.translate.detect_language(r.get("text", "")),
+                language=lang,
                 topic=r.get("topic", "auto"),
             )
             items.append(item)
