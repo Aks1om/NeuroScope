@@ -1,9 +1,9 @@
 {
   "settings": {
     "reset": true,
-    "first_run": false,
+    "first_run": true,
     "use_chatgpt": false,
-    "test_one_raw": true,
+    "test_one_raw": false,
     "poll_interval": 900,
     "dub_threshold": 0.90,
     "dub_hours_threshold": 6

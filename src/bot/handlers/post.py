@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import uuid
 from pathlib import Path
+from typing import List
 
-from aiogram import F, Router
+from aiogram import F, Router, Bot
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -13,6 +15,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
     InputMediaPhoto,
     Message,
+    File,
 )
 
 from src.utils.paths import MEDIA_DIR
@@ -24,6 +27,12 @@ class EditState(StatesGroup):
     media = State()
     title = State()
 
+class EditMedia(StatesGroup):
+    waiting_add_photo = State()   # ждём фото/альбом
+    waiting_add_index = State()   # ждём позицию (цифру)
+    waiting_del_nums  = State()   # ждём «1,3…» для удаления
+
+
 # ─────────────── helpers ─────────────── #
 def _target_chat(cfg: AppConfig) -> int | str:
     return (
@@ -33,9 +42,9 @@ def _target_chat(cfg: AppConfig) -> int | str:
 
 
 def _main_kb(pid: int) -> InlineKeyboardMarkup:
-    """Кнопки управления – в callback-data только ID поста."""
+    """Кнопки управления постом (основное сообщение)."""
     return InlineKeyboardMarkup(
-        inline_keyboard=[[
+        inline_keyboard=[[  # в callback-data передаём id поста
             InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit:{pid}"),
             InlineKeyboardButton(text="🗑 Удалить",        callback_data=f"delete:{pid}"),
             InlineKeyboardButton(text="✅ Подтвердить",    callback_data=f"confirm:{pid}"),
@@ -45,9 +54,9 @@ def _main_kb(pid: int) -> InlineKeyboardMarkup:
 
 def _edit_kb(pid: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[[
-            InlineKeyboardButton(text="Текст",     callback_data=f"ef:text:{pid}"),
-            InlineKeyboardButton(text="Медиа",     callback_data=f"ef:media:{pid}"),
+        inline_keyboard=[[  # выбор поля для редактирования
+            InlineKeyboardButton(text="Текст", callback_data=f"ef:text:{pid}"),
+            InlineKeyboardButton(text="Медиа", callback_data=f"ef:media:{pid}"),
             InlineKeyboardButton(text="Заголовок", callback_data=f"ef:title:{pid}"),
         ]]
     )
@@ -55,33 +64,38 @@ def _edit_kb(pid: int) -> InlineKeyboardMarkup:
 
 def _media_kb(pid: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[[
+        inline_keyboard=[[  # режимы для медиа
             InlineKeyboardButton(text="➕ Добавить", callback_data=f"m:add:{pid}"),
             InlineKeyboardButton(text="➖ Убрать",   callback_data=f"m:del:{pid}"),
         ]]
     )
 
 
+# ───────────────────── отправка поста / пересборка ───────────────────── #
 async def _send_suggestion(
-    bot,
+    bot: Bot,
     chat_id: int | str,
     post,
     *,
-    with_kb: bool = True,           # ← показывать ли meta-пост и кнопки
+    with_kb: bool = True,
 ):
     """
-    Возвращает (album_ids, meta_mid).
-    album_ids нужен, чтобы обновить main_mid в БД.
+    Отправляет пост-предложку.
+    Возвращает (album_ids, meta_mid) — нужны, чтобы обновить БД.
     """
     caption = f"<b>{post.title}</b>\n{post.text}"
-    album_ids: list[int] = []
+    album_ids: List[int] = []
     meta_mid: int | None = None
 
-    # ── ALBUM ─────────────────────────────────────────────
+    # ---------- ALBUM ----------
     if post.media_ids:
+        def _media_src(m: str):
+            p = Path(MEDIA_DIR) / m
+            return FSInputFile(p) if p.exists() else m  # локальный файл или file_id
+
         album = [
             InputMediaPhoto(
-                media=FSInputFile(Path(MEDIA_DIR) / mid),
+                media=_media_src(mid),
                 **({"caption": caption, "parse_mode": "HTML"} if i == 0 else {}),
             )
             for i, mid in enumerate(post.media_ids[:10])
@@ -93,30 +107,31 @@ async def _send_suggestion(
             meta = await bot.send_message(
                 chat_id,
                 f"Источник: <a href='{post.url}'>ссылка</a>\nID: <code>{post.id}</code>",
-                parse_mode = "HTML",
-                disable_web_page_preview = False,
-                reply_markup = _main_kb(post.id),
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=_main_kb(post.id),
             )
             meta_mid = meta.message_id
 
-    # ── SINGLE ────────────────────────────────────────────
+    # ---------- SINGLE ----------
     else:
         msg = await bot.send_message(chat_id, caption, parse_mode="HTML")
         album_ids = [msg.message_id]
         if with_kb:
             await bot.edit_message_reply_markup(
-                chat_id, msg.message_id,
-                reply_markup = _main_kb(post.id),
+                chat_id, msg.message_id, reply_markup=_main_kb(post.id)
             )
+
     return album_ids, meta_mid
 
-async def _purge_old(bot, chat_id: int, *message_ids):
-    """Удаляем старый альбом + meta-пост."""
+
+async def _purge_old(bot: Bot, chat_id: int, *message_ids):
+    """Удаляет старый альбом + meta-сообщение."""
     ids = [mid for mid in message_ids if mid]
     if not ids:
         return
     try:
-        await bot.delete_messages(chat_id, ids)      # Bot API 7.1+
+        await bot.delete_messages(chat_id, ids)  # Bot API 7.1+
     except Exception:
         for mid in ids:
             try:
@@ -124,12 +139,13 @@ async def _purge_old(bot, chat_id: int, *message_ids):
             except Exception:
                 pass
 
-# ──────────────── factory ──────────────── #
+
+# ──────────────── ROUTER BUILD ──────────────── #
 def build_post_admin_router(repo, prog_admin_filter, cfg: AppConfig) -> Router:
     router = Router()
     publish_chat = _target_chat(cfg)
 
-    # DELETE
+    # ---------- DELETE ----------
     @router.callback_query(F.data.startswith("delete:"), prog_admin_filter)
     async def delete_cb(cb: CallbackQuery):
         pid = int(cb.data.split(":")[1])
@@ -137,7 +153,7 @@ def build_post_admin_router(repo, prog_admin_filter, cfg: AppConfig) -> Router:
         await _purge_old(cb.bot, cb.message.chat.id, *post.album_mids, post.meta_mid)
         await cb.answer("Удалено.")
 
-    # CONFIRM
+    # ---------- CONFIRM ----------
     @router.callback_query(F.data.startswith("confirm:"), prog_admin_filter)
     async def confirm_cb(cb: CallbackQuery):
         pid = int(cb.data.split(":")[1])
@@ -149,11 +165,11 @@ def build_post_admin_router(repo, prog_admin_filter, cfg: AppConfig) -> Router:
         repo.set_flag("confirmed", [pid])
         await cb.answer("Отправлено!")
 
-    # EDIT-MENU
+    # ---------- EDIT MENU ----------
     @router.callback_query(F.data.startswith("edit:"), prog_admin_filter)
     async def edit_menu(cb: CallbackQuery, state: FSMContext):
         pid = int(cb.data.split(":")[1])
-        await state.update_data(pid=pid)                      # храним только pid
+        await state.update_data(pid=pid)
         await cb.message.answer(f"Редактирование {pid}", reply_markup=_edit_kb(pid))
         await cb.answer()
 
@@ -163,100 +179,148 @@ def build_post_admin_router(repo, prog_admin_filter, cfg: AppConfig) -> Router:
         _, field, pid = cb.data.split(":")
         pid = int(pid)
         await state.update_data(pid=pid)
+
         if field == "text":
             await state.set_state(EditState.text)
             await cb.message.answer("Новый текст:")
         elif field == "title":
             await state.set_state(EditState.title)
             await cb.message.answer("Новый заголовок:")
-        else:
+        else:  # media
             await cb.message.answer("Медиа: выбери действие", reply_markup=_media_kb(pid))
             await state.set_state(EditState.media)
         await cb.answer()
 
-    # переключение add/del для медиа
+    # переключение режима add/del для медиа
     @router.callback_query(F.data.startswith("m:"), prog_admin_filter)
     async def media_mode(cb: CallbackQuery, state: FSMContext):
         _, mode, pid = cb.data.split(":")
         await state.update_data(pid=int(pid), action=mode)
-        await state.set_state(EditState.media)
-        await cb.message.answer("Пришли файлы (add) или номера «1,3…» (del).")
+        if mode == "add":
+            await cb.message.answer("Пришли фото/альбом — одним сообщением.")
+            await state.set_state(EditMedia.waiting_add_photo)
+        else:  # del
+            await cb.message.answer("Укажи номера через запятую.")
+            await state.set_state(EditMedia.waiting_del_nums)
         await cb.answer()
 
-    # edit TEXT
+    # ───────────────────── TEXT / TITLE ───────────────────── #
     @router.message(EditState.text, prog_admin_filter)
     async def edit_text(msg: Message, state: FSMContext):
-        data = await state.get_data()
-        pid = data["pid"]
-
+        pid = (await state.get_data())["pid"]
         repo.update_fields(pid, text=msg.text)
         post = repo.fetch_by_id(pid)
 
         await _purge_old(msg.bot, msg.chat.id, *post.album_mids, post.meta_mid)
         album_ids, meta_mid = await _send_suggestion(msg.bot, msg.chat.id, post)
-        repo.update_fields(pid,
-                           main_mid=(album_ids[0] if album_ids else None),
-                           meta_mid=meta_mid)
+        repo.update_fields(
+            pid,
+            main_mid=(album_ids[0] if album_ids else None),
+            meta_mid=meta_mid,
+        )
         await state.clear()
 
-    # edit TITLE
     @router.message(EditState.title, prog_admin_filter)
     async def edit_title(msg: Message, state: FSMContext):
         pid = (await state.get_data())["pid"]
-
         repo.update_fields(pid, title=msg.text)
         post = repo.fetch_by_id(pid)
 
         await _purge_old(msg.bot, msg.chat.id, *post.album_mids, post.meta_mid)
         album_ids, meta_mid = await _send_suggestion(msg.bot, msg.chat.id, post)
-        repo.update_fields(pid,
-                           main_mid=(album_ids[0] if album_ids else None),
-                           meta_mid=meta_mid)
+        repo.update_fields(
+            pid,
+            main_mid=(album_ids[0] if album_ids else None),
+            meta_mid=meta_mid,
+        )
         await state.clear()
 
-    # edit MEDIA
-    @router.message(EditState.media, prog_admin_filter)
-    async def edit_media(msg: Message, state: FSMContext):
+    # ───────────────────── MEDIA: ADD (step 1) ───────────────────── #
+    @router.message(EditMedia.waiting_add_photo, prog_admin_filter)
+    async def media_add_photo(msg: Message, state: FSMContext):
+        # собираем file_id-ы
+        file_ids: List[str] = []
+        if msg.photo:
+            file_ids.append(msg.photo[-1].file_id)
+        elif msg.video:
+            file_ids.append(msg.video.file_id)
+        elif getattr(msg, "media_group", None):
+            for m in msg.media_group:
+                file_ids.append(m.photo[-1].file_id if m.photo else m.video.file_id)
+
+        if not file_ids:
+            return await msg.reply("Не увидел медиа.")
+
         data = await state.get_data()
-        pid    = data["pid"]
-        action = data["action"]          # 'add' | 'del'
+        pid = data["pid"]
+        cur_mids: List[str] = repo.fetch_by_id(pid).media_ids
 
-        post = repo.fetch_by_id(pid)
-        if not post:
-            return await msg.reply("Не найдено.")
+        if len(cur_mids) + len(file_ids) > 10:
+            return await msg.reply("Максимум 10 фото. Удалите лишние и попробуйте снова.")
 
-        mids = list(post.media_ids)
+        await state.update_data(pending=file_ids, cur_mids=cur_mids)
+        await msg.reply(f"Теперь пришли позицию 1…{len(cur_mids)+1} (0 — в конец).")
+        await state.set_state(EditMedia.waiting_add_index)
 
-        if action == "add":
-            new_mids = []
-            if msg.photo:
-                new_mids.append(msg.photo[-1].file_id)
-            elif msg.video:
-                new_mids.append(msg.video.file_id)
-            elif getattr(msg, "media_group", None):
-                for m in msg.media_group:
-                    new_mids.append(
-                        m.photo[-1].file_id if m.photo else m.video.file_id
-                    )
-            if not new_mids:
-                return await msg.reply("Не увидел медиа.")
-            mids.extend(new_mids)
-        else:  # del
-            try:
-                idxs = [int(i) - 1 for i in msg.text.split(",")]
-            except Exception:
-                return await msg.reply("Укажи номера через запятую.")
-            mids = [m for i, m in enumerate(mids) if i not in idxs]
+    # ───────────────────── MEDIA: ADD (step 2) ───────────────────── #
+    @router.message(EditMedia.waiting_add_index, prog_admin_filter)
+    async def media_add_index(msg: Message, state: FSMContext):
+        if not msg.text or not msg.text.isdigit():
+            return await msg.reply("Нужна одна цифра позиции.")
+        pos = int(msg.text)
+
+        data = await state.get_data()
+        pid       = data["pid"]
+        file_ids  = data["pending"]
+        mids      = list(data["cur_mids"])  # копия
+
+        # скачиваем и сохраняем
+        new_local: List[str] = []
+        for fid in file_ids:
+            tg_file: File = await msg.bot.get_file(fid)
+            ext   = Path(tg_file.file_path).suffix or ".jpg"
+            name  = f"{uuid.uuid4().hex[:16]}{ext}"
+            await msg.bot.download_file(tg_file.file_path, MEDIA_DIR / name)
+            new_local.append(name)
+
+        idx = max(0, min(pos - 1, len(mids))) if pos else len(mids)
+        mids[idx:idx] = new_local
 
         repo.update_fields(pid, media_ids=mids)
         post = repo.fetch_by_id(pid)
 
         await _purge_old(msg.bot, msg.chat.id, *post.album_mids, post.meta_mid)
-
         album_ids, meta_mid = await _send_suggestion(msg.bot, msg.chat.id, post)
-        repo.update_fields(pid,
-                           main_mid=(album_ids[0] if album_ids else None),
-                           meta_mid=meta_mid)
+        repo.update_fields(
+            pid,
+            main_mid=(album_ids[0] if album_ids else None),
+            meta_mid=meta_mid,
+        )
+        await state.clear()
+        await msg.answer("Фото добавлены.")
+
+    # ───────────────────── MEDIA: DEL ───────────────────── #
+    @router.message(EditMedia.waiting_del_nums, prog_admin_filter)
+    async def media_del_nums(msg: Message, state: FSMContext):
+        try:
+            idxs = [int(i) - 1 for i in msg.text.split(",")]
+        except Exception:
+            return await msg.reply("Укажи номера через запятую.")
+
+        pid  = (await state.get_data())["pid"]
+        mids = list(repo.fetch_by_id(pid).media_ids)
+        mids = [m for i, m in enumerate(mids) if i not in idxs]
+
+        repo.update_fields(pid, media_ids=mids)
+        post = repo.fetch_by_id(pid)
+
+        await _purge_old(msg.bot, msg.chat.id, *post.album_mids, post.meta_mid)
+        album_ids, meta_mid = await _send_suggestion(msg.bot, msg.chat.id, post)
+        repo.update_fields(
+            pid,
+            main_mid=(album_ids[0] if album_ids else None),
+            meta_mid=meta_mid,
+        )
         await state.clear()
 
     return router

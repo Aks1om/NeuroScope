@@ -45,7 +45,7 @@ class DuplicateFilterService(Generic[T]):
         и моложе dub_hours_threshold.
         """
 
-        cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours)
+        cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
         return [
             it.text
             for it in raw_items

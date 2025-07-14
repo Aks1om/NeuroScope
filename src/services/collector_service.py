@@ -28,7 +28,7 @@ class CollectorService:
         duplicate_filter,
         logger,
         test_one_raw: bool = False,
-        item_index: int = 0,
+        item_index: int = 2,
     ):
         self.raw_repo = raw_repo
         self.collector = collector

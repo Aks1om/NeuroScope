@@ -27,7 +27,7 @@ class SettingsBlock(BaseModel):
     use_chatgpt:   bool = True
     test_one_raw:  bool = False
     poll_interval: int = 900
-    dub_threshold: int = 0.90
+    dub_threshold: float = 0.90
     dub_hours_threshold: int = 6
 
 class AppConfig(BaseModel):

@@ -140,7 +140,7 @@ class SendingService:
                 self.chat,
                 f"Источник: <a href='{news.url}'>ссылка</a>\nID: <code>{news.id}</code>",
                 parse_mode="HTML",
-                disable_web_page_preview=False,  # хотим превью
+                disable_web_page_preview=True,
                 reply_markup=self._edit_kb(news.id),
             )
             meta_mid = meta_msg.message_id
