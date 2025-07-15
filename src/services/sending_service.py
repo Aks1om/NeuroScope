@@ -23,6 +23,8 @@ from src.utils.paths import MEDIA_DIR
 class SendingService:
     MAX_MEDIA   = 10
     FILE_ID_MIN = 40   # строка короче — точно не Telegram file_id
+    CAPTION_MAX = 1024  # лимит Telegram для caption в альбоме
+    TEXT_MAX = 4096  # лимит для обычного сообщения
 
     def __init__(
         self,
@@ -37,6 +39,17 @@ class SendingService:
         self.log   = logger
 
     # ────────── helpers ────────── #
+    @classmethod
+    def _clip(cls, text: str, limit: int) -> tuple[str, bool]:
+        """
+        Возвращает (text ≤ limit, was_trimmed?).
+        Добавляет «…» при обрезке.
+        """
+
+        if len(text) <= limit:
+            return text, False
+        return text[: limit - 1] + "…", True
+
     async def _safe_send_album(self, album: List[InputMediaPhoto]):
         try:
             return await self.bot.send_media_group(self.chat, album)
@@ -103,7 +116,7 @@ class SendingService:
 
         # ── обычный режим ──────────────────────────────────────────────────
         for news in items:
-            caption = build_caption(news)
+            caption, trimmed = self._clip(build_caption(news), self.TEXT_MAX)
             album_ids: list[int] = []  # все id альбома или [main_mid] для текста
             main_mid: int | None = None
 
@@ -121,6 +134,12 @@ class SendingService:
                         continue
 
                     kwargs = {"caption": caption, "parse_mode": "HTML"} if i == 0 else {}
+                    if i == 0:  # только к первой фотке
+                        cap, cap_trim = self._clip(caption, self.CAPTION_MAX)
+                        trimmed = trimmed or cap_trim
+                        kwargs = {"caption": cap, "parse_mode": "HTML"}
+                    else:
+                        kwargs = {}
                     album.append(InputMediaPhoto(media=media_src, **kwargs))
 
                 if album:
@@ -144,6 +163,12 @@ class SendingService:
                 reply_markup=self._edit_kb(news.id),
             )
             meta_mid = meta_msg.message_id
+
+            # ---------- warning для админов ---------- #
+            if trimmed:
+                warn = (f"⚠️ Текст новости ID={news.id} был обрезан "
+                        f"до {self.CAPTION_MAX if news.media_ids else self.TEXT_MAX} символов.")
+                await self._safe_send_text(warn)
 
             # ---------- запись в БД ----------
             self.repo.update_fields(

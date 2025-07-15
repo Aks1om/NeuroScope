@@ -2,7 +2,6 @@
 from __future__ import annotations
 from typing import List, TypeVar, Generic, Set
 from pydantic import BaseModel
-from difflib import SequenceMatcher
 from datetime import datetime, timedelta
 from typing import Iterable
 # — NLP —
@@ -10,7 +9,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer, util
 
 from src.utils.file_utils import load_app_config
-from src.utils.app_config import AppConfig
+from src.data_manager.app_config import AppConfig
 from src.data_manager.NewsItem import RawNewsItem
 from src.data_manager.duckdb_repository import DuckDBRepository
 

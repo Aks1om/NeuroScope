@@ -1,94 +1,74 @@
-# src/services/processed_service.py
-from __future__ import annotations
+# src/data_manager/duckdb_repository.py
 
-import logging
-from typing import List
+import json
 
-from src.data_manager.NewsItem import RawNewsItem, ProcessedNewsItem
-from src.services.duplicate_filter_service import DuplicateFilterService
-from src.utils.file_utils import _parse_date
+class DuckDBRepository:
+    """Универсальный репозиторий для Raw и Processed моделей."""
 
+    def __init__(self, conn, table, model):
+        self.conn = conn
+        self.table = table
+        self.Model = model
 
-class ProcessedService:
-    """
-    1. Берёт всё из raw_repo.
-    2. Переводит EN→RU (TranslateService).
-    3. При необходимости обрабатывает GPT.
-    4. Сохраняет уникальные записи в processed_repo.
-    """
+    def insert_news(self, items):
+        if not items:
+            return 0
+        cols = list(items[0].dict().keys())
+        sql = (
+            f"INSERT INTO {self.table} ({', '.join(cols)}) "
+            f"VALUES ({', '.join('?' for _ in cols)}) "
+            f"ON CONFLICT (id) DO NOTHING"
+        )
+        for m in items:
+            vals = list(m.dict().values())
+            # url -> str
+            vals[cols.index("url")] = str(vals[cols.index("url")])
+            # сериализуем media_ids
+            if "media_ids" in cols:
+                vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            self.conn.execute(sql, vals)
+        return len(items)
 
-    def __init__(
-        self,
-        *,
-        raw_repo,
-        processed_repo,
-        translate_service,
-        chat_gpt_service,
-        duplicate_filter: DuplicateFilterService[ProcessedNewsItem],
-        logger: logging.Logger,
-        use_chatgpt: bool,
-    ):
-        self.raw_repo = raw_repo
-        self.proc_repo = processed_repo
-        self.translate = translate_service
-        self.chat_gpt = chat_gpt_service
-        self.dup_filter = duplicate_filter
-        self.logger = logger
-        self.use_chatgpt = use_chatgpt
-
-    # ───────────────────────── helpers ───────────────────────── #
-    def _already_done_ids(self) -> set[int]:
-        rows = self.proc_repo.conn.execute(f"SELECT id FROM {self.proc_repo.table}")
-        return {r[0] for r in rows.fetchall()}
-
-    # ───────────────────────── core ──────────────────────────── #
-    def process_and_save(self, first_run: bool) -> int:
-        done_ids = self._already_done_ids()
-        raw_items: List[RawNewsItem] = self.raw_repo.fetch_all()
-
-        recent_texts = self.dup_filter.get_recent_texts(raw_items, done_ids)
-        batch: List[ProcessedNewsItem] = []
-
-        for item in raw_items:
-            if item.id in done_ids:
-                continue
-
-            text = item.text
-
-            # 1) проверка на похожие новости (за последние dub_hours_threshold)
-            if self.dup_filter.is_similar_recent(text, recent_texts):
-                self.logger.debug("Similar news found, skip id=%s", item.id)
-                continue
-
-            # 2) GPT-обработка
-            if not first_run and self.use_chatgpt:
-                try:
-                    text = self.chat_gpt.process(text)
-                except Exception as e:
-                    self.logger.error("GPT failed for %s: %s", item.id, e)
-                    continue  # пропускаем, если GPT упал
-
-            processed = ProcessedNewsItem(
-                id=item.id,
-                title=item.title,
-                url=item.url,
-                date=_parse_date(item.date),
-                text=text,
-                media_ids=item.media_ids,
-                language=item.language,
-                topic=item.topic,
+    def _row_to_model(self, row, cols):
+        data = {
+            k: (
+                json.loads(v)
+                if k == "media_ids" and v is not None else v
             )
-            batch.append(processed)
+            for k, v in zip(cols, row)
+        }
+        return self.Model(**data)
 
-        if not batch:
-            self.logger.debug("Нет новых элементов для обработки.")
-            return 0
+    def fetch_all(self):
+        rel = self.conn.execute(f"SELECT * FROM {self.table}")
+        cols = [c[0] for c in rel.description]
+        return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-        unique = self.dup_filter.filter(batch)
-        if not unique:
-            self.logger.debug("Все элементы оказались дубликатами.")
-            return 0
+    def fetch_unsuggested(self, limit):
+        rel = self.conn.execute(
+            f"SELECT * FROM {self.table} WHERE suggested = FALSE LIMIT ?",
+            [limit],
+        )
+        cols = [c[0] for c in rel.description]
+        return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-        saved = self.proc_repo.insert_news(unique)
-        self.logger.debug("Сохранили в processed: %d", saved)
-        return saved
+    def fetch_by_id(self, id_):
+        rel = self.conn.execute(f"SELECT * FROM {self.table} WHERE id=?", [id_])
+        row = rel.fetchone()
+        return None if row is None else self._row_to_model(row, [c[0] for c in rel.description])
+
+    def update_fields(self, id_, **fields):
+        if "media_ids" in fields:
+            fields["media_ids"] = json.dumps(fields["media_ids"])
+        sets = ", ".join(f"{k}=?" for k in fields)
+        self.conn.execute(
+            f"UPDATE {self.table} SET {sets} WHERE id=?",
+            list(fields.values()) + [id_],
+        )
+
+    def set_flag(self, flag, ids):
+        if ids:
+            ph = ",".join("?" for _ in ids)
+            self.conn.execute(
+                f"UPDATE {self.table} SET {flag}=TRUE WHERE id IN ({ph})", ids
+            )

@@ -28,9 +28,6 @@ CREATE TABLE IF NOT EXISTS processed_news (
     topic     TEXT,
     suggested BOOLEAN DEFAULT FALSE,
     confirmed BOOLEAN DEFAULT FALSE,
-    main_mid  UBIGINT,
-    meta_mid  UBIGINT,
-    album_mids TEXT
 );
 """
 

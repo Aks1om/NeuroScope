@@ -1,6 +1,4 @@
 # src/di.py
-from __future__ import annotations
-
 # ────────────── 0. stdlib / сторонние ────────────── #
 import os
 import shutil
@@ -12,7 +10,7 @@ from aiogram.client.default import DefaultBotProperties
 
 # ────────────── 1. util-слой ────────────── #
 from src.utils.file_utils import load_env, load_app_config
-from src.utils.app_config import AppConfig
+from src.data_manager.app_config import AppConfig
 from src.utils.paths import DB, MEDIA_DIR
 from src.bot.logger import setup_logger
 from src.bot.filter import ProgOrAdminFilter

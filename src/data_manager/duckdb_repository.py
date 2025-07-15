@@ -1,26 +1,19 @@
-# src/data_manager/duckdb_repository
-from __future__ import annotations
+# src/data_manager/duckdb_repository.py
+
 import json
-from typing import List, TypeVar, Generic, Sequence
 
-from pydantic import BaseModel
+class DuckDBRepository:
+    """Универсальный репозиторий для Raw и Processed моделей."""
 
-T = TypeVar("T", bound=BaseModel)
-
-
-class DuckDBRepository(Generic[T]):
-    """Универсальный репозиторий для Raw/Processed моделей."""
-
-    def __init__(self, conn, table: str, model: type[T]):
+    def __init__(self, conn, table, model):
         self.conn = conn
         self.table = table
         self.Model = model
 
-    # ─── insert ─── #
-    def insert_news(self, items: List[T]) -> int:
+    def insert_news(self, items):
         if not items:
             return 0
-        cols = list(items[0].dict().keys())  # порядок полей
+        cols = list(items[0].dict().keys())
         sql = (
             f"INSERT INTO {self.table} ({', '.join(cols)}) "
             f"VALUES ({', '.join('?' for _ in cols)}) "
@@ -28,33 +21,32 @@ class DuckDBRepository(Generic[T]):
         )
         for m in items:
             vals = list(m.dict().values())
-            vals[2] = str(vals[2])  # url -> str
-            vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            # url -> str
+            vals[cols.index("url")] = str(vals[cols.index("url")])
+            # сериализуем media_ids/album_mids
+            if "media_ids" in cols:
+                vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
             if "album_mids" in cols:
                 vals[cols.index("album_mids")] = json.dumps(vals[cols.index("album_mids")])
             self.conn.execute(sql, vals)
         return len(items)
 
-    # ─── helpers ─── #
-    def _row_to_model(self, row: Sequence, cols: Sequence[str]) -> T:
+    def _row_to_model(self, row, cols):
         data = {
             k: (
                 json.loads(v)
-                if k in ("media_ids", "album_mids") else v
+                if k in ("media_ids", "album_mids") and v is not None else v
             )
             for k, v in zip(cols, row)
         }
         return self.Model(**data)
 
-    # ─── select all ─── #
-    def fetch_all(self) -> List[T]:
+    def fetch_all(self):
         rel = self.conn.execute(f"SELECT * FROM {self.table}")
         cols = [c[0] for c in rel.description]
         return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-
-    # ─── select ─── #
-    def fetch_unsuggested(self, limit: int) -> List[T]:
+    def fetch_unsuggested(self, limit):
         rel = self.conn.execute(
             f"SELECT * FROM {self.table} WHERE suggested = FALSE LIMIT ?",
             [limit],
@@ -62,13 +54,12 @@ class DuckDBRepository(Generic[T]):
         cols = [c[0] for c in rel.description]
         return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-    def fetch_by_id(self, id_: int) -> T | None:
+    def fetch_by_id(self, id_):
         rel = self.conn.execute(f"SELECT * FROM {self.table} WHERE id=?", [id_])
         row = rel.fetchone()
         return None if row is None else self._row_to_model(row, [c[0] for c in rel.description])
 
-    # ─── update partial ─── #
-    def update_fields(self, id_: int, **fields):
+    def update_fields(self, id_, **fields):
         if "media_ids" in fields:
             fields["media_ids"] = json.dumps(fields["media_ids"])
         if "album_mids" in fields:
@@ -79,8 +70,7 @@ class DuckDBRepository(Generic[T]):
             list(fields.values()) + [id_],
         )
 
-    # ─── flags ─── #
-    def set_flag(self, flag: str, ids: List[int]):
+    def set_flag(self, flag, ids):
         if ids:
             ph = ",".join("?" for _ in ids)
             self.conn.execute(

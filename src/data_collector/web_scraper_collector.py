@@ -5,9 +5,9 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Sequence
 
-from pydantic import BaseModel, HttpUrl, ValidationError
+from pydantic import ValidationError
 
-from src.utils.app_config import SourceSpec
+from src.data_manager.app_config import SourceSpec
 from .web_scrapers import SCRAPER_REGISTRY
 
 logger = logging.getLogger(__name__)

@@ -1,17 +1,17 @@
 {
   "settings": {
     "reset": true,
-    "first_run": true,
+    "first_run": false,
     "use_chatgpt": false,
-    "test_one_raw": false,
+    "test_one_raw": true,
     "poll_interval": 900,
     "dub_threshold": 0.90,
     "dub_hours_threshold": 6
   },
   "telegram_channels": {
-    "suggested_chat_id": -1002857895412,
+    "suggested_chat_id": -4885589416,
     "topics": {
-      "auto": "@tachkinaprokachky"
+      "auto": "@Autogfpojoerg"
     }
   },
   "users": {

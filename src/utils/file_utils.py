@@ -9,7 +9,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from src.utils.paths import ENV_DIR, CONFIG_DIR
-from src.utils.app_config import AppConfig   # ← pydantic-модель
+from src.data_manager.app_config import AppConfig   # ← pydantic-модель
 
 
 # ─────────────────── env ─────────────────── #

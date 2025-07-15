@@ -42,7 +42,7 @@ class LoggingMiddleware(BaseMiddleware):
         self.logger = logger
 
     async def __call__(self, handler, event: TelegramObject, data):
-        self.logger.debug("Update: %s", event)
+        #self.logger.debug("Update: %s", event)
         return await handler(event, data)
 
 
