@@ -23,7 +23,7 @@ from src.bot.handlers.general import router as general_router
 from src.bot.handlers.post import build_post_admin_router
 
 # ────────────── 2. модели / БД ────────────── #
-from src.data_manager.models import RawNewsItem, ProcessedNewsItem
+from src.data_manager.models import *
 from src.data_manager.duckdb_client import DuckDBClient
 from src.data_manager.duckdb_repository import DuckDBRepository
 
@@ -38,6 +38,7 @@ from src.services.sending_service import SendingService
 from src.services.polling_service import PollingService
 
 from src.data_collector.web_scraper_collector import WebScraperCollector
+from src.data_collector.web_scrapers import *
 
 # ────────────── 4. конфиг + окружение ────────────── #
 load_env()                                   # .env → os.environ
@@ -89,7 +90,12 @@ translate_svc = TranslateService()
 dup_raw       = DuplicateFilterService(raw_repo)
 dup_proc      = DuplicateFilterService(processed_repo)
 
-web_collector = WebScraperCollector(cfg.source_map, logger)
+web_collector = WebScraperCollector(
+    source_map=cfg.source_map,
+    source_spec_model=SourceSpec,
+    scraper_registry=SCRAPER_REGISTRY,
+    logger=logger,
+)
 
 dup_raw  = DuplicateFilterService(
     repo=raw_repo,
