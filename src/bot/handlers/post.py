@@ -16,7 +16,7 @@ from aiogram.types import (
 )
 
 from src.utils.paths import MEDIA_DIR
-from src.data_manager.app_config import AppConfig
+from src.data_manager.models import AppConfig
 from src.bot.filter import LockManager, EditingSessionFilter, ProgOrAdminFilter
 
 # ---------- FSM ----------

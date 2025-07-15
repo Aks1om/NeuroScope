@@ -1,14 +1,5 @@
 # src/services/collector_service.py
-from __future__ import annotations
-
 import hashlib
-from typing import List, Dict, Any
-
-from pydantic import HttpUrl
-
-from src.utils.file_utils import _parse_date
-from src.data_manager.NewsItem import RawNewsItem
-
 
 class CollectorService:
     """
@@ -27,51 +18,53 @@ class CollectorService:
         media_service,
         duplicate_filter,
         logger,
-        test_one_raw: bool = False,
-        item_index: int = 2,
+        model,  # <--- Pydantic-модель RawNewsItem через DI
+        parse_date,  # <--- функция парсинга даты через DI
+        test_one_raw=False,
+        item_index=2,
     ):
         self.raw_repo = raw_repo
         self.collector = collector
-        self.translate = translate_service
-        self.media = media_service
-        self.dup = duplicate_filter
-        self.log = logger
+        self.translate_service = translate_service
+        self.media_service = media_service
+        self.duplicate_filter = duplicate_filter
+        self.logger = logger
+        self.model = model
+        self.parse_date = parse_date
         self.test_one_raw = test_one_raw
         self.item_index = item_index
 
-    # ───────────────────────── helpers ───────────────────────── #
     @staticmethod
-    def _make_id(url: str) -> int:
+    def _make_id(url):
         """MD5(url) → 16 hex → int -> UBIGINT для DuckDB."""
         return int(hashlib.md5(url.encode()).hexdigest()[:16], 16)
 
-    # ───────────────────────── core ──────────────────────────── #
-    async def collect_and_save(self) -> None:
-        raw: List[Dict[str, Any]] = await self.collector.collect()
+    async def collect_and_save(self):
+        raw = await self.collector.collect()
         if self.test_one_raw and raw:
             raw = [raw[self.item_index]]
 
-        items: List[RawNewsItem] = []
+        items = []
         for r in raw:
-            # ─── media ─── #
-            media_ids: list[str] = []
+            # --- media ---
+            media_ids = []
             for murl in r.get("media_urls", []):
-                fid = await self.media.download(murl)
+                fid = await self.media_service.download(murl)
                 if fid:
                     media_ids.append(fid)
 
             raw_text = r.get("text", "")
-            lang = self.translate.detect_language(raw_text)
+            lang = self.translate_service.detect_language(raw_text)
             if lang == "en":
-                raw_text = self.translate.translate(raw_text)
+                raw_text = self.translate_service.translate(raw_text)
                 lang = "ru"
 
-            # ─── модель ─── #
-            item = RawNewsItem(
+            # --- модель ---
+            item = self.model(
                 id=self._make_id(r["url"]),
                 title=r["title"],
-                url=HttpUrl(r["url"]),
-                date=_parse_date(r.get("date")),
+                url=r["url"],
+                date=self.parse_date(r.get("date")),
                 text=raw_text,
                 media_ids=media_ids,
                 language=lang,
@@ -79,7 +72,7 @@ class CollectorService:
             )
             items.append(item)
 
-        unique = self.dup.filter(items)
+        unique = self.duplicate_filter.filter(items)
         if unique:
             self.raw_repo.insert_news(unique)
-            self.log.debug("Сохранили в raw: %d", len(unique))
+            self.logger.debug("Сохранили в raw: %d", len(unique))

@@ -1,7 +1,6 @@
 # src/services/chat_gpt_service.py
 import os
 from openai import OpenAI
-from typing import Optional
 
 class ChatGPTService:
     """
@@ -10,17 +9,15 @@ class ChatGPTService:
     делает запрос в OpenAI и возвращает результат.
     """
 
-    def __init__(self, api_key: str, proxy_url: Optional[str] = None):
+    def __init__(self, api_key, proxy_url=None):
         self.api_key = api_key
         self.proxy_url = proxy_url
 
-    def process(self, news_text: str) -> str:
+    def process(self, news_text):
         """
         Переписывает текст через GPT с прокси.
         """
-        # Сохраняем старый прокси (если был)
         old_proxy = os.environ.get('HTTPS_PROXY')
-        # Устанавливаем нужный прокси только на время работы
         if self.proxy_url:
             os.environ['HTTPS_PROXY'] = self.proxy_url
 

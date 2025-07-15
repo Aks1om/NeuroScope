@@ -1,24 +1,7 @@
 # src/services/sending_service.py
-from __future__ import annotations
-
 import asyncio
-import logging
 from pathlib import Path
-from typing import List
-
-from aiogram import Bot
-from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
-from aiogram.types import (
-    FSInputFile,
-    InputMediaPhoto,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-)
-
-from src.data_manager.NewsItem import ProcessedNewsItem
-from src.utils.formatters import build_caption, build_meta
-from src.utils.paths import MEDIA_DIR
-
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 class SendingService:
     MAX_MEDIA   = 10
@@ -28,43 +11,39 @@ class SendingService:
 
     def __init__(
         self,
-        bot: Bot,
-        chat_id: int,
+        bot,
+        chat_id,
         processed_repo,
-        logger: logging.Logger,
+        logger,
+        build_caption,
+        build_meta,
+        media_dir,
     ):
         self.bot   = bot
         self.chat  = chat_id
         self.repo  = processed_repo
         self.log   = logger
+        self.build_caption = build_caption
+        self.build_meta = build_meta
+        self.media_dir = media_dir
 
-    # ────────── helpers ────────── #
     @classmethod
-    def _clip(cls, text: str, limit: int) -> tuple[str, bool]:
-        """
-        Возвращает (text ≤ limit, was_trimmed?).
-        Добавляет «…» при обрезке.
-        """
-
+    def _clip(cls, text, limit):
         if len(text) <= limit:
             return text, False
         return text[: limit - 1] + "…", True
 
-    async def _safe_send_album(self, album: List[InputMediaPhoto]):
+    async def _safe_send_album(self, album):
         try:
             return await self.bot.send_media_group(self.chat, album)
-        except TelegramRetryAfter as e:
-            self.log.warning("Flood-control album: %.1f s", e.retry_after)
-            await asyncio.sleep(e.retry_after)
-            return await self.bot.send_media_group(self.chat, album)
-        except TelegramBadRequest as e:
+        except Exception as e:
+            if hasattr(e, "retry_after"):
+                self.log.warning("Flood-control album: %.1f s", e.retry_after)
+                await asyncio.sleep(e.retry_after)
+                return await self.bot.send_media_group(self.chat, album)
             self.log.error("Album failed: %s", e)
 
-    async def _safe_send_text(
-        self,
-        text: str,
-        kb: InlineKeyboardMarkup | None = None,
-    ):
+    async def _safe_send_text(self, text, kb=None):
         try:
             return await self.bot.send_message(
                 self.chat,
@@ -73,18 +52,18 @@ class SendingService:
                 disable_web_page_preview=True,
                 reply_markup=kb,
             )
-        except TelegramRetryAfter as e:
-            self.log.warning("Flood-control text: %.1f s", e.retry_after)
-            await asyncio.sleep(e.retry_after)
-            return await self.bot.send_message(
-                self.chat,
-                text=text,
-                parse_mode="HTML",
-                disable_web_page_preview=True,
-                reply_markup=kb,
-            )
+        except Exception as e:
+            if hasattr(e, "retry_after"):
+                self.log.warning("Flood-control text: %.1f s", e.retry_after)
+                await asyncio.sleep(e.retry_after)
+                return await self.bot.send_message(
+                    self.chat,
+                    text=text,
+                    parse_mode="HTML",
+                    disable_web_page_preview=True,
+                    reply_markup=kb,
+                )
 
-    # ───────── helpers ───────── #
     @staticmethod
     def _edit_kb(post_id: int) -> InlineKeyboardMarkup:
         """Клавиатура: в callback-data только ID поста."""
@@ -96,50 +75,50 @@ class SendingService:
             ]]
         )
 
-    # ────────── core ────────── #
-    async def send(self, limit: int, first_run: bool):
-        """
-        Отправляет новости в «предложку».
+    @staticmethod
+    def _edit_kb(post_id):
+        return InlineKeyboardMarkup(
+            inline_keyboard=[[
+                InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"edit:{post_id}"),
+                InlineKeyboardButton(text="🗑 Удалить", callback_data=f"delete:{post_id}"),
+                InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"confirm:{post_id}"),
+            ]]
+        )
 
-        • Если у новости < 10 медиа — шлём альбом, иначе один текстовый пост.
-        • Сохраняем ВСЕ message_id альбома, чтобы потом удалить без «хвостов».
-        • На самом первом запуске (first_run=True) только проставляем флаг
-          suggested — ничего не отправляем, чтобы не завалить чат.
-        """
-        items: List[ProcessedNewsItem] = self.repo.fetch_unsuggested(limit)
+    async def send(self, limit, first_run):
+        items = self.repo.fetch_unsuggested(limit)
 
-        # ── первый прогон: просто отметили и вышли ─────────────────────────
         if first_run:
             self.repo.set_flag("suggested", [it.id for it in items])
             self.log.debug("First run: %d записей помечены suggested", len(items))
             return
 
-        # ── обычный режим ──────────────────────────────────────────────────
         for news in items:
-            caption, trimmed = self._clip(build_caption(news), self.TEXT_MAX)
-            album_ids: list[int] = []  # все id альбома или [main_mid] для текста
-            main_mid: int | None = None
+            caption, trimmed = self._clip(self.build_caption(news), self.TEXT_MAX)
+            album_ids = []
+            main_mid = None
 
-            # ---------- альбом ----------
-            if news.media_ids:
-                album: list[InputMediaPhoto] = []
+            if getattr(news, "media_ids", None):
+                album = []
                 for i, mid in enumerate(news.media_ids[: self.MAX_MEDIA]):
-                    path = Path(MEDIA_DIR) / mid
-                    if path.exists():  # файл на диске
+                    path = Path(self.media_dir) / mid
+                    if path.exists():
+                        from aiogram.types import FSInputFile, InputMediaPhoto
                         media_src = FSInputFile(path)
                     elif len(mid) >= self.FILE_ID_MIN and "." not in mid:
-                        media_src = mid  # Telegram file_id
+                        media_src = mid
                     else:
                         self.log.warning("Skip media «%s»: файла нет", mid)
                         continue
 
                     kwargs = {"caption": caption, "parse_mode": "HTML"} if i == 0 else {}
-                    if i == 0:  # только к первой фотке
+                    if i == 0:
                         cap, cap_trim = self._clip(caption, self.CAPTION_MAX)
                         trimmed = trimmed or cap_trim
                         kwargs = {"caption": cap, "parse_mode": "HTML"}
                     else:
                         kwargs = {}
+                    from aiogram.types import InputMediaPhoto
                     album.append(InputMediaPhoto(media=media_src, **kwargs))
 
                 if album:
@@ -148,36 +127,31 @@ class SendingService:
                     if album_ids:
                         main_mid = album_ids[0]
 
-            # ---------- одиночный текст ----------
-            if main_mid is None:  # альбом не отправлен
+            if main_mid is None:
                 msg = await self._safe_send_text(caption)
                 main_mid = msg.message_id
                 album_ids = [main_mid]
 
-            # ---------- meta ----------
             meta_msg = await self.bot.send_message(
                 self.chat,
-                f"Источник: <a href='{news.url}'>ссылка</a>\nID: <code>{news.id}</code>",
+                self.build_meta(news),
                 parse_mode="HTML",
                 disable_web_page_preview=True,
                 reply_markup=self._edit_kb(news.id),
             )
             meta_mid = meta_msg.message_id
 
-            # ---------- warning для админов ---------- #
             if trimmed:
                 warn = (f"⚠️ Текст новости ID={news.id} был обрезан "
-                        f"до {self.CAPTION_MAX if news.media_ids else self.TEXT_MAX} символов.")
+                        f"до {self.CAPTION_MAX if getattr(news, 'media_ids', None) else self.TEXT_MAX} символов.")
                 await self._safe_send_text(warn)
 
-            # ---------- запись в БД ----------
             self.repo.update_fields(
                 news.id,
                 main_mid=main_mid,
                 meta_mid=meta_mid,
-                album_mids=album_ids,  # сохраняем полный список id
+                album_mids=album_ids,
                 suggested=True,
             )
 
-            await asyncio.sleep(1.0)  # пауза, чтобы не ловить flood-контроль
-
+            await asyncio.sleep(1.0)

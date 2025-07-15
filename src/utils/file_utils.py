@@ -9,7 +9,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 from src.utils.paths import ENV_DIR, CONFIG_DIR
-from src.data_manager.app_config import AppConfig   # ← pydantic-модель
+from src.data_manager.models import AppConfig   # ← pydantic-модель
 
 
 # ─────────────────── env ─────────────────── #
@@ -32,7 +32,7 @@ def load_app_config(path: Path | str = CONFIG_DIR) -> AppConfig:
         data: dict[str, Any] = json.load(f)
     return AppConfig.parse_obj(data)
 
-def _parse_date(v):
+def parse_date(v):
     if v in (None, "", 0):
         return None
     if isinstance(v, datetime):

@@ -7,7 +7,7 @@ from pathlib import Path
 
 from aiogram import Bot
 
-from src.data_manager.app_config import AppConfig
+from src.data_manager.models import AppConfig
 
 
 class TelegramLogsHandler(logging.Handler):

@@ -1,49 +1,33 @@
 # src/services/duplicate_filter_service.py
-from __future__ import annotations
-from typing import List, TypeVar, Generic, Set
-from pydantic import BaseModel
-from datetime import datetime, timedelta
-from typing import Iterable
-# — NLP —
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
+from datetime import datetime, timedelta
 
-from src.utils.file_utils import load_app_config
-from src.data_manager.app_config import AppConfig
-from src.data_manager.NewsItem import RawNewsItem
-from src.data_manager.duckdb_repository import DuckDBRepository
-
-T = TypeVar("T", bound=BaseModel)
-
-
-class DuplicateFilterService(Generic[T]):
+class DuplicateFilterService:
     """
     1) filter() — фильтрация только по URL
     2) is_duplicate_content() — проверка на дубликат по содержанию
     3) filter_content() — отбор неповторяющихся по содержанию элементов
     """
 
-    def __init__(self, repo: DuckDBRepository):
-        self.repo = repo
-        cfg: AppConfig = load_app_config()
-        self.dub_threshold: float = cfg.settings.dub_threshold
-        self.dub_hours_threshold: int = cfg.settings.dub_hours_threshold
-        if not hasattr(DuplicateFilterService, "_model"):
-            DuplicateFilterService._model: SentenceTransformer = (
-                SentenceTransformer("paraphrase-MiniLM-L6-v2")
-            )
-
-    def get_recent_texts(
+    def __init__(
         self,
-        raw_items: Iterable[RawNewsItem],
-        processed_ids: set[int],
-    ) -> list[str]:
-        """
-        Берёт raw_items и возвращает тексты новостей,
-        которые **уже** были переработаны (id ∈ processed_ids)
-        и моложе dub_hours_threshold.
-        """
+        repo,
+        dub_threshold,
+        dub_hours_threshold,
+        embedding_model=None,
+    ):
+        self.repo = repo
+        self.dub_threshold = dub_threshold
+        self.dub_hours_threshold = dub_hours_threshold
+        if embedding_model is not None:
+            self._model = embedding_model
+        else:
+            if not hasattr(DuplicateFilterService, "_model"):
+                DuplicateFilterService._model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+            self._model = DuplicateFilterService._model
 
+    def get_recent_texts(self, raw_items, processed_ids):
         cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
         return [
             it.text
@@ -51,11 +35,11 @@ class DuplicateFilterService(Generic[T]):
             if (it.id in processed_ids and it.date and it.date >= cutoff)
         ]
 
-    def filter(self, items: List[T]) -> List[T]:
+    def filter(self, items):
         cur = self.repo.conn.execute(f"SELECT url FROM {self.repo.table}")
-        existing_urls: Set[str] = {row[0] for row in cur.fetchall()}
+        existing_urls = {row[0] for row in cur.fetchall()}
 
-        unique: List[T] = []
+        unique = []
         for it in items:
             url = str(it.url)
             if url in existing_urls:
@@ -64,11 +48,7 @@ class DuplicateFilterService(Generic[T]):
             unique.append(it)
         return unique
 
-    def is_duplicate_content(self, item: T) -> bool:
-        """
-        Сравниваем текст `item.text` со всеми text из БД за последние dub_hours_threshold часов.
-        Если хоть с одним similarity >= dub_threshold — считаем дубликатом.
-        """
+    def is_duplicate_content(self, item):
         cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
         cur = self.repo.conn.execute(
             f"SELECT text FROM {self.repo.table} WHERE date >= ?",
@@ -79,11 +59,7 @@ class DuplicateFilterService(Generic[T]):
                 return True
         return False
 
-    def is_similar_recent(self, text: str, recent_texts: list[str]) -> bool:
-        """
-        Сравнивает *text* с каждым из *recent_texts* (уже обработанные
-        новости за последние N часов).  True ⇢ дубликат по содержанию.
-        """
+    def is_similar_recent(self, text, recent_texts):
         if not recent_texts:
             return False
 
@@ -94,16 +70,13 @@ class DuplicateFilterService(Generic[T]):
         return False
 
     # ─────────────────── helpers (приватные) ─────────────────── #
-    @classmethod
-    def _embedding(cls, text: str) -> np.ndarray:
-        """Средний эмбеддинг по абзацам (> 5 слов)."""
+    def _embedding(self, text):
         parts = [p for p in text.split("\n") if len(p.split()) > 5]
         if not parts:
             parts = [text]
-            embs = cls._model.encode(parts)
+        embs = self._model.encode(parts)
         return embs.mean(axis=0)
 
     @staticmethod
-    def _similarity(a_emb: np.ndarray, b_emb: np.ndarray) -> float:
-        """Косинусное сходство двух эмбеддингов (0…1)."""
+    def _similarity(a_emb, b_emb):
         return float(util.cos_sim(a_emb, b_emb))
