@@ -148,9 +148,8 @@ class SendingService:
 
             self.repo.update_fields(
                 news.id,
-                main_mid=main_mid,
-                meta_mid=meta_mid,
-                album_mids=album_ids,
+                main_message_id=main_mid,
+                others_message_ids=other_ids,
                 suggested=True,
             )
 

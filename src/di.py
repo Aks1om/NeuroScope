@@ -87,26 +87,22 @@ prog_admin_filter = ProgOrAdminFilter(
 dp.include_router(build_post_admin_router(processed_repo, prog_admin_filter, cfg))
 
 translate_svc = TranslateService()
-dup_raw       = DuplicateFilterService(raw_repo)
-dup_proc      = DuplicateFilterService(processed_repo)
+dup_raw = DuplicateFilterService(
+    repo=raw_repo,
+    dub_threshold=cfg.settings.dub_threshold,
+    dub_hours_threshold=cfg.settings.dub_hours_threshold
+)
+dup_proc = DuplicateFilterService(
+    repo=processed_repo,
+    dub_threshold=cfg.settings.dub_threshold,
+    dub_hours_threshold=cfg.settings.dub_hours_threshold
+)
 
 web_collector = WebScraperCollector(
     source_map=cfg.source_map,
     source_spec_model=SourceSpec,
     scraper_registry=SCRAPER_REGISTRY,
     logger=logger,
-)
-
-dup_raw  = DuplicateFilterService(
-    repo=raw_repo,
-    dub_threshold=cfg.settings.dub_threshold,
-    dub_hours_threshold=cfg.settings.dub_hours_threshold,
-)
-
-dup_proc = DuplicateFilterService(
-    repo=processed_repo,
-    dub_threshold=cfg.settings.dub_threshold,
-    dub_hours_threshold=cfg.settings.dub_hours_threshold,
 )
 
 media_service = MediaService(

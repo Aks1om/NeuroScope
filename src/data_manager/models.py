@@ -26,7 +26,21 @@ class ProcessedNewsItem(BaseModel):
     language:  str
     topic:     str
     suggested: bool = False
+
+class SentNewsItem(BaseModel):
+    id:        int
+    title:     str
+    url:       HttpUrl
+    date:      Optional[datetime] = None
+    text:      str
+    media_ids: List[str] = []
+    language:  str
+    topic:     str
     confirmed: bool = False
+    main_message_id: Optional[int] = None
+    others_message_ids: List[int] = []
+
+
 
 # --------- Config Models ---------
 
