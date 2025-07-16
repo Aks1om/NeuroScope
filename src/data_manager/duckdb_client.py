@@ -1,4 +1,4 @@
-# src/data_manager/duckdb_client
+# src/data_manager/duckdb_client.py
 from pathlib import Path
 import duckdb
 from src.utils.paths import DB
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS processed_news (
     media_ids TEXT,
     language  TEXT,
     topic     TEXT,
-    suggested BOOLEAN DEFAULT FALSE,
+    suggested BOOLEAN DEFAULT FALSE
 );
 """
 
@@ -41,16 +41,15 @@ CREATE TABLE IF NOT EXISTS sent_news (
     language  TEXT,
     topic     TEXT,
     confirmed BOOLEAN DEFAULT FALSE,
-    main_message_id     BIGINT,
-    others_message_ids  TEXT
+    main_message_id    BIGINT,
+    others_message_ids TEXT
 );
 """
-
 
 class DuckDBClient:
     """Singleton-подключение к DuckDB + создание схемы."""
 
-    def __init__(self, db_path: str | Path = DB, *, reset: bool = False):
+    def __init__(self, db_path=DB, reset=False):
         self.path = Path(db_path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         if reset and self.path.exists():
@@ -62,4 +61,3 @@ class DuckDBClient:
         self.conn.execute(DDL_RAW)
         self.conn.execute(DDL_PROCESSED)
         self.conn.execute(DDL_SENT)
-

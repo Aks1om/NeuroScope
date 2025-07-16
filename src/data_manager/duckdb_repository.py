@@ -3,7 +3,7 @@
 import json
 
 class DuckDBRepository:
-    """Универсальный репозиторий для Raw и Processed моделей."""
+    """Универсальный репозиторий для Raw / Processed / Sent моделей."""
 
     def __init__(self, conn, table, model):
         self.conn = conn
@@ -23,20 +23,23 @@ class DuckDBRepository:
             vals = list(m.dict().values())
             # url -> str
             vals[cols.index("url")] = str(vals[cols.index("url")])
-            # сериализуем media_ids
-            if "media_ids" in cols:
-                vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            # сериализуем списки
+            for list_field in ("media_ids", "others_message_ids"):
+                if list_field in cols:
+                    vals[cols.index(list_field)] = json.dumps(vals[cols.index(list_field)])
             self.conn.execute(sql, vals)
         return len(items)
 
     def _row_to_model(self, row, cols):
-        data = {
-            k: (
-                json.loads(v)
-                if k == "media_ids" and v is not None else v
-            )
-            for k, v in zip(cols, row)
-        }
+        data = {}
+        for k, v in zip(cols, row):
+            if k in ("media_ids", "others_message_ids") and v is not None:
+                try:
+                    data[k] = json.loads(v)
+                except Exception:
+                    data[k] = []
+            else:
+                data[k] = v
         return self.model(**data)
 
     def fetch_all(self):
@@ -71,8 +74,10 @@ class DuckDBRepository:
         return [r[0] for r in rel.fetchall()]
 
     def update_fields(self, id_, **fields):
-        if "media_ids" in fields:
-            fields["media_ids"] = json.dumps(fields["media_ids"])
+        # сериализуем списки
+        for list_field in ("media_ids", "others_message_ids"):
+            if list_field in fields:
+                fields[list_field] = json.dumps(fields[list_field])
         sets = ", ".join(f"{k}=?" for k in fields)
         self.conn.execute(
             f"UPDATE {self.table} SET {sets} WHERE id=?",

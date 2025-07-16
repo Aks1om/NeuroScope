@@ -48,12 +48,12 @@ class LockManager:
         return owner is not None and owner != user_id
 
 class EditingSessionFilter(BaseFilter):
-    """
-    Фильтр для колбэков/сообщений: разрешает действия только если
-    пользователь сейчас владеет локом на соответствующий post_id.
-    """
-    async def __call__(self, event: CallbackQuery | Message, data=None) -> bool:
-        # предполагаем, что data.callback_query.data или event.text содержит "<префикс>:<post_id>"
-        payload = event.data  # для CallbackQuery
-        pid = int(payload.split(':')[-1])
-        return not LockManager.is_locked_by_other(pid, event.from_user.id)
+    async def __call__(self, event, data=None):
+        if isinstance(event, CallbackQuery):
+            try:
+                pid = int(event.data.split(":")[-1])
+            except Exception:
+                return False
+            return not LockManager.is_locked_by_other(pid, event.from_user.id)
+        # для message не блокируем
+        return True

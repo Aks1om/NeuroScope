@@ -83,7 +83,16 @@ sent_repo      = DuckDBRepository(db_client.conn, "sent_news", SentNewsItem)
 prog_admin_filter = ProgOrAdminFilter(
     set(cfg.users.prog_ids), set(cfg.users.admin_ids)
 )
-dp.include_router(build_post_admin_router(processed_repo, prog_admin_filter, cfg))
+dp.include_router(
+    build_post_admin_router(
+        sent_repo=sent_repo,
+        processed_repo=processed_repo,
+        prog_admin_filter=prog_admin_filter,
+        cfg=cfg,
+        build_caption=build_caption,
+        build_meta=build_meta,
+    )
+)
 
 translate_svc = TranslateService()
 dup_raw = DuplicateFilterService(
