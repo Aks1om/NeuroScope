@@ -1,6 +1,5 @@
 # src/utils/file_utils.py
-from __future__ import annotations
-
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,12 +12,12 @@ from src.data_manager.models import AppConfig   # ← pydantic-модель
 
 
 # ─────────────────── env ─────────────────── #
-def load_env() -> None:
+def load_env():
     """Загружает .env в переменные окружения (если файл есть)."""
     load_dotenv(dotenv_path=ENV_DIR)
 
 
-def get_env(key: str) -> str:
+def get_env(key):
     value = os.environ.get(key)
     if value is None:
         raise RuntimeError(f"ENV: обязательная переменная {key} не найдена!")
@@ -26,7 +25,7 @@ def get_env(key: str) -> str:
 
 
 # ─────────────────── config ───────────────── #
-def load_app_config(path: Path | str = CONFIG_DIR) -> AppConfig:
+def load_app_config(path):
     """Читает config.json и валидирует через Pydantic‐модель AppConfig."""
     with open(path, encoding="utf-8") as f:
         data: dict[str, Any] = json.load(f)
@@ -43,3 +42,7 @@ def parse_date(v):
         except ValueError:
             continue
     raise ValueError(f"Неподдерживаемый формат даты: {v!r}")
+
+def make_id(url):
+    """MD5(url) → 16 hex → int -> UBIGINT для DuckDB."""
+    return int(hashlib.md5(url.encode()).hexdigest()[:16], 16)

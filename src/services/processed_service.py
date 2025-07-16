@@ -29,8 +29,7 @@ class ProcessedService:
 
     # ───────────────────────── helpers ───────────────────────── #
     def _already_done_ids(self):
-        rows = self.proc_repo.conn.execute(f"SELECT id FROM {self.proc_repo.table}")
-        return {r[0] for r in rows.fetchall()}
+        return self.proc_repo.all_field("id")
 
     # ───────────────────────── core ──────────────────────────── #
     def process_and_save(self, first_run):
@@ -47,7 +46,7 @@ class ProcessedService:
 
             # 1) проверка на похожие новости (за последние dub_hours_threshold)
             if self.dup_filter.is_similar_recent(text, recent_texts):
-                self.logger.debug("Similar news found, skip id=%s", item.id)
+                self.logger.debug("Похожая новость уже есть, пропускаем id=%s", item.id)
                 continue
 
             # 2) GPT-обработка
@@ -55,11 +54,10 @@ class ProcessedService:
                 try:
                     text = self.chat_gpt.process(text)
                 except Exception as e:
-                    self.logger.error("GPT failed for %s: %s", item.id, e)
-                    continue  # пропускаем, если GPT упал
+                    self.logger.error("GPT не справился для %s: %s", item.id, e)
+                    continue
 
-            # Собираем новую модель ProcessedNewsItem:
-            processed = self.proc_repo.Model(
+            processed = self.proc_repo.model(
                 id=item.id,
                 title=item.title,
                 url=item.url,

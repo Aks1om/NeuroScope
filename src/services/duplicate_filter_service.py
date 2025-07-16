@@ -36,9 +36,7 @@ class DuplicateFilterService:
         ]
 
     def filter(self, items):
-        cur = self.repo.conn.execute(f"SELECT url FROM {self.repo.table}")
-        existing_urls = {row[0] for row in cur.fetchall()}
-
+        existing_urls = self.repo.all_field("url")
         unique = []
         for it in items:
             url = str(it.url)
@@ -49,12 +47,14 @@ class DuplicateFilterService:
         return unique
 
     def is_duplicate_content(self, item):
+        # Тут нужна выборка text по дате — реализуем в репозитории!
         cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
-        cur = self.repo.conn.execute(
-            f"SELECT text FROM {self.repo.table} WHERE date >= ?",
-            [cutoff]
+        existing_texts = self.repo.select_field_where(
+            field="text",
+            where="date >= ?",
+            params=[cutoff],
         )
-        for (existing_text,) in cur.fetchall():
+        for existing_text in existing_texts:
             if self._similarity(item.text, existing_text) >= self.dub_threshold:
                 return True
         return False
@@ -62,7 +62,6 @@ class DuplicateFilterService:
     def is_similar_recent(self, text, recent_texts):
         if not recent_texts:
             return False
-
         new_emb = self._embedding(text)
         for old in recent_texts:
             if self._similarity(new_emb, self._embedding(old)) >= self.dub_threshold:

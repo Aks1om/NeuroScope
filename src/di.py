@@ -1,8 +1,6 @@
 # src/di.py
 # ────────────── 0. stdlib / сторонние ────────────── #
-import os
 import shutil
-from pathlib import Path
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
@@ -79,6 +77,7 @@ dp.include_router(general_router)
 db_client      = DuckDBClient(DB)
 raw_repo       = DuckDBRepository(db_client.conn, "raw_news",       RawNewsItem)
 processed_repo = DuckDBRepository(db_client.conn, "processed_news", ProcessedNewsItem)
+sent_repo      = DuckDBRepository(db_client.conn, "sent_news", SentNewsItem)
 
 # ────────────── 8. сервисы ────────────── #
 prog_admin_filter = ProgOrAdminFilter(
@@ -141,6 +140,7 @@ sending_service = SendingService(
     bot=bot,
     chat_id=cfg.telegram_channels.suggested_chat_id,
     processed_repo=processed_repo,
+    sent_repo=sent_repo,
     logger=logger,
     build_caption=build_caption,
     build_meta=build_meta,

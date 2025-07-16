@@ -1,22 +1,17 @@
-from __future__ import annotations
-import uuid
-from pathlib import Path
-from typing import List
-
 from aiogram import F, Router, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (
     CallbackQuery,
     FSInputFile,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
     InputMediaPhoto,
     Message,
 )
+from pathlib import Path
+from typing import List
 
 from src.utils.paths import MEDIA_DIR
-from src.data_manager.models import AppConfig
+from src.bot.keyboards import main_keyboard, edit_keyboard, media_keyboard
 from src.bot.filter import LockManager, EditingSessionFilter, ProgOrAdminFilter
 
 # ---------- FSM ----------
@@ -27,74 +22,55 @@ class EditState(StatesGroup):
     media_add    = State()
     media_del    = State()
 
-# ---------- клавиатуры ----------
-def _kb_main(pid: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="✏️ Редактировать", callback_data=f"e:{pid}"),
-            InlineKeyboardButton(text="🗑 Удалить", callback_data=f"d:{pid}"),
-            InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"c:{pid}"),
-        ]
-    ])
-
-def _kb_edit(pid: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Текст", callback_data=f"t:{pid}"),
-            InlineKeyboardButton(text="Заголовок", callback_data=f"h:{pid}"),
-            InlineKeyboardButton(text="Медиа", callback_data=f"m:{pid}"),
-        ],
-        [InlineKeyboardButton(text="✅ Готово", callback_data=f"done:{pid}")]
-    ])
-
-def _kb_media(pid: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="➕ Добавить", callback_data=f"ma:{pid}"),
-            InlineKeyboardButton(text="➖ Удалить", callback_data=f"md:{pid}"),
-        ],
-        [InlineKeyboardButton(text="🔙 Назад", callback_data=f"back:{pid}")]
-    ])
-
-# ---------- rebuild ----------
-async def _rebuild(bot: Bot, chat_id: int, post):
-    """Пересобрать пост и обновить message_id-ы в БД."""
+# ---------- Пересборка поста ----------
+async def rebuild_post(bot: Bot, chat_id: int, post, repo):
+    """Пересобрать пост: удалить старые сообщения, отправить новые, обновить message_id в БД."""
     try:
-        await bot.delete_messages(chat_id, post.album_mids + [post.meta_mid])
+        ids_to_delete = []
+        if post.main_message_id:
+            ids_to_delete.append(post.main_message_id)
+        if post.others_message_ids:
+            ids_to_delete.extend(post.others_message_ids)
+        if ids_to_delete:
+            await bot.delete_messages(chat_id, ids_to_delete)
     except Exception:
         pass
 
     caption = f"<b>{post.title}</b>\n{post.text}"
-    album_ids: List[int] = []
-    meta_mid: int | None = None
+    main_mid = None
+    others_ids: List[int] = []
 
+    # --- Отправляем медиа или текст ---
     if post.media_ids:
         album = [
             InputMediaPhoto(
-                media=FSInputFile(Path(MEDIA_DIR)/m) if (Path(MEDIA_DIR)/m).exists() else m,
+                media=FSInputFile(Path(MEDIA_DIR) / m) if (Path(MEDIA_DIR) / m).exists() else m,
                 **({"caption": caption, "parse_mode": "HTML"} if i == 0 else {})
             )
             for i, m in enumerate(post.media_ids[:10])
         ]
         msgs = await bot.send_media_group(chat_id, album)
-        album_ids = [m.message_id for m in msgs]
-        meta = await bot.send_message(
-            chat_id,
-            f"Источник: <a href='{post.url}'>ссылка</a>\nID: <code>{post.id}</code>",
-            parse_mode="HTML", disable_web_page_preview=True,
-            reply_markup=_kb_main(post.id)
-        )
-        meta_mid = meta.message_id
+        main_mid = msgs[0].message_id
+        others_ids = [m.message_id for m in msgs[1:]]
     else:
         msg = await bot.send_message(chat_id, caption, parse_mode="HTML",
-                                     reply_markup=_kb_main(post.id))
-        album_ids = [msg.message_id]
-        meta_mid = None
+                                     reply_markup=main_keyboard(post.id))
+        main_mid = msg.message_id
 
-    post.repo.update_fields(post.id, album_mids=album_ids, meta_mid=meta_mid)
+    # --- Meta сообщение ---
+    meta = await bot.send_message(
+        chat_id,
+        f"Источник: <a href='{post.url}'>ссылка</a>\nID: <code>{post.id}</code>",
+        parse_mode="HTML", disable_web_page_preview=True,
+        reply_markup=main_keyboard(post.id)
+    )
+    others_ids.append(meta.message_id)
 
-# ---------- router ----------
-def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: AppConfig) -> Router:
+    # --- Обновляем в репозитории ---
+    repo.update_fields(post.id, main_message_id=main_mid, others_message_ids=others_ids)
+
+# ---------- Роутер ----------
+def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg) -> Router:
     router = Router()
 
     # --- Удалить ---
@@ -102,8 +78,14 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
     async def _(cb: CallbackQuery):
         pid = int(cb.data[2:])
         post = repo.fetch_by_id(pid)
+        ids_to_delete = []
+        if post.main_message_id:
+            ids_to_delete.append(post.main_message_id)
+        if post.others_message_ids:
+            ids_to_delete.extend(post.others_message_ids)
         try:
-            await cb.bot.delete_messages(cb.message.chat.id, post.album_mids + [post.meta_mid])
+            if ids_to_delete:
+                await cb.bot.delete_messages(cb.message.chat.id, ids_to_delete)
         except Exception:
             pass
         await cb.answer("Удалено ✔️")
@@ -113,11 +95,16 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
     async def _(cb: CallbackQuery):
         pid = int(cb.data[2:])
         post = repo.fetch_by_id(pid)
-        await _rebuild(cb.bot, cfg.telegram_channels.topics.get("auto") or cfg.telegram_channels.suggested_chat_id, post)
+        await rebuild_post(
+            cb.bot,
+            cfg.telegram_channels.topics.get("auto") or cfg.telegram_channels.suggested_chat_id,
+            post,
+            repo
+        )
         repo.set_flag("confirmed", [pid])
         await cb.answer("Отправлено ✔️")
 
-    # --- Вход в режим редактирования: даем лок ---
+    # --- Вход в режим редактирования: даём лок ---
     @router.callback_query(F.data.startswith("e:"), prog_admin_filter)
     async def _(cb: CallbackQuery, state: FSMContext):
         pid = int(cb.data[2:])
@@ -125,7 +112,7 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
         repo.update_fields(pid, editing_by=cb.from_user.id)
         await state.update_data(pid=pid)
         await state.set_state(EditState.menu)
-        await cb.message.answer("Выберите, что изменить:", reply_markup=_kb_edit(pid))
+        await cb.message.answer("Выберите, что изменить:", reply_markup=edit_keyboard(pid))
         await cb.answer()
 
     # --- Назад ---
@@ -133,7 +120,7 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
     async def _(cb: CallbackQuery, state: FSMContext):
         pid = int(cb.data.split(':')[1])
         await state.set_state(EditState.menu)
-        await cb.message.answer("Выберите, что изменить:", reply_markup=_kb_edit(pid))
+        await cb.message.answer("Выберите, что изменить:", reply_markup=edit_keyboard(pid))
         await cb.answer()
 
     # --- Редактирование текста ---
@@ -148,7 +135,7 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
         pid = (await state.get_data())["pid"]
         repo.update_fields(pid, text=msg.text)
         await state.set_state(EditState.menu)
-        await msg.answer("Выберите, что изменить:", reply_markup=_kb_edit(pid))
+        await msg.answer("Выберите, что изменить:", reply_markup=edit_keyboard(pid))
 
     # --- Редактирование заголовка ---
     @router.callback_query(F.data.startswith("h:"), prog_admin_filter, EditingSessionFilter())
@@ -162,14 +149,14 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
         pid = (await state.get_data())["pid"]
         repo.update_fields(pid, title=msg.text)
         await state.set_state(EditState.menu)
-        await msg.answer("Выберите, что изменить:", reply_markup=_kb_edit(pid))
+        await msg.answer("Выберите, что изменить:", reply_markup=edit_keyboard(pid))
 
     # --- Работа с медиа ---
     @router.callback_query(F.data.startswith("m:"), prog_admin_filter, EditingSessionFilter())
     async def _(cb: CallbackQuery, state: FSMContext):
         pid = int(cb.data.split(':')[1])
         await state.set_state(EditState.menu)
-        await cb.message.answer("Действие с медиа:", reply_markup=_kb_media(pid))
+        await cb.message.answer("Действие с медиа:", reply_markup=media_keyboard(pid))
 
     # --- Добавление медиа ---
     @router.callback_query(F.data.startswith("ma:"), prog_admin_filter, EditingSessionFilter())
@@ -193,7 +180,7 @@ def build_post_admin_router(repo, prog_admin_filter: ProgOrAdminFilter, cfg: App
         repo.update_fields(pid, editing_by=None)
         await state.clear()
         post = repo.fetch_by_id(pid)
-        await _rebuild(cb.bot, cb.message.chat.id, post)
+        await rebuild_post(cb.bot, cb.message.chat.id, post, repo)
         await cb.message.answer(f"@{cb.from_user.username or cb.from_user.id} изменил пост {pid}")
 
     return router

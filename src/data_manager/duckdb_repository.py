@@ -8,7 +8,7 @@ class DuckDBRepository:
     def __init__(self, conn, table, model):
         self.conn = conn
         self.table = table
-        self.Model = model
+        self.model = model
 
     def insert_news(self, items):
         if not items:
@@ -37,12 +37,16 @@ class DuckDBRepository:
             )
             for k, v in zip(cols, row)
         }
-        return self.Model(**data)
+        return self.model(**data)
 
     def fetch_all(self):
         rel = self.conn.execute(f"SELECT * FROM {self.table}")
         cols = [c[0] for c in rel.description]
         return [self._row_to_model(r, cols) for r in rel.fetchall()]
+
+    def all_field(self, field):
+        rel = self.conn.execute(f"SELECT {field} FROM {self.table}")
+        return {r[0] for r in rel.fetchall()}
 
     def fetch_unsuggested(self, limit):
         rel = self.conn.execute(
@@ -56,6 +60,15 @@ class DuckDBRepository:
         rel = self.conn.execute(f"SELECT * FROM {self.table} WHERE id=?", [id_])
         row = rel.fetchone()
         return None if row is None else self._row_to_model(row, [c[0] for c in rel.description])
+
+    def select_field_where(self, field, where=None, params=None):
+        params = params or []
+        if where:
+            sql = f"SELECT {field} FROM {self.table} WHERE {where}"
+        else:
+            sql = f"SELECT {field} FROM {self.table}"
+        rel = self.conn.execute(sql, params)
+        return [r[0] for r in rel.fetchall()]
 
     def update_fields(self, id_, **fields):
         if "media_ids" in fields:

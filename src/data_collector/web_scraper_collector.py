@@ -49,8 +49,8 @@ class WebScraperCollector:
         merged = []
 
         for scraper, items in zip(self.scrapers, results, strict=True):
-            for it in items:
-                it.setdefault("topic", scraper.topic)
-                merged.append(it)
+            for item in items:
+                item.setdefault("topic", scraper.topic)
+                merged.append(item)
 
         return merged

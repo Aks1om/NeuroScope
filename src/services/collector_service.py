@@ -1,6 +1,5 @@
 # src/services/collector_service.py
-import hashlib
-
+from src.utils.file_utils import make_id
 class CollectorService:
     """
     1. Запускает WebScraperCollector -> получает list[dict].
@@ -34,19 +33,18 @@ class CollectorService:
         self.test_one_raw = test_one_raw
         self.item_index = item_index
 
-    @staticmethod
-    def _make_id(url):
-        """MD5(url) → 16 hex → int -> UBIGINT для DuckDB."""
-        return int(hashlib.md5(url.encode()).hexdigest()[:16], 16)
-
     async def collect_and_save(self):
         raw = await self.collector.collect()
         if self.test_one_raw and raw:
             raw = [raw[self.item_index]]
 
+        already_urls = self.raw_repo.all_field("url")
         items = []
         for r in raw:
-            # --- media ---
+            # --- фильтруем сразу по наличию в базе
+            if r["url"] in already_urls:
+                continue
+
             media_ids = []
             for murl in r.get("media_urls", []):
                 fid = await self.media_service.download(murl)
@@ -61,7 +59,7 @@ class CollectorService:
 
             # --- модель ---
             item = self.model(
-                id=self._make_id(r["url"]),
+                id=make_id(r["url"]),
                 title=r["title"],
                 url=r["url"],
                 date=self.parse_date(r.get("date")),

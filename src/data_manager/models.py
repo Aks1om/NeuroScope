@@ -5,7 +5,6 @@ from typing import List, Optional, Dict, Union
 from pydantic import BaseModel, HttpUrl, Field
 
 # --------- News Models ---------
-
 class RawNewsItem(BaseModel):
     id:        int
     title:     str
@@ -43,7 +42,6 @@ class SentNewsItem(BaseModel):
 
 
 # --------- Config Models ---------
-
 class SourceSpec(BaseModel):
     class_: str = Field(..., alias="class")
     module: Optional[str] = None
