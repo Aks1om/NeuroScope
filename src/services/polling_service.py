@@ -25,6 +25,7 @@ class PollingService:
         self.logger = logger
 
     async def run(self):
+        self.logger.info(f"Запуск NeuroScope")
         self._running = True
         while self._running:
             try:

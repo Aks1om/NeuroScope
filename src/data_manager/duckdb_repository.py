@@ -1,26 +1,19 @@
-# src/data_manager/duckdb_repository
-from __future__ import annotations
+# src/data_manager/duckdb_repository.py
+
 import json
-from typing import List, TypeVar, Generic, Sequence
 
-from pydantic import BaseModel
+class DuckDBRepository:
+    """Универсальный репозиторий для Raw / Processed / Sent моделей."""
 
-T = TypeVar("T", bound=BaseModel)
-
-
-class DuckDBRepository(Generic[T]):
-    """Универсальный репозиторий для Raw/Processed моделей."""
-
-    def __init__(self, conn, table: str, model: type[T]):
+    def __init__(self, conn, table, model):
         self.conn = conn
         self.table = table
-        self.Model = model
+        self.model = model
 
-    # ─── insert ─── #
-    def insert_news(self, items: List[T]) -> int:
+    def insert_news(self, items):
         if not items:
             return 0
-        cols = list(items[0].dict().keys())  # порядок полей
+        cols = list(items[0].dict().keys())
         sql = (
             f"INSERT INTO {self.table} ({', '.join(cols)}) "
             f"VALUES ({', '.join('?' for _ in cols)}) "
@@ -28,28 +21,37 @@ class DuckDBRepository(Generic[T]):
         )
         for m in items:
             vals = list(m.dict().values())
-            vals[2] = str(vals[2])  # url -> str
-            vals[cols.index("media_ids")] = json.dumps(vals[cols.index("media_ids")])
+            # url -> str
+            vals[cols.index("url")] = str(vals[cols.index("url")])
+            # сериализуем списки
+            for list_field in ("media_ids", "others_message_ids"):
+                if list_field in cols:
+                    vals[cols.index(list_field)] = json.dumps(vals[cols.index(list_field)])
             self.conn.execute(sql, vals)
         return len(items)
 
-    # ─── helpers ─── #
-    def _row_to_model(self, row: Sequence, cols: Sequence[str]) -> T:
-        data = {
-            k: (json.loads(v) if k == "media_ids" else v)
-            for k, v in zip(cols, row)
-        }
-        return self.Model(**data)
+    def _row_to_model(self, row, cols):
+        data = {}
+        for k, v in zip(cols, row):
+            if k in ("media_ids", "others_message_ids") and v is not None:
+                try:
+                    data[k] = json.loads(v)
+                except Exception:
+                    data[k] = []
+            else:
+                data[k] = v
+        return self.model(**data)
 
-    # ─── select all ─── #
-    def fetch_all(self) -> List[T]:
+    def fetch_all(self):
         rel = self.conn.execute(f"SELECT * FROM {self.table}")
         cols = [c[0] for c in rel.description]
         return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
+    def all_field(self, field):
+        rel = self.conn.execute(f"SELECT {field} FROM {self.table}")
+        return {r[0] for r in rel.fetchall()}
 
-    # ─── select ─── #
-    def fetch_unsuggested(self, limit: int) -> List[T]:
+    def fetch_unsuggested(self, limit):
         rel = self.conn.execute(
             f"SELECT * FROM {self.table} WHERE suggested = FALSE LIMIT ?",
             [limit],
@@ -57,23 +59,32 @@ class DuckDBRepository(Generic[T]):
         cols = [c[0] for c in rel.description]
         return [self._row_to_model(r, cols) for r in rel.fetchall()]
 
-    def fetch_by_id(self, id_: int) -> T | None:
+    def fetch_by_id(self, id_):
         rel = self.conn.execute(f"SELECT * FROM {self.table} WHERE id=?", [id_])
         row = rel.fetchone()
         return None if row is None else self._row_to_model(row, [c[0] for c in rel.description])
 
-    # ─── update partial ─── #
-    def update_fields(self, id_: int, **fields):
-        if "media_ids" in fields:
-            fields["media_ids"] = json.dumps(fields["media_ids"])
+    def select_field_where(self, field, where=None, params=None):
+        params = params or []
+        if where:
+            sql = f"SELECT {field} FROM {self.table} WHERE {where}"
+        else:
+            sql = f"SELECT {field} FROM {self.table}"
+        rel = self.conn.execute(sql, params)
+        return [r[0] for r in rel.fetchall()]
+
+    def update_fields(self, id_, **fields):
+        # сериализуем списки
+        for list_field in ("media_ids", "others_message_ids"):
+            if list_field in fields:
+                fields[list_field] = json.dumps(fields[list_field])
         sets = ", ".join(f"{k}=?" for k in fields)
         self.conn.execute(
             f"UPDATE {self.table} SET {sets} WHERE id=?",
             list(fields.values()) + [id_],
         )
 
-    # ─── flags ─── #
-    def set_flag(self, flag: str, ids: List[int]):
+    def set_flag(self, flag, ids):
         if ids:
             ph = ",".join("?" for _ in ids)
             self.conn.execute(

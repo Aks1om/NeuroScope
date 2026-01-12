@@ -1,35 +1,81 @@
 # src/services/duplicate_filter_service.py
-from __future__ import annotations
+import numpy as np
+from sentence_transformers import SentenceTransformer, util
+from datetime import datetime, timedelta
 
-from typing import List, TypeVar, Generic, Set, Tuple
-
-from pydantic import BaseModel
-from src.data_manager.duckdb_repository import DuckDBRepository
-
-T = TypeVar("T", bound=BaseModel)
-
-
-class DuplicateFilterService(Generic[T]):
+class DuplicateFilterService:
     """
-    Фильтрация дубликатов по (title, url) на уровне выбранного репозитория.
-    Принимает и возвращает список Pydantic-моделей.
+    1) filter() — фильтрация только по URL
+    2) is_duplicate_content() — проверка на дубликат по содержанию
+    3) filter_content() — отбор неповторяющихся по содержанию элементов
     """
 
-    def __init__(self, repo: DuckDBRepository):
+    def __init__(
+        self,
+        repo,
+        dub_threshold,
+        dub_hours_threshold,
+        embedding_model=None,
+    ):
         self.repo = repo
+        self.dub_threshold = dub_threshold
+        self.dub_hours_threshold = dub_hours_threshold
+        if embedding_model is not None:
+            self._model = embedding_model
+        else:
+            if not hasattr(DuplicateFilterService, "_model"):
+                DuplicateFilterService._model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+            self._model = DuplicateFilterService._model
 
-    def filter(self, items: List[T]) -> List[T]:
-        # загружаем существующие пары title+url
-        rows = self.repo.conn.execute(
-            f"SELECT title, url FROM {self.repo.table}"
-        ).fetchall()
-        existing: Set[Tuple[str, str]] = {(t, u) for t, u in rows}
+    def get_recent_texts(self, raw_items, processed_ids):
+        cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
+        return [
+            it.text
+            for it in raw_items
+            if (it.id in processed_ids and it.date and it.date >= cutoff)
+        ]
 
-        unique: List[T] = []
+    def filter(self, items):
+        existing_urls = self.repo.all_field("url")
+        unique = []
         for it in items:
-            pair = (it.title, str(it.url))
-            if pair in existing:
+            url = str(it.url)
+            if url in existing_urls:
                 continue
-            existing.add(pair)
+            existing_urls.add(url)
             unique.append(it)
         return unique
+
+    def is_duplicate_content(self, item):
+        # Тут нужна выборка text по дате — реализуем в репозитории!
+        cutoff = datetime.utcnow() - timedelta(hours=self.dub_hours_threshold)
+        existing_texts = self.repo.select_field_where(
+            field="text",
+            where="date >= ?",
+            params=[cutoff],
+        )
+        for existing_text in existing_texts:
+            if self._similarity(item.text, existing_text) >= self.dub_threshold:
+                return True
+        return False
+
+    def is_similar_recent(self, text, recent_texts):
+        if not recent_texts:
+            return False
+        new_emb = self._embedding(text)
+        for old in recent_texts:
+            if self._similarity(new_emb, self._embedding(old)) >= self.dub_threshold:
+                return True
+        return False
+
+    # ─────────────────── helpers (приватные) ─────────────────── #
+    def _embedding(self, text):
+        parts = [p for p in text.split("\n") if len(p.split()) > 5]
+        if not parts:
+            parts = [text]
+        embs = self._model.encode(parts)
+        return embs.mean(axis=0)
+
+    @staticmethod
+    def _similarity(a_emb, b_emb):
+        return float(util.cos_sim(a_emb, b_emb))

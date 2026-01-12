@@ -1,10 +1,12 @@
 {
   "settings": {
     "reset": true,
-    "poll_interval": 900,
     "first_run": false,
     "use_chatgpt": false,
-    "test_one_raw": true
+    "test_one_raw": true,
+    "poll_interval": 900,
+    "dub_threshold": 0.90,
+    "dub_hours_threshold": 6
   },
   "telegram_channels": {
     "suggested_chat_id": -4885589416,

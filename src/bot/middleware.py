@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message, TelegramObject
+from aiogram.types import Message
 
 
 class RoleMiddleware(BaseMiddleware):
@@ -11,13 +11,13 @@ class RoleMiddleware(BaseMiddleware):
     • В личке команды могут слать только `prog_ids`.
     • В группах — только в suggest-chat.
     """
-    def __init__(self, prog_ids: set[int], admin_ids: set[int], suggest_group_id: int):
+    def __init__(self, prog_ids, admin_ids, suggest_group_id):
         super().__init__()
         self.prog_ids = prog_ids
         self.admin_ids = admin_ids
         self.suggest_group_id = suggest_group_id
 
-    async def __call__(self, handler, event: TelegramObject, data):
+    async def __call__(self, handler, event, data):
         if isinstance(event, Message) and event.text and event.text.startswith("/"):
             uid = event.from_user.id
             cid = event.chat.id
@@ -37,12 +37,12 @@ class RoleMiddleware(BaseMiddleware):
 
 class LoggingMiddleware(BaseMiddleware):
     """Записывает каждое обновление на DEBUG-уровне."""
-    def __init__(self, logger: logging.Logger):
+    def __init__(self, logger):
         super().__init__()
         self.logger = logger
 
-    async def __call__(self, handler, event: TelegramObject, data):
-        self.logger.debug("Update: %s", event)
+    async def __call__(self, handler, event, data):
+        #self.logger.debug("Update: %s", event)
         return await handler(event, data)
 
 
@@ -51,12 +51,12 @@ class CommandRestrictionMiddleware(BaseMiddleware):
     • PRIV: команды могут слать только prog_ids
     • GROUP: команды принимаются только в suggest-chat
     """
-    def __init__(self, prog_ids: set[int], suggest_group_id: int):
+    def __init__(self, prog_ids, suggest_group_id):
         super().__init__()
         self.prog_ids = prog_ids
         self.suggest_group_id = suggest_group_id
 
-    async def __call__(self, handler, event: TelegramObject, data):
+    async def __call__(self, handler, event, data):
         if isinstance(event, Message) and event.text and event.text.startswith("/"):
             uid = event.from_user.id
             cid = event.chat.id
